@@ -2,7 +2,7 @@
 
 CookCue is an Android + Wear OS cooking assistant that treats a recipe as an executable plan instead of a static list of steps.
 
-Tasks do not have a vague `canRunInParallel` flag. They declare the resources they occupy. Two chopping jobs both require `cook`, so they cannot overlap. A simmering pot occupies `pot + burner`, but not `cook`, so preparation can continue while it cooks.
+The scheduler understands dependencies, limited resources and work that can happen in parallel. For example, two knife-prep tasks compete for the cook, while a pot can keep simmering in the background while you prepare something else.
 
 ## Modules
 
