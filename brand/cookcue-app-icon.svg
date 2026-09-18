@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" role="img" aria-label="CookCue app icon">
-	<rect width="108" height="108" rx="24" fill="#C8542E"/>
-	<path d="M71 29C61 20 44 20 33 31C20 44 20 64 33 77C44 88 61 88 72 78" fill="none" stroke="#FFF8F1" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
-	<circle cx="78" cy="23" r="6" fill="#F2B84B"/>
+	<rect width="108" height="108" rx="24" fill="#9E3A5A"/>
+	<path d="M71 29C61 20 44 20 33 31C20 44 20 64 33 77C44 88 61 88 72 78" fill="none" stroke="#FFF8F5" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+	<circle cx="78" cy="23" r="6" fill="#D3A64A"/>
 </svg>
