@@ -13,6 +13,7 @@ data class ResourceRequirement(
 enum class TaskKind {
 	ACTIVE,
 	WAIT,
+	EVENT,
 }
 
 enum class Skill {
@@ -30,11 +31,17 @@ data class CookingTask(
 	val kind: TaskKind = TaskKind.ACTIVE,
 	val skill: Skill = Skill.GENERAL,
 	val instruction: String = title,
+	val actionLabel: String? = null,
 ) {
 	init {
 		require(id.isNotBlank())
 		require(title.isNotBlank())
 		require(durationSeconds > 0)
+		if (kind == TaskKind.EVENT) {
+			require(!actionLabel.isNullOrBlank()) {
+				"Event task '$id' must define actionLabel."
+			}
+		}
 	}
 }
 
@@ -56,7 +63,7 @@ data class CookProfile(
 	val speedBySkill: Map<Skill, Double> = emptyMap(),
 ) {
 	fun durationFor(task: CookingTask): Long {
-		if (task.kind == TaskKind.WAIT) {
+		if (task.kind != TaskKind.ACTIVE) {
 			return task.durationSeconds
 		}
 

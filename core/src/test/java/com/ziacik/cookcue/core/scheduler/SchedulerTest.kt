@@ -80,6 +80,39 @@ class SchedulerTest {
 		assertEquals(120, result.single { it.task.id == "chop" }.endSeconds)
 	}
 
+	@Test
+	fun eventDurationOverrideMovesDependentTimer() {
+		val source = recipe(
+			capacities = mapOf("pot" to 1, "burner" to 1),
+			CookingTask(
+				id = "boil",
+				title = "Wait for boil",
+				durationSeconds = 240,
+				resources = uses("pot", "burner"),
+				kind = TaskKind.EVENT,
+				actionLabel = "BOILING",
+			),
+			CookingTask(
+				id = "simmer",
+				title = "Simmer",
+				durationSeconds = 2700,
+				dependsOn = setOf("boil"),
+				resources = uses("pot", "burner"),
+				kind = TaskKind.WAIT,
+			),
+		)
+
+		val estimate = scheduler.schedule(source)
+		assertEquals(240, estimate.single { it.task.id == "simmer" }.startSeconds)
+
+		val actual = scheduler.schedule(
+			recipe = source,
+			durationOverrides = mapOf("boil" to 420),
+		)
+		assertEquals(420, actual.single { it.task.id == "simmer" }.startSeconds)
+		assertEquals(3120, actual.single { it.task.id == "simmer" }.endSeconds)
+	}
+
 	private fun recipe(
 		capacities: Map<String, Int>,
 		vararg tasks: CookingTask,

@@ -29,14 +29,17 @@ class MainActivity : ComponentActivity() {
 		setContent {
 			MaterialTheme {
 				val schedule = remember { Scheduler().schedule(BeanSoupRecipe.recipe) }
-				val actionSteps = remember(schedule) {
+				val interactiveSteps = remember(schedule) {
 					schedule.filter {
-						it.task.kind == TaskKind.ACTIVE &&
-							it.task.resources.any { resource -> resource.resource == "cook" }
+						it.task.kind == TaskKind.EVENT ||
+							(
+								it.task.kind == TaskKind.ACTIVE &&
+									it.task.resources.any { resource -> resource.resource == "cook" }
+							)
 					}
 				}
 				var currentIndex by remember { mutableStateOf(0) }
-				val currentTask = actionSteps[currentIndex]
+				val currentTask = interactiveSteps[currentIndex]
 
 				Column(
 					modifier = Modifier
@@ -60,17 +63,23 @@ class MainActivity : ComponentActivity() {
 						}
 						Button(
 							onClick = {
-								if (currentIndex < actionSteps.lastIndex) {
+								if (currentIndex < interactiveSteps.lastIndex) {
 									currentIndex++
 								}
 							},
-							enabled = currentIndex < actionSteps.lastIndex,
+							enabled = currentIndex < interactiveSteps.lastIndex,
 						) {
-							Text("✓")
+							Text(
+								if (currentTask.task.kind == TaskKind.EVENT) {
+									currentTask.task.actionLabel ?: "✓"
+								} else {
+									"✓"
+								}
+							)
 						}
 						Button(
 							onClick = { currentIndex++ },
-							enabled = currentIndex < actionSteps.lastIndex,
+							enabled = currentIndex < interactiveSteps.lastIndex,
 						) {
 							Text("→")
 						}

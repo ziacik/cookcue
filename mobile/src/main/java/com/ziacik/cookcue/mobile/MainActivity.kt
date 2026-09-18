@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.ziacik.cookcue.core.model.Recipe
 import com.ziacik.cookcue.core.model.ScheduledTask
 import com.ziacik.cookcue.core.model.TaskKind
 import com.ziacik.cookcue.core.recipes.BeanSoupRecipe
@@ -51,12 +52,12 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun CookCueScreen() {
 	val recipe = BeanSoupRecipe.recipe
-	val schedule = remember { Scheduler().schedule(recipe) }
-	val actionSteps = remember(schedule) {
-		schedule.filter {
-			it.task.kind == TaskKind.ACTIVE &&
-				it.task.resources.any { resource -> resource.resource == "cook" }
-		}
+	var durationOverrides by remember { mutableStateOf<Map<String, Long>>(emptyMap()) }
+	val schedule = remember(durationOverrides) {
+		Scheduler().schedule(
+			recipe = recipe,
+			durationOverrides = durationOverrides,
+		)
 	}
 
 	var startedAt by remember { mutableStateOf<Long?>(null) }
@@ -70,10 +71,29 @@ private fun CookCueScreen() {
 	}
 
 	val elapsedSeconds = startedAt?.let { ((now - it) / 1000).coerceAtLeast(0) } ?: 0
+
+	val pendingEvents = if (startedAt == null) {
+		emptyList()
+	} else {
+		schedule.filter {
+			it.task.kind == TaskKind.EVENT &&
+				it.startSeconds <= elapsedSeconds &&
+				it.task.id !in durationOverrides
+		}
+	}
+	val blockedIds = blockedTaskIds(
+		recipe = recipe,
+		roots = pendingEvents.mapTo(mutableSetOf()) { it.task.id },
+	)
+
 	val running = if (startedAt == null) {
 		emptyList()
 	} else {
-		schedule.filter { elapsedSeconds in it.startSeconds until it.endSeconds }
+		schedule.filter {
+			it.task.kind != TaskKind.EVENT &&
+				it.task.id !in blockedIds &&
+				elapsedSeconds in it.startSeconds until it.endSeconds
+		}
 	}
 
 	val currentAction = running.firstOrNull {
@@ -81,8 +101,12 @@ private fun CookCueScreen() {
 			it.task.resources.any { resource -> resource.resource == "cook" }
 	}
 	val background = running.filter { it !== currentAction }
-	val nextScheduled = schedule.firstOrNull { it.startSeconds > elapsedSeconds }
 
+	val actionSteps = schedule.filter {
+		it.task.kind == TaskKind.ACTIVE &&
+			it.task.resources.any { resource -> resource.resource == "cook" } &&
+			it.task.id !in blockedIds
+	}
 	val navigationIndex = if (startedAt == null || actionSteps.isEmpty()) {
 		-1
 	} else {
@@ -91,10 +115,21 @@ private fun CookCueScreen() {
 	val previousAction = actionSteps.getOrNull(navigationIndex - 1)
 	val nextAction = actionSteps.getOrNull(navigationIndex + 1)
 
+	val nextScheduled = schedule.firstOrNull {
+		it.task.kind != TaskKind.EVENT &&
+			it.task.id !in blockedIds &&
+			it.startSeconds > elapsedSeconds
+	}
+
 	val jumpTo: (ScheduledTask) -> Unit = { target ->
 		val currentNow = SystemClock.elapsedRealtime()
 		now = currentNow
 		startedAt = currentNow - target.startSeconds * 1000
+	}
+
+	val confirmEvent: (ScheduledTask) -> Unit = { event ->
+		val actualDuration = (elapsedSeconds - event.startSeconds).coerceAtLeast(1)
+		durationOverrides = durationOverrides + (event.task.id to actualDuration)
 	}
 
 	Scaffold { padding ->
@@ -119,12 +154,13 @@ private fun CookCueScreen() {
 
 				if (startedAt == null) {
 					Text(
-						text = "Fazuľa má byť pred štartom už namočená aspoň 6 hodín. Namáčanie nie je 6-hodinový timer v tomto varení.",
+						text = "Fazuľa má byť pred štartom už namočená aspoň 6 hodín.",
 						style = MaterialTheme.typography.bodyLarge,
 					)
 					Spacer(Modifier.height(12.dp))
 					Button(
 						onClick = {
+							durationOverrides = emptyMap()
 							now = SystemClock.elapsedRealtime()
 							startedAt = now
 						},
@@ -149,6 +185,32 @@ private fun CookCueScreen() {
 								Text(it.task.instruction)
 								Spacer(Modifier.height(8.dp))
 								Text("Plánovane ešte " + formatRemaining(it.endSeconds - elapsedSeconds))
+							}
+						}
+					}
+
+					pendingEvents.forEach { event ->
+						Spacer(Modifier.height(10.dp))
+						Card(modifier = Modifier.fillMaxWidth()) {
+							Column(modifier = Modifier.padding(18.dp)) {
+								Text(
+									text = "ČAKÁM NA STAV",
+									style = MaterialTheme.typography.labelLarge,
+								)
+								Spacer(Modifier.height(6.dp))
+								Text(
+									text = event.task.title,
+									style = MaterialTheme.typography.titleLarge,
+								)
+								Spacer(Modifier.height(4.dp))
+								Text(event.task.instruction)
+								Spacer(Modifier.height(12.dp))
+								Button(
+									onClick = { confirmEvent(event) },
+									modifier = Modifier.fillMaxWidth(),
+								) {
+									Text(event.task.actionLabel ?: "HOTOVO")
+								}
 							}
 						}
 					}
@@ -218,7 +280,11 @@ private fun TimelineItem(item: ScheduledTask) {
 					style = MaterialTheme.typography.labelLarge,
 				)
 				Text(
-					text = formatRemaining(item.endSeconds - item.startSeconds),
+					text = if (item.task.kind == TaskKind.EVENT) {
+						"odhad ~" + formatRemaining(item.endSeconds - item.startSeconds)
+					} else {
+						formatRemaining(item.endSeconds - item.startSeconds)
+					},
 					style = MaterialTheme.typography.labelMedium,
 				)
 			}
@@ -232,8 +298,43 @@ private fun TimelineItem(item: ScheduledTask) {
 				text = item.task.instruction,
 				style = MaterialTheme.typography.bodyMedium,
 			)
+			if (item.task.kind == TaskKind.EVENT) {
+				Spacer(Modifier.height(4.dp))
+				Text(
+					text = "Ďalší časovač začne až po potvrdení: " + item.task.actionLabel,
+					style = MaterialTheme.typography.labelMedium,
+				)
+			}
 		}
 	}
+}
+
+private fun blockedTaskIds(
+	recipe: Recipe,
+	roots: Set<String>,
+): Set<String> {
+	if (roots.isEmpty()) {
+		return emptySet()
+	}
+
+	val children = recipe.tasks
+		.flatMap { task -> task.dependsOn.map { dependency -> dependency to task.id } }
+		.groupBy({ it.first }, { it.second })
+
+	val blocked = mutableSetOf<String>()
+	val queue = ArrayDeque<String>()
+	roots.forEach(queue::addLast)
+
+	while (queue.isNotEmpty()) {
+		val current = queue.removeFirst()
+		children[current].orEmpty().forEach { child ->
+			if (blocked.add(child)) {
+				queue.addLast(child)
+			}
+		}
+	}
+
+	return blocked
 }
 
 private fun formatOffset(seconds: Long): String {

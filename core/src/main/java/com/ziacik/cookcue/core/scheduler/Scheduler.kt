@@ -10,20 +10,25 @@ class Scheduler {
 	fun schedule(
 		recipe: Recipe,
 		profile: CookProfile = CookProfile.Default,
+		durationOverrides: Map<String, Long> = emptyMap(),
 	): List<ScheduledTask> {
-		validate(recipe)
+		validate(recipe, durationOverrides)
 
 		val tasksById = recipe.tasks.associateBy { it.id }
 		val children = recipe.tasks
 			.flatMap { task -> task.dependsOn.map { dependency -> dependency to task.id } }
 			.groupBy({ it.first }, { it.second })
 
+		fun durationFor(task: CookingTask): Long {
+			return durationOverrides[task.id] ?: profile.durationFor(task)
+		}
+
 		val criticalPathCache = mutableMapOf<String, Long>()
 
 		fun criticalPath(id: String): Long {
 			return criticalPathCache.getOrPut(id) {
 				val task = tasksById.getValue(id)
-				profile.durationFor(task) + (children[id]?.maxOfOrNull(::criticalPath) ?: 0L)
+				durationFor(task) + (children[id]?.maxOfOrNull(::criticalPath) ?: 0L)
 			}
 		}
 
@@ -46,7 +51,7 @@ class Scheduler {
 				.maxOfOrNull { scheduledById.getValue(it).endSeconds }
 				?: 0L
 
-			val duration = profile.durationFor(task)
+			val duration = durationFor(task)
 			val start = earliestFeasibleStart(
 				task = task,
 				duration = duration,
@@ -140,12 +145,24 @@ class Scheduler {
 			.sumOf(ResourceRequirement::units)
 	}
 
-	private fun validate(recipe: Recipe) {
+	private fun validate(
+		recipe: Recipe,
+		durationOverrides: Map<String, Long>,
+	) {
 		require(recipe.tasks.map { it.id }.distinct().size == recipe.tasks.size) {
 			"Task ids must be unique."
 		}
 
 		val ids = recipe.tasks.mapTo(mutableSetOf()) { it.id }
+
+		durationOverrides.forEach { (taskId, duration) ->
+			require(taskId in ids) {
+				"Duration override references missing task '$taskId'."
+			}
+			require(duration > 0) {
+				"Duration override for '$taskId' must be positive."
+			}
+		}
 
 		recipe.resourceCapacities.forEach { (resource, capacity) ->
 			require(resource.isNotBlank())
