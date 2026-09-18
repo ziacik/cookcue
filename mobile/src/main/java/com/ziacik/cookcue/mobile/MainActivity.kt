@@ -70,6 +70,7 @@ private fun CookCueScreen() {
 	val snapshot = remember(now, startedAt, durationOverrides) {
 		CookingSessionController.snapshot(now)
 	}
+	val primaryWait = snapshot.background.minByOrNull { it.endSeconds }
 
 	fun persistAndSync() {
 		MobileSessionPersistence.save(context)
@@ -135,7 +136,9 @@ private fun CookCueScreen() {
 							)
 							Spacer(Modifier.height(6.dp))
 							Text(
-								text = snapshot.currentAction?.task?.title ?: "Momentálne od teba nič netreba",
+								text = snapshot.currentAction?.task?.title
+									?: primaryWait?.task?.title
+									?: "Momentálne od teba nič netreba",
 								style = MaterialTheme.typography.headlineSmall,
 							)
 							snapshot.currentAction?.let {
@@ -170,6 +173,22 @@ private fun CookCueScreen() {
 								) {
 									Text("HOTOVO")
 								}
+							}
+
+							if (snapshot.currentAction == null && primaryWait != null) {
+								Spacer(Modifier.height(4.dp))
+								Text(primaryWait.task.instruction)
+								primaryWait.task.tips.forEach { tip ->
+									Spacer(Modifier.height(6.dp))
+									Text(
+										text = "Rada: " + tip,
+										style = MaterialTheme.typography.bodyMedium,
+									)
+								}
+								Spacer(Modifier.height(8.dp))
+								Text(
+									"Zostáva " + formatRemaining(primaryWait.endSeconds - snapshot.elapsedSeconds),
+								)
 							}
 						}
 					}
@@ -235,10 +254,13 @@ private fun CookCueScreen() {
 						}
 					}
 
-					if (snapshot.background.isNotEmpty()) {
+					val secondaryBackground = snapshot.background.filterNot {
+						it.task.id == primaryWait?.task?.id
+					}
+					if (secondaryBackground.isNotEmpty()) {
 						Spacer(Modifier.height(10.dp))
 						Text(
-							text = snapshot.background.joinToString("\n") {
+							text = secondaryBackground.joinToString("\n") {
 								it.task.title + ": " + formatRemaining(it.endSeconds - snapshot.elapsedSeconds)
 							},
 							style = MaterialTheme.typography.bodyMedium,
