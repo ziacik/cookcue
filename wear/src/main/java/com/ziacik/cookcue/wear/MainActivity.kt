@@ -247,7 +247,7 @@ private fun WearCookCueScreen() {
 					Spacer(Modifier.height(8.dp))
 					Text(
 						text = formatRemaining(backgroundRemaining),
-						color = CookCuePaprika,
+						color = CookCueBerry,
 						style = MaterialTheme.typography.displaySmall,
 						fontWeight = FontWeight.Bold,
 					)
@@ -317,7 +317,7 @@ private fun WearBrandHeader() {
 		Box(modifier = Modifier.size(22.dp)) {
 			Canvas(modifier = Modifier.fillMaxSize()) {
 				drawArc(
-					color = CookCuePaprika,
+					color = CookCueBerry,
 					startAngle = 45f,
 					sweepAngle = 275f,
 					useCenter = false,
@@ -346,7 +346,7 @@ private fun WearBrandHeader() {
 private fun StatusLabel(text: String) {
 	Text(
 		text = text,
-		color = CookCuePaprika,
+		color = CookCueBerry,
 		style = MaterialTheme.typography.labelMedium,
 		fontWeight = FontWeight.ExtraBold,
 	)
@@ -375,7 +375,7 @@ private fun WearTimerDial(
 				style = Stroke(width = 6.dp.toPx()),
 			)
 			drawArc(
-				color = if (elapsedSeconds > estimateSeconds) CookCueHoney else CookCuePaprika,
+				color = if (elapsedSeconds > estimateSeconds) CookCueHoney else CookCueBerry,
 				startAngle = -90f,
 				sweepAngle = 360f * progress,
 				useCenter = false,
@@ -414,7 +414,7 @@ private fun PrimaryWearButton(
 		onClick = onClick,
 		modifier = Modifier.fillMaxWidth(),
 		colors = ButtonDefaults.buttonColors(
-			containerColor = CookCuePaprika,
+			containerColor = CookCueBerry,
 			contentColor = CookCueCream,
 		),
 		shape = RoundedCornerShape(18.dp),
