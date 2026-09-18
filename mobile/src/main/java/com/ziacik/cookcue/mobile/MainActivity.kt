@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,6 +52,13 @@ class MainActivity : ComponentActivity() {
 private fun CookCueScreen() {
 	val recipe = BeanSoupRecipe.recipe
 	val schedule = remember { Scheduler().schedule(recipe) }
+	val actionSteps = remember(schedule) {
+		schedule.filter {
+			it.task.kind == TaskKind.ACTIVE &&
+				it.task.resources.any { resource -> resource.resource == "cook" }
+		}
+	}
+
 	var startedAt by remember { mutableStateOf<Long?>(null) }
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
 
@@ -67,11 +75,27 @@ private fun CookCueScreen() {
 	} else {
 		schedule.filter { elapsedSeconds in it.startSeconds until it.endSeconds }
 	}
+
 	val currentAction = running.firstOrNull {
-		it.task.kind == TaskKind.ACTIVE && it.task.resources.any { resource -> resource.resource == "cook" }
+		it.task.kind == TaskKind.ACTIVE &&
+			it.task.resources.any { resource -> resource.resource == "cook" }
 	}
 	val background = running.filter { it !== currentAction }
-	val next = schedule.firstOrNull { it.startSeconds > elapsedSeconds }
+	val nextScheduled = schedule.firstOrNull { it.startSeconds > elapsedSeconds }
+
+	val navigationIndex = if (startedAt == null || actionSteps.isEmpty()) {
+		-1
+	} else {
+		actionSteps.indexOfLast { it.startSeconds <= elapsedSeconds }.coerceAtLeast(0)
+	}
+	val previousAction = actionSteps.getOrNull(navigationIndex - 1)
+	val nextAction = actionSteps.getOrNull(navigationIndex + 1)
+
+	val jumpTo: (ScheduledTask) -> Unit = { target ->
+		val currentNow = SystemClock.elapsedRealtime()
+		now = currentNow
+		startedAt = currentNow - target.startSeconds * 1000
+	}
 
 	Scaffold { padding ->
 		LazyColumn(
@@ -95,7 +119,7 @@ private fun CookCueScreen() {
 
 				if (startedAt == null) {
 					Text(
-						text = "Pred štartom: fazuľa musí byť namočená aspoň 6 hodín.",
+						text = "Fazuľa má byť pred štartom už namočená aspoň 6 hodín. Namáčanie nie je 6-hodinový timer v tomto varení.",
 						style = MaterialTheme.typography.bodyLarge,
 					)
 					Spacer(Modifier.height(12.dp))
@@ -129,6 +153,25 @@ private fun CookCueScreen() {
 						}
 					}
 
+					Spacer(Modifier.height(10.dp))
+					Row(
+						modifier = Modifier.fillMaxWidth(),
+						horizontalArrangement = Arrangement.SpaceBetween,
+					) {
+						OutlinedButton(
+							onClick = { previousAction?.let(jumpTo) },
+							enabled = previousAction != null,
+						) {
+							Text("← PREDOŠLÝ")
+						}
+						Button(
+							onClick = { nextAction?.let(jumpTo) },
+							enabled = nextAction != null,
+						) {
+							Text("ĎALŠÍ →")
+						}
+					}
+
 					if (background.isNotEmpty()) {
 						Spacer(Modifier.height(10.dp))
 						Text(
@@ -139,10 +182,10 @@ private fun CookCueScreen() {
 						)
 					}
 
-					next?.let {
+					nextScheduled?.let {
 						Spacer(Modifier.height(10.dp))
 						Text(
-							text = "Ďalej: " + it.task.title + " o " + formatRemaining(it.startSeconds - elapsedSeconds),
+							text = "Ďalej podľa plánu: " + it.task.title + " o " + formatRemaining(it.startSeconds - elapsedSeconds),
 							style = MaterialTheme.typography.bodyMedium,
 						)
 					}
