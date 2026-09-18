@@ -286,6 +286,10 @@ object BeanSoupRecipe {
 				problem = "Príliš slaná",
 				advice = "Zrieď horúcou vodou. Ďalší bujón nepridávaj.",
 			),
+			TroubleshootingTip(
+				problem = "Príliš kyslá / veľa octu",
+				advice = "Dolej trochu horúcej vody, premiešaj a znova ochutnaj. Ak sa chuť príliš zriedi, pridaj štipku soli a majoránu. Cukor nepridávaj. Ak je polievka stále výrazne kyslá, ako poslednú záchranu pridaj naozaj malú štipku sódy bikarbóny, premiešaj a znovu ochutnaj.",
+			),
 		),
 	)
 }

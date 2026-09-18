@@ -88,6 +88,7 @@ private fun CookCueScreen() {
 	val snapshot = remember(now, startedAt, durationOverrides) {
 		CookingSessionController.snapshot(now)
 	}
+	val primaryWait = snapshot.background.minByOrNull { it.endSeconds }
 
 	fun persistAndSync() {
 		MobileSessionPersistence.save(context)
@@ -234,11 +235,50 @@ private fun CookCueScreen() {
 							Spacer(Modifier.height(8.dp))
 
 							if (current == null) {
-								Text(
-									text = "Momentálne od teba nič netreba",
-									style = MaterialTheme.typography.titleLarge,
-									fontWeight = FontWeight.SemiBold,
-								)
+								if (primaryWait == null) {
+									Text(
+										text = "Momentálne od teba nič netreba",
+										style = MaterialTheme.typography.titleLarge,
+										fontWeight = FontWeight.SemiBold,
+									)
+								} else {
+									val waitElapsed =
+										(snapshot.elapsedSeconds - primaryWait.startSeconds).coerceAtLeast(0)
+									val waitDuration =
+										(primaryWait.endSeconds - primaryWait.startSeconds).coerceAtLeast(1)
+
+									Row(
+										modifier = Modifier.fillMaxWidth(),
+										horizontalArrangement = Arrangement.spacedBy(16.dp),
+										verticalAlignment = Alignment.CenterVertically,
+									) {
+										Column(modifier = Modifier.weight(1f)) {
+											Text(
+												text = primaryWait.task.title,
+												style = MaterialTheme.typography.headlineSmall,
+												fontWeight = FontWeight.Bold,
+											)
+											Spacer(Modifier.height(6.dp))
+											Text(
+												text = primaryWait.task.instruction,
+												style = MaterialTheme.typography.bodyLarge,
+											)
+										}
+										TimerDial(
+											estimateSeconds = waitDuration,
+											elapsedSeconds = waitElapsed,
+										)
+									}
+
+									primaryWait.task.tips.forEach { tip ->
+										Spacer(Modifier.height(10.dp))
+										Text(
+											text = "TIP  $tip",
+											style = MaterialTheme.typography.bodyMedium,
+											color = MaterialTheme.colorScheme.secondary,
+										)
+									}
+								}
 							} else {
 								val actionElapsed =
 									(snapshot.elapsedSeconds - current.startSeconds).coerceAtLeast(0)
@@ -364,7 +404,10 @@ private fun CookCueScreen() {
 					}
 				}
 
-				if (snapshot.background.isNotEmpty()) {
+				val secondaryBackground = snapshot.background.filterNot {
+					it.task.id == primaryWait?.task?.id
+				}
+				if (secondaryBackground.isNotEmpty()) {
 					item {
 						Card(
 							modifier = Modifier.fillMaxWidth(),
@@ -381,7 +424,7 @@ private fun CookCueScreen() {
 									fontWeight = FontWeight.Bold,
 								)
 								Spacer(Modifier.height(8.dp))
-								snapshot.background.forEachIndexed { index, background ->
+								secondaryBackground.forEachIndexed { index, background ->
 									Row(
 										modifier = Modifier.fillMaxWidth(),
 										horizontalArrangement = Arrangement.SpaceBetween,
@@ -400,7 +443,7 @@ private fun CookCueScreen() {
 											fontWeight = FontWeight.Bold,
 										)
 									}
-									if (index != snapshot.background.lastIndex) {
+									if (index != secondaryBackground.lastIndex) {
 										Spacer(Modifier.height(7.dp))
 									}
 								}
