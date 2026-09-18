@@ -15,8 +15,5 @@ ACTIVITY="com.ziacik.cookcue.wear.MainActivity"
 
 bash ./gradlew :wear:assembleDebug
 
-# Remove the pre-sync prototype package if it is still installed.
-"${ADB[@]}" shell pm uninstall com.ziacik.cookcue.wear >/dev/null 2>&1 || true
-
 "${ADB[@]}" install -r wear/build/outputs/apk/debug/wear-debug.apk
 "${ADB[@]}" shell am start -n "$PACKAGE/$ACTIVITY"
