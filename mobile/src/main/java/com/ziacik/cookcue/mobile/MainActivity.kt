@@ -27,7 +27,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -149,8 +148,28 @@ private fun CookCueScreen() {
 										style = MaterialTheme.typography.bodyMedium,
 									)
 								}
+								val actionElapsed = (snapshot.elapsedSeconds - it.startSeconds).coerceAtLeast(0)
+								val estimate = it.task.durationSeconds
 								Spacer(Modifier.height(8.dp))
-								Text("Plánovane ešte " + formatRemaining(it.endSeconds - snapshot.elapsedSeconds))
+								Text(
+									if (actionElapsed <= estimate) {
+										"Odhad " + formatRemaining(estimate) +
+											" · približne ešte " + formatRemaining(estimate - actionElapsed)
+									} else {
+										"Odhad " + formatRemaining(estimate) +
+											" · už to trvá " + formatRemaining(actionElapsed)
+									}
+								)
+								Spacer(Modifier.height(12.dp))
+								Button(
+									onClick = {
+										CookingSessionController.completeAction(it.task.id)
+										persistAndSync()
+									},
+									modifier = Modifier.fillMaxWidth(),
+								) {
+									Text("HOTOVO")
+								}
 							}
 						}
 					}

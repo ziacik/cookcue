@@ -9,6 +9,7 @@ object DataLayerProtocol {
 	const val ACTION_PREVIOUS = "previous"
 	const val ACTION_NEXT = "next"
 	const val ACTION_CONFIRM_EVENT = "confirm_event"
+	const val ACTION_COMPLETE_ACTIVE = "complete_active"
 
 	const val KEY_VERSION = "version"
 	const val KEY_STARTED = "started"
@@ -17,6 +18,8 @@ object DataLayerProtocol {
 	const val KEY_CURRENT_INSTRUCTION = "current_instruction"
 	const val KEY_CURRENT_TIPS = "current_tips"
 	const val KEY_CURRENT_REMAINING_SECONDS = "current_remaining_seconds"
+	const val KEY_CURRENT_ESTIMATE_SECONDS = "current_estimate_seconds"
+	const val KEY_CURRENT_ELAPSED_SECONDS = "current_elapsed_seconds"
 	const val KEY_BACKGROUND_TITLE = "background_title"
 	const val KEY_BACKGROUND_REMAINING_SECONDS = "background_remaining_seconds"
 	const val KEY_EVENT_TASK_ID = "event_task_id"

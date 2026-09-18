@@ -73,7 +73,8 @@ private fun WearCookCueScreen() {
 	} else {
 		((now - state.receivedAtElapsedRealtime) / 1000).coerceAtLeast(0)
 	}
-	val currentRemaining = (state.currentRemainingSeconds - elapsedSinceSync).coerceAtLeast(0)
+	val currentElapsed = state.currentElapsedSeconds + elapsedSinceSync
+	val currentRemaining = (state.currentEstimateSeconds - currentElapsed).coerceAtLeast(0)
 	val backgroundRemaining = (state.backgroundRemainingSeconds - elapsedSinceSync).coerceAtLeast(0)
 	val nextIn = (state.nextInSeconds - elapsedSinceSync).coerceAtLeast(0)
 
@@ -144,19 +145,25 @@ private fun WearCookCueScreen() {
 				Text(state.currentTitle)
 				Spacer(Modifier.height(4.dp))
 				Text(state.currentInstruction)
-				if (currentRemaining > 0) {
-					Spacer(Modifier.height(4.dp))
-					Text(formatRemaining(currentRemaining))
-				}
+				Spacer(Modifier.height(4.dp))
+				Text(
+					if (currentRemaining > 0) {
+						"Odhad " + formatRemaining(state.currentEstimateSeconds) +
+							" · ešte asi " + formatRemaining(currentRemaining)
+					} else {
+						"Odhad " + formatRemaining(state.currentEstimateSeconds) +
+							" · trvá " + formatRemaining(currentElapsed)
+					}
+				)
 				Spacer(Modifier.height(8.dp))
 				Button(
 					onClick = {
 						WearActionSender.send(
 							context,
-							DataLayerProtocol.ACTION_NEXT,
+							DataLayerProtocol.ACTION_COMPLETE_ACTIVE,
+							state.currentTaskId,
 						)
 					},
-					enabled = state.canNext,
 				) {
 					Text("HOTOVO")
 				}

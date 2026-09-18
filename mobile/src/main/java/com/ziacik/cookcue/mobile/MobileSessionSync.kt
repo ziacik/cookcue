@@ -22,9 +22,21 @@ object MobileSessionSync {
 			putString(DataLayerProtocol.KEY_CURRENT_TITLE, current?.task?.title.orEmpty())
 			putString(DataLayerProtocol.KEY_CURRENT_INSTRUCTION, current?.task?.instruction.orEmpty())
 			putString(DataLayerProtocol.KEY_CURRENT_TIPS, current?.task?.tips?.joinToString("\n").orEmpty())
+			val currentElapsed = current
+				?.let { (snapshot.elapsedSeconds - it.startSeconds).coerceAtLeast(0) }
+				?: 0
+			val currentEstimate = current?.task?.durationSeconds ?: 0
 			putLong(
 				DataLayerProtocol.KEY_CURRENT_REMAINING_SECONDS,
-				current?.let { (it.endSeconds - snapshot.elapsedSeconds).coerceAtLeast(0) } ?: 0,
+				(currentEstimate - currentElapsed).coerceAtLeast(0),
+			)
+			putLong(
+				DataLayerProtocol.KEY_CURRENT_ESTIMATE_SECONDS,
+				currentEstimate,
+			)
+			putLong(
+				DataLayerProtocol.KEY_CURRENT_ELAPSED_SECONDS,
+				currentElapsed,
 			)
 
 			putString(DataLayerProtocol.KEY_BACKGROUND_TITLE, background?.task?.title.orEmpty())

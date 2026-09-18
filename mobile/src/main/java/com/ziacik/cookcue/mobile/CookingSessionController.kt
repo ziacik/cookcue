@@ -46,6 +46,16 @@ object CookingSessionController {
 		this.durationOverrides = durationOverrides
 	}
 
+	fun completeAction(taskId: String) {
+		val snapshot = snapshot()
+		val action = snapshot.currentAction
+			?.takeIf { it.task.id == taskId }
+			?: return
+
+		val actualDuration = (snapshot.elapsedSeconds - action.startSeconds).coerceAtLeast(1)
+		durationOverrides = durationOverrides + (taskId to actualDuration)
+	}
+
 	fun confirmEvent(taskId: String) {
 		val snapshot = snapshot()
 		val event = snapshot.pendingEvents.firstOrNull { it.task.id == taskId } ?: return
@@ -54,53 +64,86 @@ object CookingSessionController {
 	}
 
 	fun previous() {
-		val target = snapshot().previousAction ?: return
+		val snapshot = snapshot()
+		if (snapshot.currentAction != null || snapshot.pendingEvents.isNotEmpty()) {
+			return
+		}
+
+		val target = snapshot.previousAction ?: return
 		jumpTo(target)
 	}
 
 	fun next() {
-		val target = snapshot().nextAction ?: return
+		val snapshot = snapshot()
+		if (snapshot.currentAction != null || snapshot.pendingEvents.isNotEmpty()) {
+			return
+		}
+
+		val target = snapshot.nextAction ?: return
 		jumpTo(target)
 	}
 
 	fun snapshot(now: Long = SystemClock.elapsedRealtime()): MobileSessionSnapshot {
-		val schedule = scheduler.schedule(
-			recipe = recipe,
-			durationOverrides = durationOverrides,
-		)
 		val start = startedAt
 		val elapsedSeconds = start?.let { ((now - it) / 1000).coerceAtLeast(0) } ?: 0
+		val schedule = if (start == null) {
+			scheduler.schedule(
+				recipe = recipe,
+				durationOverrides = durationOverrides,
+			)
+		} else {
+			liveSchedule(elapsedSeconds)
+		}
+
+		val unconfirmedManualTaskIds = recipe.tasks
+			.asSequence()
+			.filter { it.kind == TaskKind.ACTIVE || it.kind == TaskKind.EVENT }
+			.map { it.id }
+			.filterNot(durationOverrides::containsKey)
+			.toSet()
+
+		val blockedIds = blockedTaskIds(
+			recipe = recipe,
+			roots = unconfirmedManualTaskIds,
+		)
 
 		val pendingEvents = if (start == null) {
 			emptyList()
 		} else {
 			schedule.filter {
 				it.task.kind == TaskKind.EVENT &&
-					it.startSeconds <= elapsedSeconds &&
-					it.task.id !in durationOverrides
+					it.task.id !in durationOverrides &&
+					it.task.id !in blockedIds &&
+					it.startSeconds <= elapsedSeconds
 			}
 		}
 
-		val blockedIds = blockedTaskIds(
-			recipe = recipe,
-			roots = pendingEvents.mapTo(mutableSetOf()) { it.task.id },
-		)
+		val currentAction = if (start == null) {
+			null
+		} else {
+			schedule
+				.asSequence()
+				.filter {
+					it.task.kind == TaskKind.ACTIVE &&
+						it.task.id !in durationOverrides &&
+						it.task.id !in blockedIds &&
+						it.startSeconds <= elapsedSeconds
+				}
+				.minWithOrNull(
+					compareBy<ScheduledTask> { it.startSeconds }
+						.thenBy { it.task.id }
+				)
+		}
 
-		val running = if (start == null) {
+		val background = if (start == null) {
 			emptyList()
 		} else {
 			schedule.filter {
-				it.task.kind != TaskKind.EVENT &&
+				it.task.kind == TaskKind.WAIT &&
 					it.task.id !in blockedIds &&
 					elapsedSeconds in it.startSeconds until it.endSeconds
 			}
 		}
-
-		val currentAction = running.firstOrNull {
-			it.task.kind == TaskKind.ACTIVE &&
-				it.task.resources.any { resource -> resource.resource == "cook" }
-		}
-		val background = running.filter { it !== currentAction }
 
 		val actionSteps = schedule.filter {
 			it.task.kind == TaskKind.ACTIVE &&
@@ -113,11 +156,20 @@ object CookingSessionController {
 			actionSteps.indexOfLast { it.startSeconds <= elapsedSeconds }.coerceAtLeast(0)
 		}
 
-		val previousAction = actionSteps.getOrNull(navigationIndex - 1)
-		val nextAction = actionSteps.getOrNull(navigationIndex + 1)
+		val navigationAllowed = currentAction == null && pendingEvents.isEmpty()
+		val previousAction = if (navigationAllowed) {
+			actionSteps.getOrNull(navigationIndex - 1)
+		} else {
+			null
+		}
+		val nextAction = if (navigationAllowed) {
+			actionSteps.getOrNull(navigationIndex + 1)
+		} else {
+			null
+		}
+
 		val nextScheduled = schedule.firstOrNull {
-			it.task.kind != TaskKind.EVENT &&
-				it.task.id !in blockedIds &&
+			it.task.id !in blockedIds &&
 				it.startSeconds > elapsedSeconds
 		}
 
@@ -132,6 +184,72 @@ object CookingSessionController {
 			nextAction = nextAction,
 			nextScheduled = nextScheduled,
 		)
+	}
+
+	private fun liveSchedule(elapsedSeconds: Long): List<ScheduledTask> {
+		var schedule = scheduler.schedule(
+			recipe = recipe,
+			durationOverrides = durationOverrides,
+		)
+
+		repeat(8) {
+			val unconfirmedManualTaskIds = recipe.tasks
+				.asSequence()
+				.filter { it.kind == TaskKind.ACTIVE || it.kind == TaskKind.EVENT }
+				.map { it.id }
+				.filterNot(durationOverrides::containsKey)
+				.toSet()
+			val blockedIds = blockedTaskIds(
+				recipe = recipe,
+				roots = unconfirmedManualTaskIds,
+			)
+
+			val currentAction = schedule
+				.asSequence()
+				.filter {
+					it.task.kind == TaskKind.ACTIVE &&
+						it.task.id !in durationOverrides &&
+						it.task.id !in blockedIds &&
+						it.startSeconds <= elapsedSeconds
+				}
+				.minWithOrNull(
+					compareBy<ScheduledTask> { it.startSeconds }
+						.thenBy { it.task.id }
+				)
+
+			val pendingEvents = schedule.filter {
+				it.task.kind == TaskKind.EVENT &&
+					it.task.id !in durationOverrides &&
+					it.task.id !in blockedIds &&
+					it.startSeconds <= elapsedSeconds
+			}
+
+			val liveOverrides = durationOverrides.toMutableMap()
+			(listOfNotNull(currentAction) + pendingEvents).forEach { gate ->
+				val elapsedForTask = (elapsedSeconds - gate.startSeconds + 1).coerceAtLeast(1)
+				val liveDuration = maxOf(
+					gate.task.durationSeconds,
+					elapsedForTask,
+				)
+				liveOverrides[gate.task.id] = liveDuration
+			}
+
+			val nextSchedule = scheduler.schedule(
+				recipe = recipe,
+				durationOverrides = liveOverrides,
+			)
+
+			if (
+				nextSchedule.map { it.task.id to it.startSeconds } ==
+				schedule.map { it.task.id to it.startSeconds }
+			) {
+				return nextSchedule
+			}
+
+			schedule = nextSchedule
+		}
+
+		return schedule
 	}
 
 	private fun jumpTo(target: ScheduledTask) {
