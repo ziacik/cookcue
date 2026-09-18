@@ -31,6 +31,7 @@ data class CookingTask(
 	val kind: TaskKind = TaskKind.ACTIVE,
 	val skill: Skill = Skill.GENERAL,
 	val instruction: String = title,
+	val tips: List<String> = emptyList(),
 	val actionLabel: String? = null,
 ) {
 	init {
@@ -50,13 +51,20 @@ data class Ingredient(
 	val amount: String,
 )
 
+data class TroubleshootingTip(
+	val problem: String,
+	val advice: String,
+)
+
 data class Recipe(
 	val id: String,
 	val title: String,
+	val description: String = "",
 	val servings: Int,
 	val ingredients: List<Ingredient>,
 	val resourceCapacities: Map<String, Int>,
 	val tasks: List<CookingTask>,
+	val troubleshooting: List<TroubleshootingTip> = emptyList(),
 )
 
 data class CookProfile(

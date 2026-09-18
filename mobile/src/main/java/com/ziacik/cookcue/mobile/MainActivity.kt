@@ -147,14 +147,29 @@ private fun CookCueScreen() {
 				)
 				Spacer(Modifier.height(4.dp))
 				Text(
-					text = "120 g fazule · prvý CookCue scenár",
+					text = recipe.description,
 					style = MaterialTheme.typography.bodyMedium,
 				)
 				Spacer(Modifier.height(16.dp))
 
+				Card(modifier = Modifier.fillMaxWidth()) {
+					Column(modifier = Modifier.padding(16.dp)) {
+						Text(
+							text = "Ingrediencie",
+							style = MaterialTheme.typography.titleLarge,
+						)
+						Spacer(Modifier.height(8.dp))
+						recipe.ingredients.forEach { ingredient ->
+							Text("• " + ingredient.amount + " " + ingredient.name)
+						}
+					}
+				}
+
+				Spacer(Modifier.height(16.dp))
+
 				if (startedAt == null) {
 					Text(
-						text = "Fazuľa má byť pred štartom už namočená aspoň 6 hodín.",
+						text = "Pred varením: 120 g suchej fazule namoč na 8–12 hodín vo veľkom množstve studenej vody.",
 						style = MaterialTheme.typography.bodyLarge,
 					)
 					Spacer(Modifier.height(12.dp))
@@ -183,6 +198,13 @@ private fun CookCueScreen() {
 							currentAction?.let {
 								Spacer(Modifier.height(4.dp))
 								Text(it.task.instruction)
+								it.task.tips.forEach { tip ->
+									Spacer(Modifier.height(6.dp))
+									Text(
+										text = "Rada: " + tip,
+										style = MaterialTheme.typography.bodyMedium,
+									)
+								}
 								Spacer(Modifier.height(8.dp))
 								Text("Plánovane ešte " + formatRemaining(it.endSeconds - elapsedSeconds))
 							}
@@ -204,6 +226,13 @@ private fun CookCueScreen() {
 								)
 								Spacer(Modifier.height(4.dp))
 								Text(event.task.instruction)
+								event.task.tips.forEach { tip ->
+									Spacer(Modifier.height(6.dp))
+									Text(
+										text = "Rada: " + tip,
+										style = MaterialTheme.typography.bodyMedium,
+									)
+								}
 								Spacer(Modifier.height(12.dp))
 								Button(
 									onClick = { confirmEvent(event) },
@@ -263,6 +292,27 @@ private fun CookCueScreen() {
 			items(schedule, key = { it.task.id }) { item ->
 				TimelineItem(item)
 			}
+
+			item {
+				Spacer(Modifier.height(12.dp))
+				Text(
+					text = "Krízová pomoc",
+					style = MaterialTheme.typography.titleLarge,
+				)
+			}
+
+			items(recipe.troubleshooting, key = { it.problem }) { tip ->
+				Card(modifier = Modifier.fillMaxWidth()) {
+					Column(modifier = Modifier.padding(16.dp)) {
+						Text(
+							text = tip.problem,
+							style = MaterialTheme.typography.titleMedium,
+						)
+						Spacer(Modifier.height(4.dp))
+						Text(tip.advice)
+					}
+				}
+			}
 		}
 	}
 }
@@ -298,10 +348,17 @@ private fun TimelineItem(item: ScheduledTask) {
 				text = item.task.instruction,
 				style = MaterialTheme.typography.bodyMedium,
 			)
+			item.task.tips.forEach { tip ->
+				Spacer(Modifier.height(6.dp))
+				Text(
+					text = "Rada: " + tip,
+					style = MaterialTheme.typography.bodySmall,
+				)
+			}
 			if (item.task.kind == TaskKind.EVENT) {
 				Spacer(Modifier.height(4.dp))
 				Text(
-					text = "Ďalší časovač začne až po potvrdení: " + item.task.actionLabel,
+					text = "Pokračovanie závisí od potvrdenia: " + item.task.actionLabel,
 					style = MaterialTheme.typography.labelMedium,
 				)
 			}
