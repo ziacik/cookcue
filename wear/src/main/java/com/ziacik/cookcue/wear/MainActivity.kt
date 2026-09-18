@@ -5,14 +5,20 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
+import com.ziacik.cookcue.core.model.TaskKind
 import com.ziacik.cookcue.core.recipes.BeanSoupRecipe
 import com.ziacik.cookcue.core.scheduler.Scheduler
 
@@ -22,7 +28,15 @@ class MainActivity : ComponentActivity() {
 
 		setContent {
 			MaterialTheme {
-				val firstTask = Scheduler().schedule(BeanSoupRecipe.recipe).first()
+				val schedule = remember { Scheduler().schedule(BeanSoupRecipe.recipe) }
+				val actionSteps = remember(schedule) {
+					schedule.filter {
+						it.task.kind == TaskKind.ACTIVE &&
+							it.task.resources.any { resource -> resource.resource == "cook" }
+					}
+				}
+				var currentIndex by remember { mutableStateOf(0) }
+				val currentTask = actionSteps[currentIndex]
 
 				Column(
 					modifier = Modifier
@@ -32,10 +46,34 @@ class MainActivity : ComponentActivity() {
 					verticalArrangement = Arrangement.Center,
 				) {
 					Text("CookCue")
-					Text(firstTask.task.title)
-					Text(firstTask.task.instruction)
-					Button(onClick = {}) {
-						Text("HOTOVO")
+					Text(currentTask.task.title)
+					Text(currentTask.task.instruction)
+					Row(
+						horizontalArrangement = Arrangement.spacedBy(6.dp),
+						verticalAlignment = Alignment.CenterVertically,
+					) {
+						Button(
+							onClick = { currentIndex-- },
+							enabled = currentIndex > 0,
+						) {
+							Text("←")
+						}
+						Button(
+							onClick = {
+								if (currentIndex < actionSteps.lastIndex) {
+									currentIndex++
+								}
+							},
+							enabled = currentIndex < actionSteps.lastIndex,
+						) {
+							Text("✓")
+						}
+						Button(
+							onClick = { currentIndex++ },
+							enabled = currentIndex < actionSteps.lastIndex,
+						) {
+							Text("→")
+						}
 					}
 				}
 			}
