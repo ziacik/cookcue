@@ -10,6 +10,9 @@ if [[ -n "$SERIAL" ]]; then
 	ADB+=(-s "$SERIAL")
 fi
 
+PACKAGE="com.ziacik.cookcue.wear"
+ACTIVITY="com.ziacik.cookcue.wear.MainActivity"
+
 bash ./gradlew :wear:assembleDebug
 "${ADB[@]}" install -r wear/build/outputs/apk/debug/wear-debug.apk
-"${ADB[@]}" shell am start -n com.ziacik.cookcue.wear/.MainActivity
+"${ADB[@]}" shell am start -n "$PACKAGE/$ACTIVITY"
