@@ -54,8 +54,16 @@ private fun WearCookCueScreen() {
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
 
 	LaunchedEffect(state.receivedAtElapsedRealtime, state.started) {
+		var ticks = 0
 		while (state.started) {
 			now = SystemClock.elapsedRealtime()
+			ticks++
+			if (ticks % 10 == 0) {
+				WearActionSender.send(
+					context,
+					DataLayerProtocol.ACTION_REQUEST_STATE,
+				)
+			}
 			delay(500)
 		}
 	}

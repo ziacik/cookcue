@@ -38,6 +38,14 @@ object CookingSessionController {
 		startedAt = SystemClock.elapsedRealtime()
 	}
 
+	fun restore(
+		startedAt: Long?,
+		durationOverrides: Map<String, Long>,
+	) {
+		this.startedAt = startedAt
+		this.durationOverrides = durationOverrides
+	}
+
 	fun confirmEvent(taskId: String) {
 		val snapshot = snapshot()
 		val event = snapshot.pendingEvents.firstOrNull { it.task.id == taskId } ?: return

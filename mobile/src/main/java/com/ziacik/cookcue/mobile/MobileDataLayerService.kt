@@ -17,6 +17,8 @@ class MobileDataLayerService : WearableListenerService() {
 		val (action, taskId) = DataLayerProtocol.decodeAction(messageEvent.data)
 
 		mainHandler.post {
+			MobileSessionPersistence.ensureLoaded(applicationContext)
+
 			when (action) {
 				DataLayerProtocol.ACTION_REQUEST_STATE -> Unit
 				DataLayerProtocol.ACTION_START -> CookingSessionController.start()
@@ -26,6 +28,9 @@ class MobileDataLayerService : WearableListenerService() {
 				else -> return@post
 			}
 
+			if (action != DataLayerProtocol.ACTION_REQUEST_STATE) {
+				MobileSessionPersistence.save(applicationContext)
+			}
 			MobileSessionSync.publish(applicationContext)
 		}
 	}

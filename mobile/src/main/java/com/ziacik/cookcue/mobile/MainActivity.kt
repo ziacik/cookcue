@@ -64,6 +64,7 @@ private fun CookCueScreen() {
 	}
 
 	LaunchedEffect(Unit) {
+		MobileSessionPersistence.ensureLoaded(context)
 		MobileSessionSync.publish(context)
 	}
 
@@ -71,7 +72,8 @@ private fun CookCueScreen() {
 		CookingSessionController.snapshot(now)
 	}
 
-	fun sync() {
+	fun persistAndSync() {
+		MobileSessionPersistence.save(context)
 		MobileSessionSync.publish(context)
 	}
 
@@ -119,7 +121,7 @@ private fun CookCueScreen() {
 					Button(
 						onClick = {
 							CookingSessionController.start()
-							sync()
+							persistAndSync()
 						},
 						modifier = Modifier.fillMaxWidth(),
 					) {
@@ -179,7 +181,7 @@ private fun CookCueScreen() {
 								Button(
 									onClick = {
 										CookingSessionController.confirmEvent(event.task.id)
-										sync()
+										persistAndSync()
 									},
 									modifier = Modifier.fillMaxWidth(),
 								) {
@@ -197,7 +199,7 @@ private fun CookCueScreen() {
 						OutlinedButton(
 							onClick = {
 								CookingSessionController.previous()
-								sync()
+								persistAndSync()
 							},
 							enabled = snapshot.previousAction != null,
 						) {
@@ -206,7 +208,7 @@ private fun CookCueScreen() {
 						Button(
 							onClick = {
 								CookingSessionController.next()
-								sync()
+								persistAndSync()
 							},
 							enabled = snapshot.nextAction != null,
 						) {
