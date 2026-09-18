@@ -8,10 +8,10 @@ android {
 	compileSdk = 37
 
 	defaultConfig {
-		applicationId = "com.ziacik.cookcue.wear"
+		applicationId = "com.ziacik.cookcue"
 		minSdk = 30
 		targetSdk = 37
-		versionCode = 1
+		versionCode = 2
 		versionName = "0.1.0"
 	}
 
@@ -35,4 +35,5 @@ dependencies {
 	implementation("androidx.compose.foundation:foundation")
 	implementation("androidx.compose.ui:ui")
 	implementation("androidx.wear.compose:compose-material3:1.6.2")
+	implementation("com.google.android.gms:play-services-wearable:20.0.1")
 }

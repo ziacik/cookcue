@@ -7,6 +7,10 @@
 		android:allowBackup="true"
 		android:label="CookCue"
 		android:theme="@style/AppTheme">
+		<meta-data
+			android:name="com.google.android.wearable.standalone"
+			android:value="false" />
+
 		<activity
 			android:name=".MainActivity"
 			android:exported="true">
@@ -15,5 +19,13 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+
+		<service
+			android:name=".WearDataLayerService"
+			android:exported="true">
+			<intent-filter>
+				<action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
+			</intent-filter>
+		</service>
 	</application>
 </manifest>

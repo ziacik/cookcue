@@ -10,7 +10,7 @@ if [[ -n "$SERIAL" ]]; then
 	ADB+=(-s "$SERIAL")
 fi
 
-PACKAGE="com.ziacik.cookcue.wear"
+PACKAGE="com.ziacik.cookcue"
 ACTIVITY="com.ziacik.cookcue.wear.MainActivity"
 
 bash ./gradlew :wear:assembleDebug

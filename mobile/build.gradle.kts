@@ -36,6 +36,7 @@ dependencies {
 	implementation("androidx.compose.material3:material3")
 	implementation("androidx.compose.ui:ui")
 	implementation("androidx.compose.ui:ui-tooling-preview")
+	implementation("com.google.android.gms:play-services-wearable:20.0.1")
 
 	debugImplementation("androidx.compose.ui:ui-tooling")
 }

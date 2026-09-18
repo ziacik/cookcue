@@ -1,0 +1,56 @@
+package com.ziacik.cookcue.mobile
+
+import android.content.Context
+import com.google.android.gms.wearable.PutDataMapRequest
+import com.google.android.gms.wearable.Wearable
+import com.ziacik.cookcue.core.sync.DataLayerProtocol
+
+object MobileSessionSync {
+	fun publish(context: Context) {
+		val snapshot = CookingSessionController.snapshot()
+		val current = snapshot.currentAction
+		val background = snapshot.background.firstOrNull()
+		val event = snapshot.pendingEvents.firstOrNull()
+		val next = snapshot.nextScheduled
+
+		val request = PutDataMapRequest.create(DataLayerProtocol.SESSION_PATH)
+		request.dataMap.apply {
+			putLong(DataLayerProtocol.KEY_VERSION, System.currentTimeMillis())
+			putBoolean(DataLayerProtocol.KEY_STARTED, snapshot.started)
+
+			putString(DataLayerProtocol.KEY_CURRENT_TASK_ID, current?.task?.id.orEmpty())
+			putString(DataLayerProtocol.KEY_CURRENT_TITLE, current?.task?.title.orEmpty())
+			putString(DataLayerProtocol.KEY_CURRENT_INSTRUCTION, current?.task?.instruction.orEmpty())
+			putString(DataLayerProtocol.KEY_CURRENT_TIPS, current?.task?.tips?.joinToString("\n").orEmpty())
+			putLong(
+				DataLayerProtocol.KEY_CURRENT_REMAINING_SECONDS,
+				current?.let { (it.endSeconds - snapshot.elapsedSeconds).coerceAtLeast(0) } ?: 0,
+			)
+
+			putString(DataLayerProtocol.KEY_BACKGROUND_TITLE, background?.task?.title.orEmpty())
+			putLong(
+				DataLayerProtocol.KEY_BACKGROUND_REMAINING_SECONDS,
+				background?.let { (it.endSeconds - snapshot.elapsedSeconds).coerceAtLeast(0) } ?: 0,
+			)
+
+			putString(DataLayerProtocol.KEY_EVENT_TASK_ID, event?.task?.id.orEmpty())
+			putString(DataLayerProtocol.KEY_EVENT_TITLE, event?.task?.title.orEmpty())
+			putString(DataLayerProtocol.KEY_EVENT_INSTRUCTION, event?.task?.instruction.orEmpty())
+			putString(DataLayerProtocol.KEY_EVENT_TIPS, event?.task?.tips?.joinToString("\n").orEmpty())
+			putString(DataLayerProtocol.KEY_EVENT_ACTION_LABEL, event?.task?.actionLabel.orEmpty())
+
+			putString(DataLayerProtocol.KEY_NEXT_TITLE, next?.task?.title.orEmpty())
+			putLong(
+				DataLayerProtocol.KEY_NEXT_IN_SECONDS,
+				next?.let { (it.startSeconds - snapshot.elapsedSeconds).coerceAtLeast(0) } ?: 0,
+			)
+
+			putBoolean(DataLayerProtocol.KEY_CAN_PREVIOUS, snapshot.previousAction != null)
+			putBoolean(DataLayerProtocol.KEY_CAN_NEXT, snapshot.nextAction != null)
+		}
+
+		Wearable
+			.getDataClient(context)
+			.putDataItem(request.asPutDataRequest().setUrgent())
+	}
+}
