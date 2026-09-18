@@ -1,0 +1,77 @@
+package com.ziacik.cookcue.core.model
+
+data class ResourceRequirement(
+	val resource: String,
+	val units: Int = 1,
+) {
+	init {
+		require(resource.isNotBlank())
+		require(units > 0)
+	}
+}
+
+enum class TaskKind {
+	ACTIVE,
+	WAIT,
+}
+
+enum class Skill {
+	GENERAL,
+	KNIFE,
+	PEELING,
+}
+
+data class CookingTask(
+	val id: String,
+	val title: String,
+	val durationSeconds: Long,
+	val dependsOn: Set<String> = emptySet(),
+	val resources: Set<ResourceRequirement> = emptySet(),
+	val kind: TaskKind = TaskKind.ACTIVE,
+	val skill: Skill = Skill.GENERAL,
+	val instruction: String = title,
+) {
+	init {
+		require(id.isNotBlank())
+		require(title.isNotBlank())
+		require(durationSeconds > 0)
+	}
+}
+
+data class Ingredient(
+	val name: String,
+	val amount: String,
+)
+
+data class Recipe(
+	val id: String,
+	val title: String,
+	val servings: Int,
+	val ingredients: List<Ingredient>,
+	val resourceCapacities: Map<String, Int>,
+	val tasks: List<CookingTask>,
+)
+
+data class CookProfile(
+	val speedBySkill: Map<Skill, Double> = emptyMap(),
+) {
+	fun durationFor(task: CookingTask): Long {
+		if (task.kind == TaskKind.WAIT) {
+			return task.durationSeconds
+		}
+
+		val multiplier = speedBySkill[task.skill] ?: 1.0
+		require(multiplier > 0.0)
+		return (task.durationSeconds * multiplier).toLong().coerceAtLeast(1)
+	}
+
+	companion object {
+		val Default = CookProfile()
+	}
+}
+
+data class ScheduledTask(
+	val task: CookingTask,
+	val startSeconds: Long,
+	val endSeconds: Long,
+)
