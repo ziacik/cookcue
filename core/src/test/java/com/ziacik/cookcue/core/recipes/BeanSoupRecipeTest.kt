@@ -70,12 +70,16 @@ class BeanSoupRecipeTest {
 
 	@Test
 	fun troubleshootingMatchesFinalRecipe() {
-		assertEquals(6, recipe.troubleshooting.size)
+		assertEquals(7, recipe.troubleshooting.size)
 		assertTrue(recipe.troubleshooting.any {
 			it.problem == "Mdlá chuť" && it.advice.contains("až potom ďalší ocot")
 		})
 		assertTrue(recipe.troubleshooting.any {
 			it.problem == "Príliš slaná" && it.advice.contains("Ďalší bujón nepridávaj")
+		})
+		assertTrue(recipe.troubleshooting.any {
+			it.problem == "Príliš kyslá / veľa octu" &&
+				it.advice.contains("sódy bikarbóny")
 		})
 	}
 }
