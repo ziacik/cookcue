@@ -4,13 +4,22 @@ import android.os.Bundle
 import android.os.SystemClock
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,9 +28,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.Button
+import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import com.ziacik.cookcue.core.sync.DataLayerProtocol
@@ -78,145 +94,360 @@ private fun WearCookCueScreen() {
 	val backgroundRemaining = (state.backgroundRemainingSeconds - elapsedSinceSync).coerceAtLeast(0)
 	val nextIn = (state.nextInSeconds - elapsedSinceSync).coerceAtLeast(0)
 
-	Column(
+	Box(
 		modifier = Modifier
 			.fillMaxSize()
-			.padding(14.dp),
-		horizontalAlignment = Alignment.CenterHorizontally,
-		verticalArrangement = Arrangement.Center,
+			.background(CookCueEspresso),
 	) {
-		Text("CookCue")
-		Spacer(Modifier.height(6.dp))
+		Column(
+			modifier = Modifier
+				.fillMaxSize()
+				.verticalScroll(rememberScrollState())
+				.padding(horizontal = 18.dp, vertical = 10.dp),
+			horizontalAlignment = Alignment.CenterHorizontally,
+			verticalArrangement = Arrangement.Center,
+		) {
+			WearBrandHeader()
+			Spacer(Modifier.height(8.dp))
 
-		when {
-			!state.synced -> {
-				Text("Pripájam sa k telefónu…")
-				Spacer(Modifier.height(8.dp))
-				Button(
-					onClick = {
-						WearActionSender.send(
-							context,
-							DataLayerProtocol.ACTION_REQUEST_STATE,
-						)
-					},
-				) {
-					Text("Obnoviť")
+			when {
+				!state.synced -> {
+					StatusLabel("PRIPÁJAM")
+					Text(
+						text = "Hľadám telefón…",
+						color = CookCueCream,
+						style = MaterialTheme.typography.titleMedium,
+						textAlign = TextAlign.Center,
+					)
+					Spacer(Modifier.height(10.dp))
+					PrimaryWearButton(
+						text = "OBNOVIŤ",
+						onClick = {
+							WearActionSender.send(
+								context,
+								DataLayerProtocol.ACTION_REQUEST_STATE,
+							)
+						},
+					)
 				}
-			}
 
-			!state.started -> {
-				Text("Varenie ešte nie je spustené")
-				Spacer(Modifier.height(8.dp))
-				Button(
-					onClick = {
-						WearActionSender.send(
-							context,
-							DataLayerProtocol.ACTION_START,
-						)
-					},
-				) {
-					Text("SPUSTIŤ")
+				!state.started -> {
+					StatusLabel("PRIPRAVENÉ")
+					Text(
+						text = "Varenie ešte nie je spustené",
+						color = CookCueCream,
+						style = MaterialTheme.typography.titleMedium,
+						textAlign = TextAlign.Center,
+					)
+					Spacer(Modifier.height(10.dp))
+					PrimaryWearButton(
+						text = "SPUSTIŤ",
+						onClick = {
+							WearActionSender.send(
+								context,
+								DataLayerProtocol.ACTION_START,
+							)
+						},
+					)
 				}
-			}
 
-			state.eventTaskId.isNotBlank() -> {
-				Text(state.eventTitle)
-				Spacer(Modifier.height(4.dp))
-				Text(state.eventInstruction)
-				if (state.eventTips.isNotBlank()) {
+				state.eventTaskId.isNotBlank() -> {
+					StatusLabel("ČAKÁ NA TEBA")
+					Text(
+						text = state.eventTitle,
+						color = CookCueCream,
+						style = MaterialTheme.typography.titleMedium,
+						fontWeight = FontWeight.Bold,
+						textAlign = TextAlign.Center,
+						maxLines = 2,
+						overflow = TextOverflow.Ellipsis,
+					)
 					Spacer(Modifier.height(4.dp))
-					Text("Rada: " + state.eventTips.replace("\n", " · "))
-				}
-				Spacer(Modifier.height(8.dp))
-				Button(
-					onClick = {
-						WearActionSender.send(
-							context,
-							DataLayerProtocol.ACTION_CONFIRM_EVENT,
-							state.eventTaskId,
+					Text(
+						text = state.eventInstruction,
+						color = CookCueMuted,
+						style = MaterialTheme.typography.bodySmall,
+						textAlign = TextAlign.Center,
+						maxLines = 3,
+						overflow = TextOverflow.Ellipsis,
+					)
+					if (state.eventTips.isNotBlank()) {
+						Spacer(Modifier.height(5.dp))
+						Text(
+							text = "TIP · " + state.eventTips.replace("\n", " · "),
+							color = CookCueHerb,
+							style = MaterialTheme.typography.labelSmall,
+							textAlign = TextAlign.Center,
+							maxLines = 2,
+							overflow = TextOverflow.Ellipsis,
 						)
-					},
-				) {
-					Text(state.eventActionLabel)
-				}
-			}
-
-			state.currentTitle.isNotBlank() -> {
-				Text(state.currentTitle)
-				Spacer(Modifier.height(4.dp))
-				Text(state.currentInstruction)
-				Spacer(Modifier.height(4.dp))
-				Text(
-					if (currentRemaining > 0) {
-						"Odhad " + formatRemaining(state.currentEstimateSeconds) +
-							" · ešte asi " + formatRemaining(currentRemaining)
-					} else {
-						"Odhad " + formatRemaining(state.currentEstimateSeconds) +
-							" · trvá " + formatRemaining(currentElapsed)
 					}
-				)
-				Spacer(Modifier.height(8.dp))
-				Button(
-					onClick = {
-						WearActionSender.send(
-							context,
-							DataLayerProtocol.ACTION_COMPLETE_ACTIVE,
-							state.currentTaskId,
-						)
-					},
-				) {
-					Text("HOTOVO")
+					Spacer(Modifier.height(10.dp))
+					PrimaryWearButton(
+						text = state.eventActionLabel,
+						onClick = {
+							WearActionSender.send(
+								context,
+								DataLayerProtocol.ACTION_CONFIRM_EVENT,
+								state.eventTaskId,
+							)
+						},
+					)
+				}
+
+				state.currentTitle.isNotBlank() -> {
+					StatusLabel("TERAZ")
+					Text(
+						text = state.currentTitle,
+						color = CookCueCream,
+						style = MaterialTheme.typography.titleMedium,
+						fontWeight = FontWeight.Bold,
+						textAlign = TextAlign.Center,
+						maxLines = 2,
+						overflow = TextOverflow.Ellipsis,
+					)
+					Spacer(Modifier.height(4.dp))
+					Text(
+						text = state.currentInstruction,
+						color = CookCueMuted,
+						style = MaterialTheme.typography.bodySmall,
+						textAlign = TextAlign.Center,
+						maxLines = 3,
+						overflow = TextOverflow.Ellipsis,
+					)
+					Spacer(Modifier.height(8.dp))
+					WearTimerDial(
+						estimateSeconds = state.currentEstimateSeconds,
+						elapsedSeconds = currentElapsed,
+					)
+					Spacer(Modifier.height(8.dp))
+					PrimaryWearButton(
+						text = "HOTOVO",
+						onClick = {
+							WearActionSender.send(
+								context,
+								DataLayerProtocol.ACTION_COMPLETE_ACTIVE,
+								state.currentTaskId,
+							)
+						},
+					)
+				}
+
+				state.backgroundTitle.isNotBlank() -> {
+					StatusLabel("BEŽÍ")
+					Text(
+						text = state.backgroundTitle,
+						color = CookCueCream,
+						style = MaterialTheme.typography.titleMedium,
+						fontWeight = FontWeight.Bold,
+						textAlign = TextAlign.Center,
+						maxLines = 2,
+						overflow = TextOverflow.Ellipsis,
+					)
+					Spacer(Modifier.height(8.dp))
+					Text(
+						text = formatRemaining(backgroundRemaining),
+						color = CookCuePaprika,
+						style = MaterialTheme.typography.displaySmall,
+						fontWeight = FontWeight.Bold,
+					)
+				}
+
+				else -> {
+					StatusLabel("POKOJ")
+					Text(
+						text = "Momentálne od teba nič netreba",
+						color = CookCueCream,
+						style = MaterialTheme.typography.titleMedium,
+						textAlign = TextAlign.Center,
+					)
 				}
 			}
 
-			state.backgroundTitle.isNotBlank() -> {
-				Text(state.backgroundTitle)
-				Spacer(Modifier.height(4.dp))
-				Text(formatRemaining(backgroundRemaining))
-			}
+			if (state.started) {
+				Spacer(Modifier.height(10.dp))
+				Row(
+					horizontalArrangement = Arrangement.spacedBy(8.dp),
+					verticalAlignment = Alignment.CenterVertically,
+				) {
+					SecondaryWearButton(
+						text = "←",
+						enabled = state.canPrevious,
+						onClick = {
+							WearActionSender.send(
+								context,
+								DataLayerProtocol.ACTION_PREVIOUS,
+							)
+						},
+					)
+					SecondaryWearButton(
+						text = "→",
+						enabled = state.canNext,
+						onClick = {
+							WearActionSender.send(
+								context,
+								DataLayerProtocol.ACTION_NEXT,
+							)
+						},
+					)
+				}
 
-			else -> {
-				Text("Momentálne od teba nič netreba")
+				if (state.nextTitle.isNotBlank()) {
+					Spacer(Modifier.height(8.dp))
+					Text(
+						text = "Ďalej · " + state.nextTitle + " · o " + formatRemaining(nextIn),
+						color = CookCueMuted,
+						style = MaterialTheme.typography.labelSmall,
+						textAlign = TextAlign.Center,
+						maxLines = 2,
+						overflow = TextOverflow.Ellipsis,
+					)
+				}
 			}
 		}
+	}
+}
 
-		if (state.started) {
-			Spacer(Modifier.height(10.dp))
-			Row(
-				horizontalArrangement = Arrangement.spacedBy(6.dp),
-				verticalAlignment = Alignment.CenterVertically,
-			) {
-				Button(
-					onClick = {
-						WearActionSender.send(
-							context,
-							DataLayerProtocol.ACTION_PREVIOUS,
-						)
-					},
-					enabled = state.canPrevious,
-				) {
-					Text("←")
-				}
-				Button(
-					onClick = {
-						WearActionSender.send(
-							context,
-							DataLayerProtocol.ACTION_NEXT,
-						)
-					},
-					enabled = state.canNext,
-				) {
-					Text("→")
-				}
-			}
-
-			if (state.nextTitle.isNotBlank()) {
-				Spacer(Modifier.height(6.dp))
-				Text(
-					"Ďalej: " + state.nextTitle + " o " + formatRemaining(nextIn)
+@Composable
+private fun WearBrandHeader() {
+	Row(
+		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.spacedBy(6.dp),
+	) {
+		Box(modifier = Modifier.size(22.dp)) {
+			Canvas(modifier = Modifier.fillMaxSize()) {
+				drawArc(
+					color = CookCuePaprika,
+					startAngle = 45f,
+					sweepAngle = 275f,
+					useCenter = false,
+					style = Stroke(
+						width = 3.dp.toPx(),
+						cap = StrokeCap.Round,
+					),
+				)
+				drawCircle(
+					color = CookCueHoney,
+					radius = 2.2.dp.toPx(),
+					center = Offset(this.size.width * 0.76f, this.size.height * 0.20f),
 				)
 			}
 		}
+		Text(
+			text = "CookCue",
+			color = CookCueCream,
+			style = MaterialTheme.typography.labelLarge,
+			fontWeight = FontWeight.Bold,
+		)
+	}
+}
+
+@Composable
+private fun StatusLabel(text: String) {
+	Text(
+		text = text,
+		color = CookCuePaprika,
+		style = MaterialTheme.typography.labelMedium,
+		fontWeight = FontWeight.ExtraBold,
+	)
+	Spacer(Modifier.height(4.dp))
+}
+
+@Composable
+private fun WearTimerDial(
+	estimateSeconds: Long,
+	elapsedSeconds: Long,
+) {
+	val remaining = (estimateSeconds - elapsedSeconds).coerceAtLeast(0)
+	val progress = if (estimateSeconds <= 0) {
+		0f
+	} else {
+		(elapsedSeconds.toFloat() / estimateSeconds.toFloat()).coerceIn(0f, 1f)
+	}
+
+	Box(
+		modifier = Modifier.size(88.dp),
+		contentAlignment = Alignment.Center,
+	) {
+		Canvas(modifier = Modifier.fillMaxSize()) {
+			drawCircle(
+				color = CookCueSand,
+				style = Stroke(width = 6.dp.toPx()),
+			)
+			drawArc(
+				color = if (elapsedSeconds > estimateSeconds) CookCueHoney else CookCuePaprika,
+				startAngle = -90f,
+				sweepAngle = 360f * progress,
+				useCenter = false,
+				style = Stroke(
+					width = 6.dp.toPx(),
+					cap = StrokeCap.Round,
+				),
+			)
+		}
+		Column(horizontalAlignment = Alignment.CenterHorizontally) {
+			Text(
+				text = if (remaining > 0) {
+					formatRemaining(remaining)
+				} else {
+					formatRemaining(elapsedSeconds)
+				},
+				color = CookCueCream,
+				style = MaterialTheme.typography.titleMedium,
+				fontWeight = FontWeight.Bold,
+			)
+			Text(
+				text = if (remaining > 0) "ešte asi" else "trvá",
+				color = CookCueMuted,
+				style = MaterialTheme.typography.labelSmall,
+			)
+		}
+	}
+}
+
+@Composable
+private fun PrimaryWearButton(
+	text: String,
+	onClick: () -> Unit,
+) {
+	Button(
+		onClick = onClick,
+		modifier = Modifier.fillMaxWidth(),
+		colors = ButtonDefaults.buttonColors(
+			containerColor = CookCuePaprika,
+			contentColor = CookCueCream,
+		),
+		shape = RoundedCornerShape(18.dp),
+	) {
+		Text(
+			text = text,
+			fontWeight = FontWeight.Bold,
+		)
+	}
+}
+
+@Composable
+private fun SecondaryWearButton(
+	text: String,
+	enabled: Boolean,
+	onClick: () -> Unit,
+) {
+	Button(
+		onClick = onClick,
+		enabled = enabled,
+		modifier = Modifier
+			.width(58.dp)
+			.height(38.dp),
+		colors = ButtonDefaults.buttonColors(
+			containerColor = CookCueSand,
+			contentColor = CookCueCream,
+		),
+		shape = RoundedCornerShape(18.dp),
+	) {
+		Text(
+			text = text,
+			fontWeight = FontWeight.Bold,
+		)
 	}
 }
 
