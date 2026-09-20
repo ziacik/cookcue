@@ -387,18 +387,60 @@ private fun CookCueScreen() {
 								)
 							}
 							Spacer(Modifier.height(14.dp))
-							Button(
-								onClick = {
-									CookingSessionController.confirmEvent(event.task.id)
-									persistAndSync()
-								},
-								modifier = Modifier.fillMaxWidth(),
-								shape = RoundedCornerShape(16.dp),
-							) {
+							val retryAfterSeconds = event.task.retryAfterSeconds
+							if (retryAfterSeconds != null) {
+								Row(
+									modifier = Modifier.fillMaxWidth(),
+									horizontalArrangement = Arrangement.spacedBy(10.dp),
+								) {
+									OutlinedButton(
+										onClick = {
+											CookingSessionController.deferEvent(event.task.id)
+											persistAndSync()
+										},
+										modifier = Modifier.weight(1f),
+										shape = RoundedCornerShape(16.dp),
+									) {
+										Text(
+											text = event.task.retryActionLabel ?: "NIE",
+											fontWeight = FontWeight.Bold,
+										)
+									}
+									Button(
+										onClick = {
+											CookingSessionController.confirmEvent(event.task.id)
+											persistAndSync()
+										},
+										modifier = Modifier.weight(1f),
+										shape = RoundedCornerShape(16.dp),
+									) {
+										Text(
+											text = event.task.actionLabel ?: "ÁNO",
+											fontWeight = FontWeight.Bold,
+										)
+									}
+								}
+								Spacer(Modifier.height(8.dp))
 								Text(
-									text = event.task.actionLabel ?: "HOTOVO",
-									fontWeight = FontWeight.Bold,
+									text = "Ak ešte nie, skontrolujeme znova o " +
+										formatRemaining(retryAfterSeconds) + ".",
+									style = MaterialTheme.typography.bodySmall,
+									color = MaterialTheme.colorScheme.onTertiaryContainer,
 								)
+							} else {
+								Button(
+									onClick = {
+										CookingSessionController.confirmEvent(event.task.id)
+										persistAndSync()
+									},
+									modifier = Modifier.fillMaxWidth(),
+									shape = RoundedCornerShape(16.dp),
+								) {
+									Text(
+										text = event.task.actionLabel ?: "HOTOVO",
+										fontWeight = FontWeight.Bold,
+									)
+								}
 							}
 						}
 					}
