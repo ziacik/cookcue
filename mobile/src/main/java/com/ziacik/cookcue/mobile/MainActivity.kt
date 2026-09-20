@@ -519,12 +519,12 @@ private fun CookCueTopBar(
 }
 
 @Composable
-private fun CueMark(size: Dp) {
+private fun CueMark(markSize: Dp) {
 	val wine = MaterialTheme.colorScheme.primary
-	Box(modifier = Modifier.size(size)) {
+	Box(modifier = Modifier.size(markSize)) {
 		Canvas(modifier = Modifier.fillMaxSize()) {
-			val stroke = size.toPx() * 0.19f
-			val radius = size.toPx() * 0.30f
+			val stroke = markSize.toPx() * 0.19f
+			val radius = markSize.toPx() * 0.30f
 			val centerX = this.size.width * 0.48f
 			val centerY = this.size.height * 0.53f
 
@@ -569,11 +569,12 @@ private fun CueMark(size: Dp) {
 				)
 			}
 
+			val canvasSize = this.size
 			val block = androidx.compose.ui.graphics.Path().apply {
-				moveTo(this@Canvas.size.width * 0.74f, this@Canvas.size.height * 0.42f)
-				lineTo(this@Canvas.size.width * 0.84f, this@Canvas.size.height * 0.27f)
-				lineTo(this@Canvas.size.width * 0.93f, this@Canvas.size.height * 0.34f)
-				lineTo(this@Canvas.size.width * 0.82f, this@Canvas.size.height * 0.49f)
+				moveTo(canvasSize.width * 0.74f, canvasSize.height * 0.42f)
+				lineTo(canvasSize.width * 0.84f, canvasSize.height * 0.27f)
+				lineTo(canvasSize.width * 0.93f, canvasSize.height * 0.34f)
+				lineTo(canvasSize.width * 0.82f, canvasSize.height * 0.49f)
 				close()
 			}
 			drawPath(
