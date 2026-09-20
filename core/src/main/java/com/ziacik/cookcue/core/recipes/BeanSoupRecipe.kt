@@ -48,6 +48,7 @@ object BeanSoupRecipe {
 			BURNER to 2,
 			SINK to 1,
 		),
+		preCookingNote = "120 g suchej fazule namoč na 8–12 hodín vo veľkom množstve studenej vody.",
 		tasks = listOf(
 			CookingTask(
 				id = "rinse",
