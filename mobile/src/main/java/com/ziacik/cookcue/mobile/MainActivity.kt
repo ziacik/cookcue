@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
@@ -629,6 +630,12 @@ private fun TimerDial(
 	} else {
 		(elapsedSeconds.toFloat() / estimateSeconds.toFloat()).coerceIn(0f, 1f)
 	}
+	val trackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.65f)
+	val progressColor = if (overdue) {
+		MaterialTheme.colorScheme.tertiary
+	} else {
+		MaterialTheme.colorScheme.primary
+	}
 
 	Box(
 		modifier = Modifier.size(128.dp),
@@ -636,15 +643,11 @@ private fun TimerDial(
 	) {
 		Canvas(modifier = Modifier.fillMaxSize()) {
 			drawCircle(
-				color = MaterialTheme.colorScheme.outline.copy(alpha = 0.65f),
+				color = trackColor,
 				style = Stroke(width = 7.dp.toPx()),
 			)
 			drawArc(
-				color = if (overdue) {
-					MaterialTheme.colorScheme.tertiary
-				} else {
-					MaterialTheme.colorScheme.primary
-				},
+				color = progressColor,
 				startAngle = -90f,
 				sweepAngle = 360f * progress,
 				useCenter = false,
