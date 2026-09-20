@@ -17,6 +17,7 @@ object MobileSessionSync {
 		request.dataMap.apply {
 			putLong(DataLayerProtocol.KEY_VERSION, System.currentTimeMillis())
 			putBoolean(DataLayerProtocol.KEY_STARTED, snapshot.started)
+			putString(DataLayerProtocol.KEY_RECIPE_TITLE, CookingSessionController.recipe.title)
 
 			putString(DataLayerProtocol.KEY_CURRENT_TASK_ID, current?.task?.id.orEmpty())
 			putString(DataLayerProtocol.KEY_CURRENT_TITLE, current?.task?.title.orEmpty())
@@ -43,6 +44,10 @@ object MobileSessionSync {
 			putLong(
 				DataLayerProtocol.KEY_BACKGROUND_REMAINING_SECONDS,
 				background?.let { (it.endSeconds - snapshot.elapsedSeconds).coerceAtLeast(0) } ?: 0,
+			)
+			putLong(
+				DataLayerProtocol.KEY_BACKGROUND_ESTIMATE_SECONDS,
+				background?.let { (it.endSeconds - it.startSeconds).coerceAtLeast(0) } ?: 0,
 			)
 
 			putString(DataLayerProtocol.KEY_EVENT_TASK_ID, event?.task?.id.orEmpty())
