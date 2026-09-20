@@ -7,46 +7,45 @@
 	<group
 		android:pivotX="54"
 		android:pivotY="54"
-		android:scaleX="0.82"
-		android:scaleY="0.82">
+		android:scaleX="0.76"
+		android:scaleY="0.76">
 
-		<!-- Thick open C -->
+		<!-- Thick circular C with flat ends, matching the approved mark -->
 		<path
-			android:pathData="M68,30 C54,23 36,27 27,41 C18,56 22,75 37,84 C51,93 69,89 80,76"
+			android:pathData="M62,31 A29,29 0,1 0,76,73"
 			android:fillColor="#00000000"
 			android:strokeColor="#FFF8F1"
-			android:strokeWidth="16"
+			android:strokeWidth="15"
 			android:strokeLineCap="butt"
 			android:strokeLineJoin="round" />
 
 		<!-- Gold centre -->
 		<path
-			android:pathData="M54,42 A12,12 0,1 1,54,66 A12,12 0,1 1,54,42"
+			android:pathData="M51,47 A10,10 0,1 1,51,67 A10,10 0,1 1,51,47"
 			android:fillColor="#C9A86B" />
 
-		<!-- Three fine cue rays -->
+		<!-- Cue comb -->
 		<path
-			android:pathData="M68,31 L73,19"
+			android:pathData="M63,35 L68,23"
 			android:fillColor="#00000000"
 			android:strokeColor="#C9A86B"
-			android:strokeWidth="3"
+			android:strokeWidth="2.5"
 			android:strokeLineCap="butt" />
 		<path
-			android:pathData="M72,33 L79,21"
+			android:pathData="M67,37 L74,25"
 			android:fillColor="#00000000"
 			android:strokeColor="#C9A86B"
-			android:strokeWidth="3"
+			android:strokeWidth="2.5"
 			android:strokeLineCap="butt" />
 		<path
-			android:pathData="M76,36 L85,25"
+			android:pathData="M71,39 L80,28"
 			android:fillColor="#00000000"
 			android:strokeColor="#C9A86B"
-			android:strokeWidth="3"
+			android:strokeWidth="2.5"
 			android:strokeLineCap="butt" />
 
-		<!-- Strong cue block -->
 		<path
-			android:pathData="M81,37 L91,29 L98,38 L87,47 Z"
+			android:pathData="M77,40 L85,29 L92,35 L83,47 Z"
 			android:fillColor="#C9A86B" />
 	</group>
 </vector>
