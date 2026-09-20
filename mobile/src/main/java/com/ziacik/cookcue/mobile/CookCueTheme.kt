@@ -2,67 +2,100 @@ package com.ziacik.cookcue.mobile
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
-val CookCueBerry = Color(0xFF9E3A5A)
-val CookCueBerryBright = Color(0xFFF07FA2)
-val CookCueEspresso = Color(0xFF24191D)
-val CookCueCream = Color(0xFFFFF8F5)
-val CookCueSand = Color(0xFFF1E4E8)
-val CookCueHerb = Color(0xFF5F6B56)
-val CookCueHoney = Color(0xFFD3A64A)
+val CookCueBerry = Color(0xFF8C2948)
+val CookCueBerrySoft = Color(0xFFB85C78)
+val CookCueEspresso = Color(0xFF25191C)
+val CookCueCream = Color(0xFFFFFAF7)
+val CookCuePaper = Color(0xFFF7EFEA)
+val CookCueLine = Color(0xFFE7DAD5)
+val CookCueHerb = Color(0xFF66705A)
+val CookCueHoney = Color(0xFFC8A15A)
 
 private val LightColors = lightColorScheme(
 	primary = CookCueBerry,
 	onPrimary = Color.White,
-	primaryContainer = Color(0xFFFBD9E3),
-	onPrimaryContainer = Color(0xFF3C0719),
+	primaryContainer = Color(0xFFF8E8EC),
+	onPrimaryContainer = Color(0xFF39101D),
 	secondary = CookCueHerb,
 	onSecondary = Color.White,
-	secondaryContainer = Color(0xFFDDE8C9),
-	onSecondaryContainer = Color(0xFF18220D),
-	tertiary = Color(0xFF74505B),
+	secondaryContainer = Color(0xFFEDF0E8),
+	onSecondaryContainer = Color(0xFF20261B),
+	tertiary = Color(0xFF8A6532),
 	onTertiary = Color.White,
-	tertiaryContainer = Color(0xFFF2DCE3),
-	onTertiaryContainer = Color(0xFF32131D),
+	tertiaryContainer = Color(0xFFF6EBD9),
+	onTertiaryContainer = Color(0xFF34230B),
 	background = CookCueCream,
 	onBackground = CookCueEspresso,
-	surface = Color(0xFFFFFBFA),
+	surface = Color(0xFFFFFDFC),
 	onSurface = CookCueEspresso,
-	surfaceVariant = CookCueSand,
-	onSurfaceVariant = Color(0xFF735F66),
-	outline = Color(0xFF957E86),
+	surfaceVariant = CookCuePaper,
+	onSurfaceVariant = Color(0xFF6E5E62),
+	outline = CookCueLine,
 )
 
 private val DarkColors = darkColorScheme(
-	primary = CookCueBerryBright,
-	onPrimary = Color(0xFF3E1020),
-	primaryContainer = Color(0xFF6E263F),
-	onPrimaryContainer = Color(0xFFFBD9E3),
-	secondary = Color(0xFFB8C89D),
-	onSecondary = Color(0xFF253313),
-	secondaryContainer = Color(0xFF3A4928),
-	onSecondaryContainer = Color(0xFFDDE8C9),
-	tertiary = Color(0xFFFFB95F),
-	onTertiary = Color(0xFF482900),
-	tertiaryContainer = Color(0xFF684000),
-	onTertiaryContainer = Color(0xFFF2DCE3),
-	background = Color(0xFF191315),
-	onBackground = Color(0xFFF7EDF1),
-	surface = Color(0xFF20171A),
-	onSurface = Color(0xFFF7EDF1),
-	surfaceVariant = Color(0xFF36272C),
-	onSurfaceVariant = Color(0xFFD8C1C9),
-	outline = Color(0xFFA38A93),
+	primary = Color(0xFFF19AB5),
+	onPrimary = Color(0xFF4B1427),
+	primaryContainer = Color(0xFF5C2034),
+	onPrimaryContainer = Color(0xFFFFD9E5),
+	secondary = Color(0xFFC2CBB5),
+	onSecondary = Color(0xFF2D3526),
+	secondaryContainer = Color(0xFF3C4435),
+	onSecondaryContainer = Color(0xFFDFE7D5),
+	tertiary = Color(0xFFE0BD7B),
+	onTertiary = Color(0xFF3B2A0D),
+	tertiaryContainer = Color(0xFF554018),
+	onTertiaryContainer = Color(0xFFF6E3BB),
+	background = Color(0xFF171214),
+	onBackground = Color(0xFFF7ECEF),
+	surface = Color(0xFF201719),
+	onSurface = Color(0xFFF7ECEF),
+	surfaceVariant = Color(0xFF302629),
+	onSurfaceVariant = Color(0xFFD4C3C7),
+	outline = Color(0xFF55464A),
+)
+
+private val BaseTypography = Typography()
+private val CookCueTypography = BaseTypography.copy(
+	displaySmall = BaseTypography.displaySmall.copy(
+		fontFamily = FontFamily.Serif,
+		fontWeight = FontWeight.SemiBold,
+		letterSpacing = (-0.4).sp,
+	),
+	headlineLarge = BaseTypography.headlineLarge.copy(
+		fontFamily = FontFamily.Serif,
+		fontWeight = FontWeight.SemiBold,
+		letterSpacing = (-0.35).sp,
+	),
+	headlineMedium = BaseTypography.headlineMedium.copy(
+		fontFamily = FontFamily.Serif,
+		fontWeight = FontWeight.SemiBold,
+		letterSpacing = (-0.25).sp,
+	),
+	headlineSmall = BaseTypography.headlineSmall.copy(
+		fontFamily = FontFamily.Serif,
+		fontWeight = FontWeight.SemiBold,
+	),
+	titleLarge = BaseTypography.titleLarge.copy(
+		fontFamily = FontFamily.Serif,
+		fontWeight = FontWeight.SemiBold,
+	),
 )
 
 @Composable
 fun CookCueTheme(content: @Composable () -> Unit) {
 	MaterialTheme(
 		colorScheme = if (isSystemInDarkTheme()) DarkColors else LightColors,
+		typography = CookCueTypography,
 		content = content,
 	)
 }
