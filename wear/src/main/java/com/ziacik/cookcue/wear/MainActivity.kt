@@ -9,12 +9,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -25,6 +27,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
@@ -136,7 +141,15 @@ private fun WearCookCueScreen() {
 		modifier = Modifier
 			.fillMaxSize()
 			.then(swipeModifier)
-			.background(CookCueEspresso),
+			.background(
+				Brush.radialGradient(
+					colors = listOf(
+						CookCueSurface.copy(alpha = 0.72f),
+						CookCueEspresso,
+					),
+					radius = 230f,
+				),
+			),
 		contentAlignment = Alignment.Center,
 	) {
 		when {
@@ -233,7 +246,6 @@ private fun TimerState(
 	onDone: () -> Unit,
 ) {
 	val safeEstimate = estimateSeconds.coerceAtLeast(1)
-	val remaining = (safeEstimate - elapsedSeconds).coerceAtLeast(0)
 
 	Column(
 		modifier = Modifier
@@ -243,44 +255,46 @@ private fun TimerState(
 	) {
 		Text(
 			text = recipeTitle,
-			color = CookCueCream,
+			color = CookCueCream.copy(alpha = 0.92f),
 			fontSize = 8.sp,
 			fontWeight = FontWeight.Medium,
 			textAlign = TextAlign.Center,
 			maxLines = 1,
 			overflow = TextOverflow.Ellipsis,
+			letterSpacing = 0.15.sp,
 		)
 
-		Spacer(Modifier.height(4.dp))
+		Spacer(Modifier.height(3.dp))
 
 		WearArcTimer(
 			estimateSeconds = safeEstimate,
 			elapsedSeconds = elapsedSeconds,
 		)
 
-		Spacer(Modifier.height(1.dp))
+		Spacer(Modifier.height(2.dp))
 
-		Text(
-			text = "🔥  $taskTitle",
-			color = CookCueCream,
-			fontSize = 9.sp,
-			fontWeight = FontWeight.SemiBold,
-			textAlign = TextAlign.Center,
-			maxLines = 2,
-			overflow = TextOverflow.Ellipsis,
-			lineHeight = 11.sp,
-		)
+		Row(
+			verticalAlignment = Alignment.CenterVertically,
+		) {
+			FlameGlyph(
+				modifier = Modifier.size(11.dp),
+			)
+			Spacer(Modifier.width(4.dp))
+			Text(
+				text = taskTitle,
+				color = CookCueCream,
+				fontSize = 9.sp,
+				fontWeight = FontWeight.SemiBold,
+				textAlign = TextAlign.Center,
+				maxLines = 2,
+				overflow = TextOverflow.Ellipsis,
+				lineHeight = 11.sp,
+			)
+		}
 
 		if (showDone) {
-			Spacer(Modifier.height(5.dp))
+			Spacer(Modifier.height(6.dp))
 			RoundDoneButton(onClick = onDone)
-		} else {
-			Spacer(Modifier.height(3.dp))
-			Text(
-				text = if (remaining > 0) "beží" else "hotovo",
-				color = CookCueMuted,
-				fontSize = 8.sp,
-			)
 		}
 	}
 }
@@ -293,11 +307,8 @@ private fun WearArcTimer(
 	val safeEstimate = estimateSeconds.coerceAtLeast(1)
 	val remaining = (safeEstimate - elapsedSeconds).coerceAtLeast(0)
 	val overdue = elapsedSeconds > safeEstimate
-	val progress = if (overdue) {
-		1f
-	} else {
+	val elapsedProgress =
 		(elapsedSeconds.toFloat() / safeEstimate.toFloat()).coerceIn(0f, 1f)
-	}
 	val shownSeconds = if (overdue) elapsedSeconds else remaining
 	val totalLabel = if (overdue) {
 		"nad odhad " + formatClock(safeEstimate)
@@ -306,29 +317,74 @@ private fun WearArcTimer(
 	}
 
 	Box(
-		modifier = Modifier.size(92.dp),
+		modifier = Modifier.size(104.dp),
 		contentAlignment = Alignment.Center,
 	) {
 		Canvas(modifier = Modifier.fillMaxSize()) {
+			val stroke = 6.dp.toPx()
+			val shadowStroke = 9.dp.toPx()
+
 			drawArc(
-				color = CookCueCream.copy(alpha = 0.92f),
+				color = CookCueLine.copy(alpha = 0.35f),
 				startAngle = 135f,
 				sweepAngle = 270f,
 				useCenter = false,
 				style = Stroke(
-					width = 6.dp.toPx(),
+					width = shadowStroke,
 					cap = StrokeCap.Butt,
 				),
 			)
 			drawArc(
-				color = CookCueWineDeep,
+				color = CookCueCream.copy(alpha = 0.94f),
 				startAngle = 135f,
-				sweepAngle = 270f * progress,
+				sweepAngle = 270f,
 				useCenter = false,
 				style = Stroke(
-					width = 6.dp.toPx(),
+					width = stroke,
 					cap = StrokeCap.Butt,
 				),
+			)
+			drawArc(
+				brush = Brush.sweepGradient(
+					colors = listOf(
+						CookCueWineDeep,
+						CookCueWine,
+						CookCueWineDeep,
+					),
+					center = center,
+				),
+				startAngle = 135f,
+				sweepAngle = 270f * elapsedProgress,
+				useCenter = false,
+				style = Stroke(
+					width = stroke,
+					cap = StrokeCap.Butt,
+				),
+			)
+
+			val marker = Path().apply {
+				moveTo(center.x, center.y - 30.dp.toPx())
+				cubicTo(
+					center.x - 3.5.dp.toPx(),
+					center.y - 25.dp.toPx(),
+					center.x - 2.dp.toPx(),
+					center.y - 21.dp.toPx(),
+					center.x,
+					center.y - 20.dp.toPx(),
+				)
+				cubicTo(
+					center.x + 2.dp.toPx(),
+					center.y - 21.dp.toPx(),
+					center.x + 3.5.dp.toPx(),
+					center.y - 25.dp.toPx(),
+					center.x,
+					center.y - 30.dp.toPx(),
+				)
+				close()
+			}
+			drawPath(
+				path = marker,
+				color = CookCueWineDeep,
 			)
 		}
 
@@ -339,17 +395,57 @@ private fun WearArcTimer(
 				text = formatClock(shownSeconds),
 				color = CookCueCream,
 				fontFamily = FontFamily.Serif,
-				fontSize = 24.sp,
-				fontWeight = FontWeight.Medium,
-				lineHeight = 25.sp,
+				fontSize = 27.sp,
+				fontWeight = FontWeight.Normal,
+				lineHeight = 28.sp,
+				letterSpacing = (-0.4).sp,
 			)
 			Text(
 				text = totalLabel,
 				color = CookCueMuted,
 				fontSize = 7.sp,
 				lineHeight = 8.sp,
+				letterSpacing = 0.2.sp,
 			)
 		}
+	}
+}
+
+@Composable
+private fun FlameGlyph(modifier: Modifier = Modifier) {
+	Canvas(modifier = modifier) {
+		val w = size.width
+		val h = size.height
+
+		val outer = Path().apply {
+			moveTo(w * 0.52f, h * 0.05f)
+			cubicTo(w * 0.58f, h * 0.26f, w * 0.82f, h * 0.32f, w * 0.80f, h * 0.56f)
+			cubicTo(w * 0.78f, h * 0.82f, w * 0.63f, h * 0.96f, w * 0.48f, h * 0.96f)
+			cubicTo(w * 0.26f, h * 0.96f, w * 0.10f, h * 0.80f, w * 0.13f, h * 0.58f)
+			cubicTo(w * 0.16f, h * 0.39f, w * 0.30f, h * 0.28f, w * 0.35f, h * 0.13f)
+			cubicTo(w * 0.40f, h * 0.28f, w * 0.50f, h * 0.30f, w * 0.52f, h * 0.05f)
+			close()
+		}
+		drawPath(
+			path = outer,
+			brush = Brush.verticalGradient(
+				colors = listOf(
+					CookCueHoney,
+					CookCueWine,
+				),
+			),
+		)
+
+		val inner = Path().apply {
+			moveTo(w * 0.50f, h * 0.44f)
+			cubicTo(w * 0.62f, h * 0.55f, w * 0.63f, h * 0.72f, w * 0.51f, h * 0.82f)
+			cubicTo(w * 0.39f, h * 0.72f, w * 0.39f, h * 0.57f, w * 0.50f, h * 0.44f)
+			close()
+		}
+		drawPath(
+			path = inner,
+			color = CookCueCream.copy(alpha = 0.9f),
+		)
 	}
 }
 
@@ -357,17 +453,34 @@ private fun WearArcTimer(
 private fun RoundDoneButton(onClick: () -> Unit) {
 	Button(
 		onClick = onClick,
-		modifier = Modifier.size(32.dp),
+		modifier = Modifier.size(36.dp),
 		colors = ButtonDefaults.buttonColors(
 			containerColor = CookCueWineDeep,
 			contentColor = CookCueCream,
 		),
 		shape = CircleShape,
 	) {
-		Text(
-			text = "✓",
-			fontSize = 15.sp,
-			fontWeight = FontWeight.Medium,
+		CheckGlyph(
+			modifier = Modifier.size(15.dp),
+		)
+	}
+}
+
+@Composable
+private fun CheckGlyph(modifier: Modifier = Modifier) {
+	Canvas(modifier = modifier) {
+		val path = Path().apply {
+			moveTo(size.width * 0.18f, size.height * 0.52f)
+			lineTo(size.width * 0.42f, size.height * 0.74f)
+			lineTo(size.width * 0.82f, size.height * 0.27f)
+		}
+		drawPath(
+			path = path,
+			color = CookCueCream,
+			style = Stroke(
+				width = 2.1.dp.toPx(),
+				cap = StrokeCap.Round,
+			),
 		)
 	}
 }
@@ -382,12 +495,12 @@ private fun EventState(
 	Column(
 		modifier = Modifier
 			.fillMaxSize()
-			.padding(horizontal = 18.dp, vertical = 8.dp),
+			.padding(horizontal = 18.dp, vertical = 9.dp),
 		horizontalAlignment = Alignment.CenterHorizontally,
 	) {
 		Text(
 			text = recipeTitle,
-			color = CookCueCream,
+			color = CookCueCream.copy(alpha = 0.92f),
 			fontSize = 8.sp,
 			fontWeight = FontWeight.Medium,
 			textAlign = TextAlign.Center,
@@ -395,14 +508,10 @@ private fun EventState(
 			overflow = TextOverflow.Ellipsis,
 		)
 
-		Spacer(Modifier.height(12.dp))
+		Spacer(Modifier.height(10.dp))
 
-		Text(
-			text = "ČAKÁ NA TEBA",
-			color = CookCueWine,
-			fontSize = 7.sp,
-			fontWeight = FontWeight.Bold,
-			letterSpacing = 0.7.sp,
+		EventGlyph(
+			modifier = Modifier.size(56.dp),
 		)
 
 		Spacer(Modifier.height(5.dp))
@@ -410,42 +519,73 @@ private fun EventState(
 		Text(
 			text = title,
 			color = CookCueCream,
-			fontSize = 10.sp,
-			fontWeight = FontWeight.SemiBold,
+			fontFamily = FontFamily.Serif,
+			fontSize = 13.sp,
+			fontWeight = FontWeight.Medium,
 			textAlign = TextAlign.Center,
 			maxLines = 2,
 			overflow = TextOverflow.Ellipsis,
-			lineHeight = 12.sp,
+			lineHeight = 15.sp,
 		)
 
-		Spacer(Modifier.height(10.dp))
+		Spacer(Modifier.height(8.dp))
 
-		Button(
-			onClick = onConfirm,
-			modifier = Modifier.size(32.dp),
-			colors = ButtonDefaults.buttonColors(
-				containerColor = CookCueWineDeep,
-				contentColor = CookCueCream,
-			),
-			shape = CircleShape,
-		) {
-			Text(
-				text = "✓",
-				fontSize = 15.sp,
-				fontWeight = FontWeight.Medium,
-			)
-		}
+		RoundDoneButton(onClick = onConfirm)
 
-		Spacer(Modifier.height(5.dp))
+		Spacer(Modifier.height(4.dp))
 
 		Text(
 			text = actionLabel,
 			color = CookCueMuted,
 			fontSize = 7.sp,
 			textAlign = TextAlign.Center,
-			maxLines = 2,
+			maxLines = 1,
 			overflow = TextOverflow.Ellipsis,
-			lineHeight = 8.sp,
+		)
+	}
+}
+
+@Composable
+private fun EventGlyph(modifier: Modifier = Modifier) {
+	Canvas(modifier = modifier) {
+		drawArc(
+			color = CookCueLine.copy(alpha = 0.38f),
+			startAngle = 145f,
+			sweepAngle = 250f,
+			useCenter = false,
+			style = Stroke(
+				width = 7.dp.toPx(),
+				cap = StrokeCap.Round,
+			),
+		)
+		drawArc(
+			brush = Brush.sweepGradient(
+				colors = listOf(
+					CookCueWineDeep,
+					CookCueWine,
+					CookCueWineDeep,
+				),
+				center = center,
+			),
+			startAngle = 145f,
+			sweepAngle = 118f,
+			useCenter = false,
+			style = Stroke(
+				width = 7.dp.toPx(),
+				cap = StrokeCap.Round,
+			),
+		)
+
+		val dotRadius = 4.dp.toPx()
+		drawCircle(
+			color = CookCueHoney,
+			radius = dotRadius,
+			center = Offset(center.x, center.y - 4.dp.toPx()),
+		)
+		drawCircle(
+			color = CookCueEspresso,
+			radius = dotRadius * 0.42f,
+			center = Offset(center.x, center.y - 4.dp.toPx()),
 		)
 	}
 }
@@ -464,7 +604,7 @@ private fun SimpleState(
 		Text(
 			text = title,
 			color = CookCueCream,
-			fontSize = 8.sp,
+			fontSize = 9.sp,
 			fontWeight = FontWeight.Medium,
 			textAlign = TextAlign.Center,
 		)
@@ -472,8 +612,9 @@ private fun SimpleState(
 		Text(
 			text = message,
 			color = CookCueCream,
-			fontSize = 10.sp,
-			fontWeight = FontWeight.SemiBold,
+			fontFamily = FontFamily.Serif,
+			fontSize = 13.sp,
+			fontWeight = FontWeight.Medium,
 			textAlign = TextAlign.Center,
 			maxLines = 3,
 		)
@@ -483,17 +624,18 @@ private fun SimpleState(
 				onClick = onClick,
 				modifier = Modifier
 					.fillMaxWidth()
-					.height(32.dp),
+					.height(34.dp),
 				colors = ButtonDefaults.buttonColors(
 					containerColor = CookCueWineDeep,
 					contentColor = CookCueCream,
 				),
-				shape = RoundedCornerShape(14.dp),
+				shape = RoundedCornerShape(16.dp),
 			) {
 				Text(
 					text = buttonText,
 					fontSize = 8.sp,
 					fontWeight = FontWeight.Bold,
+					letterSpacing = 0.4.sp,
 				)
 			}
 		}
