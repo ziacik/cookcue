@@ -1,5 +1,8 @@
 package com.ziacik.cookcue.mobile
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import androidx.activity.ComponentActivity
@@ -37,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,6 +60,14 @@ class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
+		MobileTransitionNotifier.ensureChannel(this)
+		if (
+			Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+			checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+		) {
+			requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1001)
+		}
+
 		setContent {
 			CookCueTheme {
 				CookCueScreen()
@@ -71,6 +83,7 @@ private fun CookCueScreen() {
 	val selectedRecipeId = CookingSessionController.selectedRecipeId
 	val startedAt = CookingSessionController.startedAt
 	val durationOverrides = CookingSessionController.durationOverrides
+	val userActionVersion = CookingSessionController.userActionVersion
 
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
 
@@ -90,6 +103,44 @@ private fun CookCueScreen() {
 		CookingSessionController.snapshot(now)
 	}
 	val primaryWait = snapshot.background.minByOrNull { it.endSeconds }
+	val transitionCue = snapshot.transitionCue()
+	var transitionInitialized by remember { mutableStateOf(false) }
+	var previousTransitionKey by remember { mutableStateOf<String?>(null) }
+	var previousUserActionVersion by remember { mutableLongStateOf(userActionVersion) }
+
+	LaunchedEffect(snapshot.started, transitionCue?.key, userActionVersion) {
+		if (!snapshot.started) {
+			transitionInitialized = false
+			previousTransitionKey = null
+			previousUserActionVersion = userActionVersion
+			return@LaunchedEffect
+		}
+
+		if (!transitionInitialized) {
+			transitionInitialized = true
+			previousTransitionKey = transitionCue?.key
+			previousUserActionVersion = userActionVersion
+			return@LaunchedEffect
+		}
+
+		val changedByUser = userActionVersion != previousUserActionVersion
+		val changedStep = transitionCue?.key != previousTransitionKey
+		if (changedStep && !changedByUser && transitionCue != null) {
+			val transitionId = System.currentTimeMillis()
+			MobileTransitionNotifier.notify(context, transitionCue)
+			MobileSessionSync.publish(
+				context,
+				TransitionSignal(
+					id = transitionId,
+					title = transitionCue.title,
+					text = transitionCue.text,
+				),
+			)
+		}
+
+		previousTransitionKey = transitionCue?.key
+		previousUserActionVersion = userActionVersion
+	}
 
 	fun persistAndSync() {
 		MobileSessionPersistence.save(context)
