@@ -33,6 +33,8 @@ data class CookingTask(
 	val instruction: String = title,
 	val tips: List<String> = emptyList(),
 	val actionLabel: String? = null,
+	val retryActionLabel: String? = null,
+	val retryAfterSeconds: Long? = null,
 ) {
 	init {
 		require(id.isNotBlank())
@@ -41,6 +43,18 @@ data class CookingTask(
 		if (kind == TaskKind.EVENT) {
 			require(!actionLabel.isNullOrBlank()) {
 				"Event task '$id' must define actionLabel."
+			}
+		}
+
+		if (retryAfterSeconds != null || retryActionLabel != null) {
+			require(kind == TaskKind.EVENT) {
+				"Only event task '$id' can define a retry action."
+			}
+			require(retryAfterSeconds != null && retryAfterSeconds > 0) {
+				"Retryable event task '$id' must define a positive retryAfterSeconds."
+			}
+			require(!retryActionLabel.isNullOrBlank()) {
+				"Retryable event task '$id' must define retryActionLabel."
 			}
 		}
 	}
