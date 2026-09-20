@@ -2,10 +2,13 @@ package com.ziacik.cookcue.wear
 
 import androidx.compose.ui.graphics.Color
 
-val CookCueBerry = Color(0xFFF07FA2)
-val CookCueEspresso = Color(0xFF1B1316)
-val CookCueCream = Color(0xFFFFF4F7)
-val CookCueSand = Color(0xFF3A2930)
-val CookCueHerb = Color(0xFFB5C59F)
-val CookCueHoney = Color(0xFFD3A64A)
-val CookCueMuted = Color(0xFFD8C1C9)
+val CookCueWine = Color(0xFFE98AAA)
+val CookCueWineDeep = Color(0xFF5B1120)
+val CookCueEspresso = Color(0xFF171113)
+val CookCueCream = Color(0xFFFFF5F7)
+val CookCueSurface = Color(0xFF241A1E)
+val CookCueSurfaceRaised = Color(0xFF302329)
+val CookCueLine = Color(0xFF4A373E)
+val CookCueHerb = Color(0xFFB8C5AA)
+val CookCueHoney = Color(0xFFC9A565)
+val CookCueMuted = Color(0xFFCAB9BE)
