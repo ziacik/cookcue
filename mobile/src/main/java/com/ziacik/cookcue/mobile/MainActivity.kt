@@ -44,6 +44,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -88,9 +89,11 @@ private fun CookCueScreen() {
 	val snapshot = remember(now, startedAt, durationOverrides) {
 		CookingSessionController.snapshot(now)
 	}
-	val primaryWait = snapshot.background.minByOrNull { it.endSeconds }
 	val current = snapshot.currentAction
+	val primaryWait = snapshot.background.minByOrNull { it.endSeconds }
 	val displayedWait = if (current == null) primaryWait else null
+	val activeTaskId = current?.task?.id ?: displayedWait?.task?.id
+	val activeStepIndex = snapshot.schedule.indexOfFirst { it.task.id == activeTaskId }
 	val secondaryBackground = snapshot.background.filterNot {
 		it.task.id == displayedWait?.task?.id
 	}
@@ -107,124 +110,154 @@ private fun CookCueScreen() {
 			modifier = Modifier
 				.fillMaxSize()
 				.padding(padding),
-			contentPadding = PaddingValues(horizontal = 20.dp, vertical = 18.dp),
-			verticalArrangement = Arrangement.spacedBy(18.dp),
+			contentPadding = PaddingValues(bottom = 28.dp),
 		) {
 			item {
-				BrandHeader()
-				Spacer(Modifier.height(18.dp))
-				Text(
-					text = recipe.title,
-					style = MaterialTheme.typography.headlineLarge,
-					color = MaterialTheme.colorScheme.onBackground,
-				)
-				Spacer(Modifier.height(6.dp))
-				Text(
-					text = recipe.description,
-					style = MaterialTheme.typography.bodyLarge,
-					color = MaterialTheme.colorScheme.onSurfaceVariant,
-				)
+				CookCueTopBar(recipe.title)
 			}
 
 			if (!snapshot.started) {
 				item {
-					SectionHeading(
-						kicker = "PRED VARENÍM",
-						title = "Ingrediencie",
-					)
-					Spacer(Modifier.height(10.dp))
-					IngredientList(
-						ingredients = recipe.ingredients.map { it.amount to it.name },
-					)
-				}
-
-				item {
-					PreCookingPanel(
-						onStart = {
-							CookingSessionController.start()
-							persistAndSync()
-						},
-					)
+					Column(
+						modifier = Modifier.padding(horizontal = 20.dp),
+					) {
+						Spacer(Modifier.height(18.dp))
+						Text(
+							text = recipe.title,
+							style = MaterialTheme.typography.headlineLarge.copy(
+								fontFamily = FontFamily.Serif,
+								fontWeight = FontWeight.SemiBold,
+							),
+						)
+						Spacer(Modifier.height(5.dp))
+						Text(
+							text = recipe.description,
+							style = MaterialTheme.typography.bodyLarge,
+							color = MaterialTheme.colorScheme.onSurfaceVariant,
+						)
+						Spacer(Modifier.height(18.dp))
+						PreCookingPanel(
+							onStart = {
+								CookingSessionController.start()
+								persistAndSync()
+							},
+						)
+						Spacer(Modifier.height(22.dp))
+						SectionTitle("Ingrediencie")
+						Spacer(Modifier.height(8.dp))
+						IngredientList(
+							ingredients = recipe.ingredients.map { it.amount to it.name },
+						)
+					}
 				}
 			} else {
 				item {
-					when {
-						current != null -> {
-							val elapsed =
-								(snapshot.elapsedSeconds - current.startSeconds).coerceAtLeast(0)
-							NowPanel(
-								title = current.task.title,
-								instruction = current.task.instruction,
-								tips = current.task.tips,
-								estimateSeconds = current.task.durationSeconds,
-								elapsedSeconds = elapsed,
-								showDone = true,
-								onDone = {
-									CookingSessionController.completeAction(current.task.id)
-									persistAndSync()
-								},
-							)
-						}
+					Column(
+						modifier = Modifier.padding(horizontal = 16.dp),
+					) {
+						Spacer(Modifier.height(12.dp))
+						when {
+							current != null -> {
+								val elapsed =
+									(snapshot.elapsedSeconds - current.startSeconds).coerceAtLeast(0)
+								CurrentStepCard(
+									title = current.task.title,
+									instruction = current.task.instruction,
+									tips = current.task.tips,
+									estimateSeconds = current.task.durationSeconds,
+									elapsedSeconds = elapsed,
+									stepNumber = activeStepIndex.takeIf { it >= 0 }?.plus(1),
+									stepCount = snapshot.schedule.size,
+									actionLabel = "HOTOVO",
+									onAction = {
+										CookingSessionController.completeAction(current.task.id)
+										persistAndSync()
+									},
+								)
+							}
 
-						displayedWait != null -> {
-							val elapsed =
-								(snapshot.elapsedSeconds - displayedWait.startSeconds).coerceAtLeast(0)
-							val duration =
-								(displayedWait.endSeconds - displayedWait.startSeconds).coerceAtLeast(1)
-							NowPanel(
-								title = displayedWait.task.title,
-								instruction = displayedWait.task.instruction,
-								tips = displayedWait.task.tips,
-								estimateSeconds = duration,
-								elapsedSeconds = elapsed,
-								showDone = false,
-								onDone = {},
-							)
-						}
+							displayedWait != null -> {
+								val elapsed =
+									(snapshot.elapsedSeconds - displayedWait.startSeconds).coerceAtLeast(0)
+								val duration =
+									(displayedWait.endSeconds - displayedWait.startSeconds)
+										.coerceAtLeast(1)
+								CurrentStepCard(
+									title = displayedWait.task.title,
+									instruction = displayedWait.task.instruction,
+									tips = displayedWait.task.tips,
+									estimateSeconds = duration,
+									elapsedSeconds = elapsed,
+									stepNumber = activeStepIndex.takeIf { it >= 0 }?.plus(1),
+									stepCount = snapshot.schedule.size,
+									actionLabel = null,
+									onAction = {},
+								)
+							}
 
-						else -> IdlePanel()
+							else -> {
+								IdleCard()
+							}
+						}
 					}
 				}
 
 				items(snapshot.pendingEvents, key = { "event-" + it.task.id }) { event ->
-					PendingEventPanel(
-						title = event.task.title,
-						instruction = event.task.instruction,
-						tips = event.task.tips,
-						actionLabel = event.task.actionLabel ?: "HOTOVO",
-						onConfirm = {
-							CookingSessionController.confirmEvent(event.task.id)
-							persistAndSync()
-						},
-					)
-				}
-
-				if (secondaryBackground.isNotEmpty()) {
-					item {
-						BackgroundTimers(
-							items = secondaryBackground.map {
-								it.task.title to formatRemaining(
-									it.endSeconds - snapshot.elapsedSeconds,
-								)
+					Column(
+						modifier = Modifier.padding(horizontal = 16.dp),
+					) {
+						Spacer(Modifier.height(12.dp))
+						PendingEventCard(
+							title = event.task.title,
+							instruction = event.task.instruction,
+							tips = event.task.tips,
+							actionLabel = event.task.actionLabel ?: "HOTOVO",
+							onConfirm = {
+								CookingSessionController.confirmEvent(event.task.id)
+								persistAndSync()
 							},
 						)
 					}
 				}
 
+				if (secondaryBackground.isNotEmpty()) {
+					item {
+						Column(
+							modifier = Modifier.padding(horizontal = 20.dp),
+						) {
+							Spacer(Modifier.height(16.dp))
+							CompactTimers(
+								items = secondaryBackground.map {
+									it.task.title to formatRemaining(
+										it.endSeconds - snapshot.elapsedSeconds,
+									)
+								},
+							)
+						}
+					}
+				}
+
 				snapshot.nextScheduled?.let { next ->
 					item {
-						NextStepStrip(
-							title = next.task.title,
-							time = "o " + formatRemaining(
-								next.startSeconds - snapshot.elapsedSeconds,
-							),
-						)
+						Column(
+							modifier = Modifier.padding(horizontal = 20.dp),
+						) {
+							Spacer(Modifier.height(16.dp))
+							NextStepRow(
+								title = next.task.title,
+								time = "o " + formatRemaining(
+									next.startSeconds - snapshot.elapsedSeconds,
+								),
+							)
+						}
 					}
 				}
 
 				item {
 					Row(
-						modifier = Modifier.fillMaxWidth(),
+						modifier = Modifier
+							.fillMaxWidth()
+							.padding(horizontal = 20.dp, vertical = 14.dp),
 						horizontalArrangement = Arrangement.spacedBy(10.dp),
 					) {
 						OutlinedButton(
@@ -234,38 +267,45 @@ private fun CookCueScreen() {
 							},
 							enabled = snapshot.previousAction != null,
 							modifier = Modifier.weight(1f),
-							shape = RoundedCornerShape(16.dp),
+							shape = RoundedCornerShape(12.dp),
 						) {
-							Text("←  PREDOŠLÝ")
+							Text("← PREDOŠLÝ")
 						}
-						Button(
+						OutlinedButton(
 							onClick = {
 								CookingSessionController.next()
 								persistAndSync()
 							},
 							enabled = snapshot.nextAction != null,
 							modifier = Modifier.weight(1f),
-							shape = RoundedCornerShape(16.dp),
+							shape = RoundedCornerShape(12.dp),
 						) {
-							Text("ĎALŠÍ  →")
+							Text("ĎALŠÍ →")
 						}
 					}
 				}
 			}
 
 			item {
-				SectionHeading(
-					kicker = "KROK ZA KROKOM",
-					title = "Plán",
-				)
+				Column(
+					modifier = Modifier.padding(horizontal = 20.dp),
+				) {
+					Spacer(Modifier.height(8.dp))
+					SectionTitle("Plán")
+					Text(
+						text = "Všetko krok za krokom. CookCue stráži čas.",
+						style = MaterialTheme.typography.bodyMedium,
+						color = MaterialTheme.colorScheme.onSurfaceVariant,
+					)
+					Spacer(Modifier.height(12.dp))
+				}
 			}
 
 			itemsIndexed(
 				items = snapshot.schedule,
 				key = { _, item -> "plan-" + item.task.id },
 			) { index, item ->
-				val activeTaskId = current?.task?.id ?: displayedWait?.task?.id
-				TimelineItem(
+				PlanRow(
 					index = index,
 					item = item,
 					active = item.task.id == activeTaskId,
@@ -274,10 +314,18 @@ private fun CookCueScreen() {
 			}
 
 			item {
-				SectionHeading(
-					kicker = "KEĎ SA NIEČO POKAZÍ",
-					title = "Krízová pomoc",
-				)
+				Column(
+					modifier = Modifier.padding(horizontal = 20.dp),
+				) {
+					Spacer(Modifier.height(24.dp))
+					SectionTitle("Krízová pomoc")
+					Text(
+						text = "Keď varenie nejde podľa plánu, tu nájdeš rýchlu záchranu.",
+						style = MaterialTheme.typography.bodyMedium,
+						color = MaterialTheme.colorScheme.onSurfaceVariant,
+					)
+					Spacer(Modifier.height(8.dp))
+				}
 			}
 
 			itemsIndexed(
@@ -287,52 +335,41 @@ private fun CookCueScreen() {
 				TroubleRow(
 					title = tip.problem,
 					advice = tip.advice,
+					showDivider = index != recipe.troubleshooting.lastIndex,
 				)
-				if (index != recipe.troubleshooting.lastIndex) {
-					HorizontalDivider(
-						modifier = Modifier.padding(top = 14.dp),
-						color = MaterialTheme.colorScheme.outline.copy(alpha = 0.8f),
-					)
-				}
-			}
-
-			item {
-				Spacer(Modifier.height(8.dp))
 			}
 		}
 	}
 }
 
 @Composable
-private fun BrandHeader() {
-	Row(
-		modifier = Modifier.fillMaxWidth(),
-		verticalAlignment = Alignment.CenterVertically,
-		horizontalArrangement = Arrangement.SpaceBetween,
-	) {
+private fun CookCueTopBar(recipeTitle: String) {
+	Column {
 		Row(
+			modifier = Modifier
+				.fillMaxWidth()
+				.padding(horizontal = 18.dp, vertical = 14.dp),
 			verticalAlignment = Alignment.CenterVertically,
-			horizontalArrangement = Arrangement.spacedBy(11.dp),
 		) {
-			CueMark(38.dp)
-			Column {
-				Text(
-					text = "CookCue",
-					style = MaterialTheme.typography.titleLarge,
-					color = MaterialTheme.colorScheme.onBackground,
-				)
-				Text(
-					text = "varenie bez chaosu",
-					style = MaterialTheme.typography.bodySmall,
-					color = MaterialTheme.colorScheme.onSurfaceVariant,
-				)
-			}
+			CueMark(27.dp)
+			Spacer(Modifier.width(10.dp))
+			Text(
+				text = recipeTitle,
+				style = MaterialTheme.typography.titleMedium.copy(
+					fontFamily = FontFamily.Serif,
+					fontWeight = FontWeight.SemiBold,
+				),
+				modifier = Modifier.weight(1f),
+			)
+			Text(
+				text = "CookCue",
+				style = MaterialTheme.typography.labelSmall,
+				color = MaterialTheme.colorScheme.primary,
+				letterSpacing = 0.7.sp,
+			)
 		}
-		Text(
-			text = "CC",
-			style = MaterialTheme.typography.labelSmall,
-			color = MaterialTheme.colorScheme.primary.copy(alpha = 0.55f),
-			letterSpacing = 1.8.sp,
+		HorizontalDivider(
+			color = MaterialTheme.colorScheme.outline.copy(alpha = 0.75f),
 		)
 	}
 }
@@ -348,49 +385,15 @@ private fun CueMark(size: Dp) {
 				sweepAngle = 275f,
 				useCenter = false,
 				style = Stroke(
-					width = 4.5.dp.toPx(),
+					width = 3.5.dp.toPx(),
 					cap = StrokeCap.Round,
 				),
 			)
 			drawCircle(
 				color = CookCueHoney,
-				radius = 3.4.dp.toPx(),
+				radius = 2.7.dp.toPx(),
 				center = Offset(this.size.width * 0.76f, this.size.height * 0.20f),
 			)
-		}
-	}
-}
-
-@Composable
-private fun IngredientList(
-	ingredients: List<Pair<String, String>>,
-) {
-	Column {
-		ingredients.forEachIndexed { index, ingredient ->
-			Row(
-				modifier = Modifier
-					.fillMaxWidth()
-					.padding(vertical = 9.dp),
-				verticalAlignment = Alignment.CenterVertically,
-			) {
-				Text(
-					text = ingredient.first,
-					style = MaterialTheme.typography.bodyMedium,
-					fontWeight = FontWeight.SemiBold,
-					color = MaterialTheme.colorScheme.primary,
-					modifier = Modifier.width(96.dp),
-				)
-				Text(
-					text = ingredient.second,
-					style = MaterialTheme.typography.bodyLarge,
-					color = MaterialTheme.colorScheme.onSurface,
-				)
-			}
-			if (index != ingredients.lastIndex) {
-				HorizontalDivider(
-					color = MaterialTheme.colorScheme.outline.copy(alpha = 0.72f),
-				)
-			}
 		}
 	}
 }
@@ -402,34 +405,37 @@ private fun PreCookingPanel(
 	Surface(
 		modifier = Modifier.fillMaxWidth(),
 		color = MaterialTheme.colorScheme.surfaceVariant,
-		shape = RoundedCornerShape(26.dp),
+		shape = RoundedCornerShape(18.dp),
 	) {
-		Column(modifier = Modifier.padding(22.dp)) {
-			EditorialLabel("PRIPRAV SI NÁSkok".uppercase())
-			Spacer(Modifier.height(8.dp))
+		Column(modifier = Modifier.padding(18.dp)) {
+			SmallLabel("PRED VARENÍM")
+			Spacer(Modifier.height(7.dp))
 			Text(
 				text = "Fazuľu namoč vopred",
-				style = MaterialTheme.typography.headlineSmall,
+				style = MaterialTheme.typography.titleLarge.copy(
+					fontFamily = FontFamily.Serif,
+					fontWeight = FontWeight.SemiBold,
+				),
 			)
-			Spacer(Modifier.height(6.dp))
+			Spacer(Modifier.height(5.dp))
 			Text(
 				text = "120 g suchej fazule namoč na 8–12 hodín vo veľkom množstve studenej vody.",
-				style = MaterialTheme.typography.bodyLarge,
+				style = MaterialTheme.typography.bodyMedium,
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
 			)
-			Spacer(Modifier.height(18.dp))
+			Spacer(Modifier.height(16.dp))
 			Button(
 				onClick = onStart,
 				modifier = Modifier.fillMaxWidth(),
+				shape = RoundedCornerShape(12.dp),
 				colors = ButtonDefaults.buttonColors(
 					containerColor = MaterialTheme.colorScheme.primary,
 				),
-				shape = RoundedCornerShape(18.dp),
 			) {
 				Text(
-					text = "SPUSTIŤ VARENIE",
+					text = "▶  SPUSTIŤ VARENIE",
 					fontWeight = FontWeight.Bold,
-					modifier = Modifier.padding(vertical = 4.dp),
+					modifier = Modifier.padding(vertical = 3.dp),
 				)
 			}
 		}
@@ -437,51 +443,127 @@ private fun PreCookingPanel(
 }
 
 @Composable
-private fun NowPanel(
+private fun IngredientList(
+	ingredients: List<Pair<String, String>>,
+) {
+	Surface(
+		modifier = Modifier.fillMaxWidth(),
+		color = MaterialTheme.colorScheme.surface,
+		shape = RoundedCornerShape(16.dp),
+		border = BorderStroke(
+			1.dp,
+			MaterialTheme.colorScheme.outline.copy(alpha = 0.75f),
+		),
+	) {
+		Column(modifier = Modifier.padding(horizontal = 15.dp, vertical = 5.dp)) {
+			ingredients.forEachIndexed { index, ingredient ->
+				Row(
+					modifier = Modifier
+						.fillMaxWidth()
+						.padding(vertical = 10.dp),
+					verticalAlignment = Alignment.CenterVertically,
+				) {
+					Box(
+						modifier = Modifier
+							.size(24.dp)
+							.background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
+						contentAlignment = Alignment.Center,
+					) {
+						Box(
+							modifier = Modifier
+								.size(7.dp)
+								.background(MaterialTheme.colorScheme.primary, CircleShape),
+						)
+					}
+					Spacer(Modifier.width(10.dp))
+					Text(
+						text = ingredient.second,
+						style = MaterialTheme.typography.bodyMedium,
+						modifier = Modifier.weight(1f),
+					)
+					Text(
+						text = ingredient.first,
+						style = MaterialTheme.typography.bodyMedium,
+						fontWeight = FontWeight.Medium,
+						color = MaterialTheme.colorScheme.onSurfaceVariant,
+					)
+				}
+				if (index != ingredients.lastIndex) {
+					HorizontalDivider(
+						color = MaterialTheme.colorScheme.outline.copy(alpha = 0.55f),
+					)
+				}
+			}
+		}
+	}
+}
+
+@Composable
+private fun CurrentStepCard(
 	title: String,
 	instruction: String,
 	tips: List<String>,
 	estimateSeconds: Long,
 	elapsedSeconds: Long,
-	showDone: Boolean,
-	onDone: () -> Unit,
+	stepNumber: Int?,
+	stepCount: Int,
+	actionLabel: String?,
+	onAction: () -> Unit,
 ) {
 	Surface(
 		modifier = Modifier.fillMaxWidth(),
 		color = MaterialTheme.colorScheme.surface,
-		shape = RoundedCornerShape(30.dp),
+		shape = RoundedCornerShape(20.dp),
 		border = BorderStroke(
 			1.dp,
-			MaterialTheme.colorScheme.outline.copy(alpha = 0.9f),
+			MaterialTheme.colorScheme.outline.copy(alpha = 0.8f),
 		),
-		shadowElevation = 3.dp,
+		shadowElevation = 2.dp,
 	) {
-		Column(modifier = Modifier.padding(24.dp)) {
-			Box(
-				modifier = Modifier
-					.width(46.dp)
-					.height(4.dp)
-					.background(
-						MaterialTheme.colorScheme.primary,
-						RoundedCornerShape(99.dp),
-					),
-			)
-			Spacer(Modifier.height(17.dp))
-			EditorialLabel("TERAZ")
-			Spacer(Modifier.height(8.dp))
+		Column(modifier = Modifier.padding(18.dp)) {
+			Row(
+				modifier = Modifier.fillMaxWidth(),
+				verticalAlignment = Alignment.CenterVertically,
+			) {
+				Surface(
+					color = MaterialTheme.colorScheme.primaryContainer,
+					shape = RoundedCornerShape(50),
+				) {
+					Text(
+						text = "TERAZ",
+						style = MaterialTheme.typography.labelMedium,
+						fontWeight = FontWeight.Bold,
+						color = MaterialTheme.colorScheme.primary,
+						modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+					)
+				}
+				Spacer(Modifier.weight(1f))
+				if (stepNumber != null && stepCount > 0) {
+					Text(
+						text = "Krok $stepNumber z $stepCount",
+						style = MaterialTheme.typography.labelMedium,
+						color = MaterialTheme.colorScheme.onSurfaceVariant,
+					)
+				}
+			}
+
+			Spacer(Modifier.height(13.dp))
 			Text(
 				text = title,
-				style = MaterialTheme.typography.headlineLarge,
-				color = MaterialTheme.colorScheme.onSurface,
+				style = MaterialTheme.typography.headlineMedium.copy(
+					fontFamily = FontFamily.Serif,
+					fontWeight = FontWeight.SemiBold,
+				),
+				lineHeight = 33.sp,
 			)
-			Spacer(Modifier.height(7.dp))
+			Spacer(Modifier.height(6.dp))
 			Text(
 				text = instruction,
 				style = MaterialTheme.typography.bodyLarge,
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
 			)
-			Spacer(Modifier.height(22.dp))
 
+			Spacer(Modifier.height(16.dp))
 			Box(
 				modifier = Modifier.fillMaxWidth(),
 				contentAlignment = Alignment.Center,
@@ -493,48 +575,41 @@ private fun NowPanel(
 			}
 
 			if (tips.isNotEmpty()) {
-				Spacer(Modifier.height(22.dp))
-				Column(
-					verticalArrangement = Arrangement.spacedBy(9.dp),
+				Spacer(Modifier.height(13.dp))
+				Surface(
+					modifier = Modifier.fillMaxWidth(),
+					color = MaterialTheme.colorScheme.surfaceVariant,
+					shape = RoundedCornerShape(12.dp),
 				) {
-					tips.forEach { tip ->
-						Row(
-							horizontalArrangement = Arrangement.spacedBy(10.dp),
-							verticalAlignment = Alignment.Top,
-						) {
-							Box(
-								modifier = Modifier
-									.padding(top = 7.dp)
-									.size(5.dp)
-									.background(
-										MaterialTheme.colorScheme.tertiary,
-										CircleShape,
-									),
-							)
+					Column(modifier = Modifier.padding(12.dp)) {
+						tips.forEachIndexed { index, tip ->
 							Text(
-								text = tip,
-								style = MaterialTheme.typography.bodyMedium,
+								text = if (index == 0) "Malý tip · $tip" else tip,
+								style = MaterialTheme.typography.bodySmall,
 								color = MaterialTheme.colorScheme.onSurfaceVariant,
 							)
+							if (index != tips.lastIndex) {
+								Spacer(Modifier.height(5.dp))
+							}
 						}
 					}
 				}
 			}
 
-			if (showDone) {
-				Spacer(Modifier.height(22.dp))
+			if (actionLabel != null) {
+				Spacer(Modifier.height(14.dp))
 				Button(
-					onClick = onDone,
+					onClick = onAction,
 					modifier = Modifier.fillMaxWidth(),
+					shape = RoundedCornerShape(12.dp),
 					colors = ButtonDefaults.buttonColors(
 						containerColor = MaterialTheme.colorScheme.primary,
 					),
-					shape = RoundedCornerShape(18.dp),
 				) {
 					Text(
-						text = "✓  HOTOVO",
+						text = "✓  $actionLabel",
 						fontWeight = FontWeight.Bold,
-						modifier = Modifier.padding(vertical = 5.dp),
+						modifier = Modifier.padding(vertical = 4.dp),
 					)
 				}
 			}
@@ -554,29 +629,27 @@ private fun TimerDial(
 	} else {
 		(elapsedSeconds.toFloat() / estimateSeconds.toFloat()).coerceIn(0f, 1f)
 	}
-	val track = MaterialTheme.colorScheme.outline.copy(alpha = 0.46f)
-	val progressColor = if (overdue) {
-		MaterialTheme.colorScheme.tertiary
-	} else {
-		MaterialTheme.colorScheme.primary
-	}
 
 	Box(
-		modifier = Modifier.size(154.dp),
+		modifier = Modifier.size(128.dp),
 		contentAlignment = Alignment.Center,
 	) {
 		Canvas(modifier = Modifier.fillMaxSize()) {
 			drawCircle(
-				color = track,
-				style = Stroke(width = 8.dp.toPx()),
+				color = MaterialTheme.colorScheme.outline.copy(alpha = 0.65f),
+				style = Stroke(width = 7.dp.toPx()),
 			)
 			drawArc(
-				color = progressColor,
+				color = if (overdue) {
+					MaterialTheme.colorScheme.tertiary
+				} else {
+					MaterialTheme.colorScheme.primary
+				},
 				startAngle = -90f,
 				sweepAngle = 360f * progress,
 				useCenter = false,
 				style = Stroke(
-					width = 8.dp.toPx(),
+					width = 7.dp.toPx(),
 					cap = StrokeCap.Round,
 				),
 			)
@@ -588,42 +661,41 @@ private fun TimerDial(
 				} else {
 					formatRemaining(remaining)
 				},
-				style = MaterialTheme.typography.displaySmall,
-				color = progressColor,
+				style = MaterialTheme.typography.headlineMedium.copy(
+					fontFamily = FontFamily.Serif,
+					fontWeight = FontWeight.Bold,
+				),
+				color = MaterialTheme.colorScheme.primary,
 			)
-			Spacer(Modifier.height(1.dp))
 			Text(
-				text = if (overdue) "trvá" else "zostáva",
-				style = MaterialTheme.typography.labelMedium,
+				text = if (overdue) "trvá" else "z " + formatRemaining(estimateSeconds),
+				style = MaterialTheme.typography.labelSmall,
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
-				letterSpacing = 0.4.sp,
-			)
-			Text(
-				text = "odhad " + formatRemaining(estimateSeconds),
-				style = MaterialTheme.typography.bodySmall,
-				color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
 			)
 		}
 	}
 }
 
 @Composable
-private fun IdlePanel() {
+private fun IdleCard() {
 	Surface(
 		modifier = Modifier.fillMaxWidth(),
 		color = MaterialTheme.colorScheme.surfaceVariant,
-		shape = RoundedCornerShape(24.dp),
+		shape = RoundedCornerShape(18.dp),
 	) {
-		Column(modifier = Modifier.padding(22.dp)) {
-			EditorialLabel("TERAZ")
+		Column(modifier = Modifier.padding(18.dp)) {
+			SmallLabel("TERAZ")
 			Spacer(Modifier.height(7.dp))
 			Text(
 				text = "Momentálne od teba nič netreba",
-				style = MaterialTheme.typography.headlineSmall,
+				style = MaterialTheme.typography.titleLarge.copy(
+					fontFamily = FontFamily.Serif,
+					fontWeight = FontWeight.SemiBold,
+				),
 			)
 			Spacer(Modifier.height(4.dp))
 			Text(
-				text = "CookCue stráži čas. Ty môžeš na chvíľu vypnúť.",
+				text = "CookCue stráži čas.",
 				style = MaterialTheme.typography.bodyMedium,
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
 			)
@@ -632,7 +704,7 @@ private fun IdlePanel() {
 }
 
 @Composable
-private fun PendingEventPanel(
+private fun PendingEventCard(
 	title: String,
 	instruction: String,
 	tips: List<String>,
@@ -642,36 +714,39 @@ private fun PendingEventPanel(
 	Surface(
 		modifier = Modifier.fillMaxWidth(),
 		color = MaterialTheme.colorScheme.tertiaryContainer,
-		shape = RoundedCornerShape(24.dp),
+		shape = RoundedCornerShape(18.dp),
 	) {
-		Column(modifier = Modifier.padding(20.dp)) {
-			EditorialLabel(
+		Column(modifier = Modifier.padding(17.dp)) {
+			SmallLabel(
 				text = "ČAKÁ NA TEBA",
 				color = MaterialTheme.colorScheme.tertiary,
 			)
-			Spacer(Modifier.height(7.dp))
+			Spacer(Modifier.height(6.dp))
 			Text(
 				text = title,
-				style = MaterialTheme.typography.headlineSmall,
+				style = MaterialTheme.typography.titleLarge.copy(
+					fontFamily = FontFamily.Serif,
+					fontWeight = FontWeight.SemiBold,
+				),
 			)
-			Spacer(Modifier.height(5.dp))
+			Spacer(Modifier.height(4.dp))
 			Text(
 				text = instruction,
-				style = MaterialTheme.typography.bodyLarge,
+				style = MaterialTheme.typography.bodyMedium,
 			)
 			tips.forEach { tip ->
-				Spacer(Modifier.height(8.dp))
+				Spacer(Modifier.height(5.dp))
 				Text(
-					text = "• " + tip,
-					style = MaterialTheme.typography.bodyMedium,
+					text = "• $tip",
+					style = MaterialTheme.typography.bodySmall,
 					color = MaterialTheme.colorScheme.onTertiaryContainer,
 				)
 			}
-			Spacer(Modifier.height(16.dp))
+			Spacer(Modifier.height(12.dp))
 			Button(
 				onClick = onConfirm,
 				modifier = Modifier.fillMaxWidth(),
-				shape = RoundedCornerShape(17.dp),
+				shape = RoundedCornerShape(12.dp),
 			) {
 				Text(
 					text = actionLabel,
@@ -683,132 +758,111 @@ private fun PendingEventPanel(
 }
 
 @Composable
-private fun BackgroundTimers(
+private fun CompactTimers(
 	items: List<Pair<String, String>>,
 ) {
-	Surface(
-		modifier = Modifier.fillMaxWidth(),
-		color = MaterialTheme.colorScheme.surfaceVariant,
-		shape = RoundedCornerShape(22.dp),
-	) {
-		Column(modifier = Modifier.padding(18.dp)) {
-			EditorialLabel(
-				text = "BEŽÍ NA POZADÍ",
-				color = MaterialTheme.colorScheme.secondary,
-			)
-			Spacer(Modifier.height(10.dp))
-			items.forEachIndexed { index, item ->
-				Row(
-					modifier = Modifier
-						.fillMaxWidth()
-						.padding(vertical = 5.dp),
-					horizontalArrangement = Arrangement.SpaceBetween,
-				) {
-					Text(
-						text = item.first,
-						style = MaterialTheme.typography.bodyMedium,
-						modifier = Modifier.weight(1f),
-					)
-					Spacer(Modifier.width(14.dp))
-					Text(
-						text = item.second,
-						style = MaterialTheme.typography.bodyMedium,
-						fontWeight = FontWeight.Bold,
-						color = MaterialTheme.colorScheme.secondary,
-					)
-				}
-				if (index != items.lastIndex) {
-					HorizontalDivider(
-						color = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
-					)
-				}
+	Column {
+		SmallLabel(
+			text = "BEŽÍ NA POZADÍ",
+			color = MaterialTheme.colorScheme.secondary,
+		)
+		Spacer(Modifier.height(7.dp))
+		items.forEachIndexed { index, item ->
+			Row(
+				modifier = Modifier
+					.fillMaxWidth()
+					.padding(vertical = 6.dp),
+				verticalAlignment = Alignment.CenterVertically,
+			) {
+				Text(
+					text = item.first,
+					style = MaterialTheme.typography.bodyMedium,
+					modifier = Modifier.weight(1f),
+				)
+				Text(
+					text = item.second,
+					style = MaterialTheme.typography.bodyMedium,
+					fontWeight = FontWeight.Bold,
+					color = MaterialTheme.colorScheme.secondary,
+				)
+			}
+			if (index != items.lastIndex) {
+				HorizontalDivider(
+					color = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
+				)
 			}
 		}
 	}
 }
 
 @Composable
-private fun NextStepStrip(
+private fun NextStepRow(
 	title: String,
 	time: String,
 ) {
-	Row(
-		modifier = Modifier
-			.fillMaxWidth()
-			.padding(vertical = 2.dp),
-		verticalAlignment = Alignment.CenterVertically,
+	Surface(
+		modifier = Modifier.fillMaxWidth(),
+		color = MaterialTheme.colorScheme.surfaceVariant,
+		shape = RoundedCornerShape(14.dp),
 	) {
-		Box(
-			modifier = Modifier
-				.width(3.dp)
-				.height(42.dp)
-				.background(
-					MaterialTheme.colorScheme.primary,
-					RoundedCornerShape(99.dp),
-				),
-		)
-		Spacer(Modifier.width(12.dp))
-		Column(modifier = Modifier.weight(1f)) {
-			EditorialLabel("ĎALEJ")
-			Spacer(Modifier.height(2.dp))
+		Row(
+			modifier = Modifier.padding(horizontal = 14.dp, vertical = 11.dp),
+			verticalAlignment = Alignment.CenterVertically,
+		) {
+			SmallLabel("ĎALEJ")
+			Spacer(Modifier.width(11.dp))
 			Text(
 				text = title,
-				style = MaterialTheme.typography.titleMedium,
-				fontWeight = FontWeight.SemiBold,
+				style = MaterialTheme.typography.bodyMedium,
+				fontWeight = FontWeight.Medium,
+				modifier = Modifier.weight(1f),
+			)
+			Text(
+				text = time,
+				style = MaterialTheme.typography.bodyMedium,
+				fontWeight = FontWeight.Bold,
+				color = MaterialTheme.colorScheme.primary,
 			)
 		}
-		Text(
-			text = time,
-			style = MaterialTheme.typography.bodyMedium,
-			fontWeight = FontWeight.Bold,
-			color = MaterialTheme.colorScheme.primary,
-		)
 	}
 }
 
 @Composable
-private fun SectionHeading(
-	kicker: String,
-	title: String,
-) {
-	Column {
-		EditorialLabel(kicker)
-		Spacer(Modifier.height(5.dp))
-		Text(
-			text = title,
-			style = MaterialTheme.typography.headlineMedium,
-			color = MaterialTheme.colorScheme.onBackground,
-		)
-		Spacer(Modifier.height(8.dp))
-		HorizontalDivider(
-			color = MaterialTheme.colorScheme.outline,
-		)
-	}
+private fun SectionTitle(text: String) {
+	Text(
+		text = text,
+		style = MaterialTheme.typography.headlineSmall.copy(
+			fontFamily = FontFamily.Serif,
+			fontWeight = FontWeight.SemiBold,
+		),
+	)
 }
 
 @Composable
-private fun EditorialLabel(
+private fun SmallLabel(
 	text: String,
 	color: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.primary,
 ) {
 	Text(
 		text = text,
-		style = MaterialTheme.typography.labelMedium,
+		style = MaterialTheme.typography.labelSmall,
 		fontWeight = FontWeight.Bold,
 		color = color,
-		letterSpacing = 1.25.sp,
+		letterSpacing = 1.0.sp,
 	)
 }
 
 @Composable
-private fun TimelineItem(
+private fun PlanRow(
 	index: Int,
 	item: ScheduledTask,
 	active: Boolean,
 	isLast: Boolean,
 ) {
 	Row(
-		modifier = Modifier.fillMaxWidth(),
+		modifier = Modifier
+			.fillMaxWidth()
+			.padding(horizontal = 20.dp),
 		verticalAlignment = Alignment.Top,
 	) {
 		Column(
@@ -816,12 +870,12 @@ private fun TimelineItem(
 		) {
 			Box(
 				modifier = Modifier
-					.size(30.dp)
+					.size(28.dp)
 					.background(
 						if (active) {
 							MaterialTheme.colorScheme.primary
 						} else {
-							MaterialTheme.colorScheme.surfaceVariant
+							if (index == 0) CookCueHerb else CookCueTaupe
 						},
 						CircleShape,
 					),
@@ -829,78 +883,87 @@ private fun TimelineItem(
 			) {
 				Text(
 					text = (index + 1).toString(),
-					style = MaterialTheme.typography.labelMedium,
+					style = MaterialTheme.typography.labelSmall,
 					fontWeight = FontWeight.Bold,
-					color = if (active) {
-						MaterialTheme.colorScheme.onPrimary
-					} else {
-						MaterialTheme.colorScheme.onSurfaceVariant
-					},
+					color = Color.White,
 				)
 			}
 			if (!isLast) {
 				Box(
 					modifier = Modifier
 						.width(1.dp)
-						.height(74.dp)
+						.height(if (active) 72.dp else 60.dp)
 						.background(MaterialTheme.colorScheme.outline),
 				)
 			}
 		}
 
-		Spacer(Modifier.width(14.dp))
+		Spacer(Modifier.width(12.dp))
 
-		Column(
-			modifier = Modifier
-				.weight(1f)
-				.padding(bottom = if (isLast) 0.dp else 14.dp),
-		) {
-			Row(
-				modifier = Modifier.fillMaxWidth(),
-				horizontalArrangement = Arrangement.SpaceBetween,
-				verticalAlignment = Alignment.CenterVertically,
+		if (active) {
+			Surface(
+				modifier = Modifier
+					.weight(1f)
+					.padding(bottom = 8.dp),
+				color = MaterialTheme.colorScheme.surface,
+				shape = RoundedCornerShape(14.dp),
+				border = BorderStroke(
+					1.dp,
+					MaterialTheme.colorScheme.outline.copy(alpha = 0.8f),
+				),
 			) {
-				Text(
-					text = formatOffset(item.startSeconds),
-					style = MaterialTheme.typography.labelMedium,
-					fontWeight = FontWeight.Bold,
-					color = if (active) {
-						MaterialTheme.colorScheme.primary
-					} else {
-						MaterialTheme.colorScheme.onSurfaceVariant
-					},
-				)
-				Text(
-					text = if (item.task.kind == TaskKind.EVENT) {
-						"odhad ~" + formatRemaining(item.endSeconds - item.startSeconds)
-					} else {
-						formatRemaining(item.endSeconds - item.startSeconds)
-					},
-					style = MaterialTheme.typography.bodySmall,
-					color = MaterialTheme.colorScheme.onSurfaceVariant,
-				)
+				PlanRowContent(item, active = true)
 			}
-			Spacer(Modifier.height(4.dp))
+		} else {
+			Box(
+				modifier = Modifier
+					.weight(1f)
+					.padding(bottom = 8.dp),
+			) {
+				PlanRowContent(item, active = false)
+			}
+		}
+	}
+}
+
+@Composable
+private fun PlanRowContent(
+	item: ScheduledTask,
+	active: Boolean,
+) {
+	Row(
+		modifier = Modifier
+			.fillMaxWidth()
+			.padding(
+				horizontal = if (active) 13.dp else 0.dp,
+				vertical = if (active) 10.dp else 7.dp,
+			),
+		verticalAlignment = Alignment.CenterVertically,
+	) {
+		Column(modifier = Modifier.weight(1f)) {
 			Text(
 				text = item.task.title,
-				style = MaterialTheme.typography.titleMedium,
-				fontWeight = if (active) FontWeight.Bold else FontWeight.SemiBold,
+				style = MaterialTheme.typography.bodyMedium,
+				fontWeight = if (active) FontWeight.Bold else FontWeight.Medium,
 				color = MaterialTheme.colorScheme.onSurface,
 			)
-			Spacer(Modifier.height(3.dp))
+			Spacer(Modifier.height(2.dp))
 			Text(
-				text = item.task.instruction,
-				style = MaterialTheme.typography.bodyMedium,
+				text = if (item.task.kind == TaskKind.EVENT) {
+					"odhad ~" + formatRemaining(item.endSeconds - item.startSeconds)
+				} else {
+					formatRemaining(item.endSeconds - item.startSeconds)
+				},
+				style = MaterialTheme.typography.bodySmall,
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
 			)
-			if (item.task.kind == TaskKind.EVENT) {
-				Spacer(Modifier.height(5.dp))
-				Text(
-					text = "Pokračovanie čaká na potvrdenie",
-					style = MaterialTheme.typography.labelSmall,
-					color = MaterialTheme.colorScheme.tertiary,
-				)
-			}
+		}
+		if (active) {
+			Text(
+				text = "▶",
+				style = MaterialTheme.typography.labelLarge,
+				color = MaterialTheme.colorScheme.primary,
+			)
 		}
 	}
 }
@@ -909,36 +972,50 @@ private fun TimelineItem(
 private fun TroubleRow(
 	title: String,
 	advice: String,
+	showDivider: Boolean,
 ) {
 	Column(
 		modifier = Modifier
 			.fillMaxWidth()
-			.padding(vertical = 2.dp),
+			.padding(horizontal = 20.dp),
 	) {
 		Row(
-			modifier = Modifier.fillMaxWidth(),
+			modifier = Modifier.padding(vertical = 11.dp),
 			verticalAlignment = Alignment.CenterVertically,
 		) {
 			Box(
 				modifier = Modifier
-					.size(8.dp)
-					.background(MaterialTheme.colorScheme.primary, CircleShape),
-			)
+					.size(28.dp)
+					.background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
+				contentAlignment = Alignment.Center,
+			) {
+				Box(
+					modifier = Modifier
+						.size(7.dp)
+						.background(MaterialTheme.colorScheme.primary, CircleShape),
+				)
+			}
 			Spacer(Modifier.width(11.dp))
-			Text(
-				text = title,
-				style = MaterialTheme.typography.titleMedium,
-				fontWeight = FontWeight.SemiBold,
-				modifier = Modifier.weight(1f),
+			Column(modifier = Modifier.weight(1f)) {
+				Text(
+					text = title,
+					style = MaterialTheme.typography.bodyMedium,
+					fontWeight = FontWeight.SemiBold,
+				)
+				Spacer(Modifier.height(2.dp))
+				Text(
+					text = advice,
+					style = MaterialTheme.typography.bodySmall,
+					color = MaterialTheme.colorScheme.onSurfaceVariant,
+				)
+			}
+		}
+		if (showDivider) {
+			HorizontalDivider(
+				modifier = Modifier.padding(start = 39.dp),
+				color = MaterialTheme.colorScheme.outline.copy(alpha = 0.55f),
 			)
 		}
-		Spacer(Modifier.height(6.dp))
-		Text(
-			text = advice,
-			style = MaterialTheme.typography.bodyMedium,
-			color = MaterialTheme.colorScheme.onSurfaceVariant,
-			modifier = Modifier.padding(start = 19.dp),
-		)
 	}
 }
 
