@@ -33,17 +33,23 @@ object CookingSessionController {
 	var startedAt by mutableStateOf<Long?>(null)
 		private set
 
+	var eventDeferredUntil by mutableStateOf<Map<String, Long>>(emptyMap())
+		private set
+
 	fun start() {
 		durationOverrides = emptyMap()
+		eventDeferredUntil = emptyMap()
 		startedAt = SystemClock.elapsedRealtime()
 	}
 
 	fun restore(
 		startedAt: Long?,
 		durationOverrides: Map<String, Long>,
+		eventDeferredUntil: Map<String, Long> = emptyMap(),
 	) {
 		this.startedAt = startedAt
 		this.durationOverrides = durationOverrides
+		this.eventDeferredUntil = eventDeferredUntil
 	}
 
 	fun completeAction(taskId: String) {
@@ -61,6 +67,17 @@ object CookingSessionController {
 		val event = snapshot.pendingEvents.firstOrNull { it.task.id == taskId } ?: return
 		val actualDuration = (snapshot.elapsedSeconds - event.startSeconds).coerceAtLeast(1)
 		durationOverrides = durationOverrides + (taskId to actualDuration)
+		eventDeferredUntil = eventDeferredUntil - taskId
+	}
+
+	fun deferEvent(taskId: String) {
+		val snapshot = snapshot()
+		val event = snapshot.pendingEvents.firstOrNull { it.task.id == taskId } ?: return
+		val retryAfterSeconds = event.task.retryAfterSeconds ?: return
+
+		eventDeferredUntil = eventDeferredUntil + (
+			taskId to snapshot.elapsedSeconds + retryAfterSeconds
+		)
 	}
 
 	fun previous() {
@@ -114,7 +131,8 @@ object CookingSessionController {
 				it.task.kind == TaskKind.EVENT &&
 					it.task.id !in durationOverrides &&
 					it.task.id !in blockedIds &&
-					it.startSeconds <= elapsedSeconds
+					it.startSeconds <= elapsedSeconds &&
+					eventIsDue(it.task.id, elapsedSeconds)
 			}
 		}
 
@@ -221,7 +239,8 @@ object CookingSessionController {
 				it.task.kind == TaskKind.EVENT &&
 					it.task.id !in durationOverrides &&
 					it.task.id !in blockedIds &&
-					it.startSeconds <= elapsedSeconds
+					it.startSeconds <= elapsedSeconds &&
+					eventIsDue(it.task.id, elapsedSeconds)
 			}
 
 			val liveOverrides = durationOverrides.toMutableMap()
@@ -250,6 +269,13 @@ object CookingSessionController {
 		}
 
 		return schedule
+	}
+
+	private fun eventIsDue(
+		taskId: String,
+		elapsedSeconds: Long,
+	): Boolean {
+		return (eventDeferredUntil[taskId] ?: Long.MIN_VALUE) <= elapsedSeconds
 	}
 
 	private fun jumpTo(target: ScheduledTask) {
