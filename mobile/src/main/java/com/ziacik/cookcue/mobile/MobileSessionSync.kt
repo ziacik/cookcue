@@ -50,6 +50,14 @@ object MobileSessionSync {
 			putString(DataLayerProtocol.KEY_EVENT_INSTRUCTION, event?.task?.instruction.orEmpty())
 			putString(DataLayerProtocol.KEY_EVENT_TIPS, event?.task?.tips?.joinToString("\n").orEmpty())
 			putString(DataLayerProtocol.KEY_EVENT_ACTION_LABEL, event?.task?.actionLabel.orEmpty())
+			putString(
+				DataLayerProtocol.KEY_EVENT_RETRY_ACTION_LABEL,
+				event?.task?.retryActionLabel.orEmpty(),
+			)
+			putLong(
+				DataLayerProtocol.KEY_EVENT_RETRY_AFTER_SECONDS,
+				event?.task?.retryAfterSeconds ?: 0,
+			)
 
 			putString(DataLayerProtocol.KEY_NEXT_TITLE, next?.task?.title.orEmpty())
 			putLong(
