@@ -29,6 +29,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -37,6 +38,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -86,6 +88,7 @@ private fun CookCueScreen() {
 	val userActionVersion = CookingSessionController.userActionVersion
 
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
+	var showStopCookingDialog by remember { mutableStateOf(false) }
 
 	LaunchedEffect(startedAt) {
 		while (startedAt != null) {
@@ -160,6 +163,36 @@ private fun CookCueScreen() {
 		MobileSessionSync.publish(context)
 	}
 
+	if (showStopCookingDialog) {
+		AlertDialog(
+			onDismissRequest = { showStopCookingDialog = false },
+			title = {
+				Text("Ukončiť aktuálne varenie?")
+			},
+			text = {
+				Text("Rozrobený postup sa ukončí a vrátiš sa na výber receptu.")
+			},
+			confirmButton = {
+				TextButton(
+					onClick = {
+						showStopCookingDialog = false
+						CookingSessionController.stop()
+						persistAndSync()
+					},
+				) {
+					Text("UKONČIŤ")
+				}
+			},
+			dismissButton = {
+				TextButton(
+					onClick = { showStopCookingDialog = false },
+				) {
+					Text("SPÄŤ")
+				}
+			},
+		)
+	}
+
 	Scaffold(
 		containerColor = MaterialTheme.colorScheme.background,
 	) { padding ->
@@ -170,7 +203,11 @@ private fun CookCueScreen() {
 			contentPadding = PaddingValues(bottom = 28.dp),
 		) {
 			item {
-				CookCueTopBar(recipe.title)
+				CookCueTopBar(
+					recipeTitle = recipe.title,
+					showRecipesAction = snapshot.started,
+					onRecipes = { showStopCookingDialog = true },
+				)
 			}
 
 			if (!snapshot.started) {
@@ -440,15 +477,19 @@ private fun CookCueScreen() {
 }
 
 @Composable
-private fun CookCueTopBar(recipeTitle: String) {
+private fun CookCueTopBar(
+	recipeTitle: String,
+	showRecipesAction: Boolean,
+	onRecipes: () -> Unit,
+) {
 	Column {
 		Row(
 			modifier = Modifier
 				.fillMaxWidth()
-				.padding(horizontal = 18.dp, vertical = 14.dp),
+				.padding(horizontal = 18.dp, vertical = 11.dp),
 			verticalAlignment = Alignment.CenterVertically,
 		) {
-			CueMark(27.dp)
+			CueMark(30.dp)
 			Spacer(Modifier.width(10.dp))
 			Text(
 				text = recipeTitle,
@@ -458,12 +499,18 @@ private fun CookCueTopBar(recipeTitle: String) {
 				),
 				modifier = Modifier.weight(1f),
 			)
-			Text(
-				text = "CookCue",
-				style = MaterialTheme.typography.labelSmall,
-				color = MaterialTheme.colorScheme.primary,
-				letterSpacing = 0.7.sp,
-			)
+			if (showRecipesAction) {
+				TextButton(
+					onClick = onRecipes,
+					contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+				) {
+					Text(
+						text = "RECEPTY",
+						style = MaterialTheme.typography.labelMedium,
+						fontWeight = FontWeight.Bold,
+					)
+				}
+			}
 		}
 		HorizontalDivider(
 			color = MaterialTheme.colorScheme.outline.copy(alpha = 0.75f),
@@ -473,23 +520,65 @@ private fun CookCueTopBar(recipeTitle: String) {
 
 @Composable
 private fun CueMark(size: Dp) {
-	val primary = MaterialTheme.colorScheme.primary
+	val wine = MaterialTheme.colorScheme.primary
 	Box(modifier = Modifier.size(size)) {
 		Canvas(modifier = Modifier.fillMaxSize()) {
+			val stroke = size.toPx() * 0.19f
+			val radius = size.toPx() * 0.30f
+			val centerX = this.size.width * 0.48f
+			val centerY = this.size.height * 0.53f
+
 			drawArc(
-				color = primary,
-				startAngle = 45f,
-				sweepAngle = 275f,
+				color = wine,
+				startAngle = -67f,
+				sweepAngle = 255f,
 				useCenter = false,
+				topLeft = Offset(
+					centerX - radius,
+					centerY - radius,
+				),
+				size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2),
 				style = Stroke(
-					width = 3.5.dp.toPx(),
-					cap = StrokeCap.Round,
+					width = stroke,
+					cap = StrokeCap.Butt,
 				),
 			)
+
 			drawCircle(
 				color = CookCueHoney,
-				radius = 2.7.dp.toPx(),
-				center = Offset(this.size.width * 0.76f, this.size.height * 0.20f),
+				radius = this.size.width * 0.105f,
+				center = Offset(
+					this.size.width * 0.48f,
+					this.size.height * 0.54f,
+				),
+			)
+
+			val rayColor = CookCueHoney
+			val rayStroke = this.size.width * 0.032f
+			listOf(
+				Offset(0.61f, 0.37f) to Offset(0.68f, 0.18f),
+				Offset(0.66f, 0.39f) to Offset(0.75f, 0.22f),
+				Offset(0.71f, 0.42f) to Offset(0.82f, 0.27f),
+			).forEach { (from, to) ->
+				drawLine(
+					color = rayColor,
+					start = Offset(this.size.width * from.x, this.size.height * from.y),
+					end = Offset(this.size.width * to.x, this.size.height * to.y),
+					strokeWidth = rayStroke,
+					cap = StrokeCap.Butt,
+				)
+			}
+
+			val block = androidx.compose.ui.graphics.Path().apply {
+				moveTo(this@Canvas.size.width * 0.74f, this@Canvas.size.height * 0.42f)
+				lineTo(this@Canvas.size.width * 0.84f, this@Canvas.size.height * 0.27f)
+				lineTo(this@Canvas.size.width * 0.93f, this@Canvas.size.height * 0.34f)
+				lineTo(this@Canvas.size.width * 0.82f, this@Canvas.size.height * 0.49f)
+				close()
+			}
+			drawPath(
+				path = block,
+				color = CookCueHoney,
 			)
 		}
 	}
