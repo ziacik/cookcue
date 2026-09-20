@@ -10,6 +10,7 @@ import com.ziacik.cookcue.core.sync.DataLayerProtocol
 data class WatchSessionSnapshot(
 	val synced: Boolean = false,
 	val started: Boolean = false,
+	val recipeTitle: String = "",
 	val currentTaskId: String = "",
 	val currentTitle: String = "",
 	val currentInstruction: String = "",
@@ -19,6 +20,7 @@ data class WatchSessionSnapshot(
 	val currentElapsedSeconds: Long = 0,
 	val backgroundTitle: String = "",
 	val backgroundRemainingSeconds: Long = 0,
+	val backgroundEstimateSeconds: Long = 0,
 	val eventTaskId: String = "",
 	val eventTitle: String = "",
 	val eventInstruction: String = "",
@@ -41,6 +43,7 @@ object WatchSessionStore {
 		snapshot = WatchSessionSnapshot(
 			synced = true,
 			started = dataMap.getBoolean(DataLayerProtocol.KEY_STARTED),
+			recipeTitle = dataMap.getString(DataLayerProtocol.KEY_RECIPE_TITLE).orEmpty(),
 			currentTaskId = dataMap.getString(DataLayerProtocol.KEY_CURRENT_TASK_ID).orEmpty(),
 			currentTitle = dataMap.getString(DataLayerProtocol.KEY_CURRENT_TITLE).orEmpty(),
 			currentInstruction = dataMap.getString(DataLayerProtocol.KEY_CURRENT_INSTRUCTION).orEmpty(),
@@ -50,6 +53,7 @@ object WatchSessionStore {
 			currentElapsedSeconds = dataMap.getLong(DataLayerProtocol.KEY_CURRENT_ELAPSED_SECONDS),
 			backgroundTitle = dataMap.getString(DataLayerProtocol.KEY_BACKGROUND_TITLE).orEmpty(),
 			backgroundRemainingSeconds = dataMap.getLong(DataLayerProtocol.KEY_BACKGROUND_REMAINING_SECONDS),
+			backgroundEstimateSeconds = dataMap.getLong(DataLayerProtocol.KEY_BACKGROUND_ESTIMATE_SECONDS),
 			eventTaskId = dataMap.getString(DataLayerProtocol.KEY_EVENT_TASK_ID).orEmpty(),
 			eventTitle = dataMap.getString(DataLayerProtocol.KEY_EVENT_TITLE).orEmpty(),
 			eventInstruction = dataMap.getString(DataLayerProtocol.KEY_EVENT_INSTRUCTION).orEmpty(),
