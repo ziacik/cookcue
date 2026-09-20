@@ -5,8 +5,17 @@ import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import com.ziacik.cookcue.core.sync.DataLayerProtocol
 
+data class TransitionSignal(
+	val id: Long,
+	val title: String,
+	val text: String,
+)
+
 object MobileSessionSync {
-	fun publish(context: Context) {
+	fun publish(
+		context: Context,
+		transition: TransitionSignal? = null,
+	) {
 		val snapshot = CookingSessionController.snapshot()
 		val current = snapshot.currentAction
 		val background = snapshot.background.firstOrNull()
@@ -55,6 +64,14 @@ object MobileSessionSync {
 			putString(DataLayerProtocol.KEY_EVENT_INSTRUCTION, event?.task?.instruction.orEmpty())
 			putString(DataLayerProtocol.KEY_EVENT_TIPS, event?.task?.tips?.joinToString("\n").orEmpty())
 			putString(DataLayerProtocol.KEY_EVENT_ACTION_LABEL, event?.task?.actionLabel.orEmpty())
+			putString(
+				DataLayerProtocol.KEY_EVENT_RETRY_ACTION_LABEL,
+				event?.task?.retryActionLabel.orEmpty(),
+			)
+			putLong(
+				DataLayerProtocol.KEY_EVENT_RETRY_AFTER_SECONDS,
+				event?.task?.retryAfterSeconds ?: 0,
+			)
 
 			putString(DataLayerProtocol.KEY_NEXT_TITLE, next?.task?.title.orEmpty())
 			putLong(
@@ -64,6 +81,10 @@ object MobileSessionSync {
 
 			putBoolean(DataLayerProtocol.KEY_CAN_PREVIOUS, snapshot.previousAction != null)
 			putBoolean(DataLayerProtocol.KEY_CAN_NEXT, snapshot.nextAction != null)
+
+			putLong(DataLayerProtocol.KEY_TRANSITION_ID, transition?.id ?: 0)
+			putString(DataLayerProtocol.KEY_TRANSITION_TITLE, transition?.title.orEmpty())
+			putString(DataLayerProtocol.KEY_TRANSITION_TEXT, transition?.text.orEmpty())
 		}
 
 		Wearable

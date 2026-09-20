@@ -1,9 +1,14 @@
 package com.ziacik.cookcue.mobile
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -36,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -69,9 +75,15 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun CookCueScreen() {
 	val context = LocalContext.current
+	val notificationPermissionLauncher = rememberLauncherForActivityResult(
+		ActivityResultContracts.RequestPermission(),
+	) {}
 	val recipe = CookingSessionController.recipe
+	val selectedRecipeId = CookingSessionController.selectedRecipeId
 	val startedAt = CookingSessionController.startedAt
 	val durationOverrides = CookingSessionController.durationOverrides
+	val eventDeferredUntil = CookingSessionController.eventDeferredUntil
+	val userActionVersion = CookingSessionController.userActionVersion
 
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
 
@@ -87,7 +99,13 @@ private fun CookCueScreen() {
 		MobileSessionSync.publish(context)
 	}
 
-	val snapshot = remember(now, startedAt, durationOverrides) {
+	val snapshot = remember(
+		now,
+		startedAt,
+		durationOverrides,
+		eventDeferredUntil,
+		selectedRecipeId,
+	) {
 		CookingSessionController.snapshot(now)
 	}
 	val current = snapshot.currentAction
@@ -97,6 +115,44 @@ private fun CookCueScreen() {
 	val activeStepIndex = snapshot.schedule.indexOfFirst { it.task.id == activeTaskId }
 	val secondaryBackground = snapshot.background.filterNot {
 		it.task.id == displayedWait?.task?.id
+	}
+	val transitionCue = snapshot.transitionCue()
+	var transitionInitialized by remember { mutableStateOf(false) }
+	var previousTransitionKey by remember { mutableStateOf<String?>(null) }
+	var previousUserActionVersion by remember { mutableLongStateOf(userActionVersion) }
+
+	LaunchedEffect(snapshot.started, transitionCue?.key, userActionVersion) {
+		if (!snapshot.started) {
+			transitionInitialized = false
+			previousTransitionKey = null
+			previousUserActionVersion = userActionVersion
+			return@LaunchedEffect
+		}
+
+		if (!transitionInitialized) {
+			transitionInitialized = true
+			previousTransitionKey = transitionCue?.key
+			previousUserActionVersion = userActionVersion
+			return@LaunchedEffect
+		}
+
+		val changedByUser = userActionVersion != previousUserActionVersion
+		val changedStep = transitionCue?.key != previousTransitionKey
+		if (changedStep && !changedByUser && transitionCue != null) {
+			val transitionId = System.currentTimeMillis()
+			MobileTransitionNotifier.notify(context, transitionCue)
+			MobileSessionSync.publish(
+				context,
+				TransitionSignal(
+					id = transitionId,
+					title = transitionCue.title,
+					text = transitionCue.text,
+				),
+			)
+		}
+
+		previousTransitionKey = transitionCue?.key
+		previousUserActionVersion = userActionVersion
 	}
 
 	fun persistAndSync() {
@@ -123,6 +179,32 @@ private fun CookCueScreen() {
 						modifier = Modifier.padding(horizontal = 20.dp),
 					) {
 						Spacer(Modifier.height(18.dp))
+						SectionTitle("Recept")
+						Spacer(Modifier.height(8.dp))
+						CookingSessionController.availableRecipes.forEach { option ->
+							if (option.id == selectedRecipeId) {
+								Button(
+									onClick = {},
+									modifier = Modifier.fillMaxWidth(),
+									shape = RoundedCornerShape(12.dp),
+								) {
+									Text(option.title)
+								}
+							} else {
+								OutlinedButton(
+									onClick = {
+										CookingSessionController.selectRecipe(option.id)
+										persistAndSync()
+									},
+									modifier = Modifier.fillMaxWidth(),
+									shape = RoundedCornerShape(12.dp),
+								) {
+									Text(option.title)
+								}
+							}
+							Spacer(Modifier.height(6.dp))
+						}
+						Spacer(Modifier.height(12.dp))
 						Text(
 							text = recipe.title,
 							style = MaterialTheme.typography.headlineLarge.copy(
@@ -138,7 +220,15 @@ private fun CookCueScreen() {
 						)
 						Spacer(Modifier.height(18.dp))
 						PreCookingPanel(
+							note = recipe.preCookingNote,
 							onStart = {
+								if (
+									Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+									context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
+									PackageManager.PERMISSION_GRANTED
+								) {
+									notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+								}
 								CookingSessionController.start()
 								persistAndSync()
 							},
@@ -213,6 +303,12 @@ private fun CookCueScreen() {
 							instruction = event.task.instruction,
 							tips = event.task.tips,
 							actionLabel = event.task.actionLabel ?: "HOTOVO",
+							retryActionLabel = event.task.retryActionLabel,
+							retryAfterSeconds = event.task.retryAfterSeconds,
+							onDefer = {
+								CookingSessionController.deferEvent(event.task.id)
+								persistAndSync()
+							},
 							onConfirm = {
 								CookingSessionController.confirmEvent(event.task.id)
 								persistAndSync()
@@ -401,6 +497,7 @@ private fun CueMark(size: Dp) {
 
 @Composable
 private fun PreCookingPanel(
+	note: String?,
 	onStart: () -> Unit,
 ) {
 	Surface(
@@ -409,22 +506,16 @@ private fun PreCookingPanel(
 		shape = RoundedCornerShape(18.dp),
 	) {
 		Column(modifier = Modifier.padding(18.dp)) {
-			SmallLabel("PRED VARENÍM")
-			Spacer(Modifier.height(7.dp))
-			Text(
-				text = "Fazuľu namoč vopred",
-				style = MaterialTheme.typography.titleLarge.copy(
-					fontFamily = FontFamily.Serif,
-					fontWeight = FontWeight.SemiBold,
-				),
-			)
-			Spacer(Modifier.height(5.dp))
-			Text(
-				text = "120 g suchej fazule namoč na 8–12 hodín vo veľkom množstve studenej vody.",
-				style = MaterialTheme.typography.bodyMedium,
-				color = MaterialTheme.colorScheme.onSurfaceVariant,
-			)
-			Spacer(Modifier.height(16.dp))
+		if (note != null) {
+				SmallLabel("PRED VARENÍM")
+				Spacer(Modifier.height(7.dp))
+				Text(
+					text = note,
+					style = MaterialTheme.typography.bodyMedium,
+					color = MaterialTheme.colorScheme.onSurfaceVariant,
+				)
+				Spacer(Modifier.height(16.dp))
+			}
 			Button(
 				onClick = onStart,
 				modifier = Modifier.fillMaxWidth(),
@@ -712,6 +803,9 @@ private fun PendingEventCard(
 	instruction: String,
 	tips: List<String>,
 	actionLabel: String,
+	retryActionLabel: String?,
+	retryAfterSeconds: Long?,
+	onDefer: () -> Unit,
 	onConfirm: () -> Unit,
 ) {
 	Surface(
@@ -746,15 +840,50 @@ private fun PendingEventCard(
 				)
 			}
 			Spacer(Modifier.height(12.dp))
-			Button(
-				onClick = onConfirm,
-				modifier = Modifier.fillMaxWidth(),
-				shape = RoundedCornerShape(12.dp),
-			) {
+			if (retryAfterSeconds != null && retryActionLabel != null) {
+				Row(
+					modifier = Modifier.fillMaxWidth(),
+					horizontalArrangement = Arrangement.spacedBy(10.dp),
+				) {
+					OutlinedButton(
+						onClick = onDefer,
+						modifier = Modifier.weight(1f),
+						shape = RoundedCornerShape(12.dp),
+					) {
+						Text(
+							text = retryActionLabel,
+							fontWeight = FontWeight.Bold,
+						)
+					}
+					Button(
+						onClick = onConfirm,
+						modifier = Modifier.weight(1f),
+						shape = RoundedCornerShape(12.dp),
+					) {
+						Text(
+							text = actionLabel,
+							fontWeight = FontWeight.Bold,
+						)
+					}
+				}
+				Spacer(Modifier.height(7.dp))
 				Text(
-					text = actionLabel,
-					fontWeight = FontWeight.Bold,
+					text = "Ak ešte nie, skontrolujeme znova o " +
+						formatRemaining(retryAfterSeconds) + ".",
+					style = MaterialTheme.typography.bodySmall,
+					color = MaterialTheme.colorScheme.onTertiaryContainer,
 				)
+			} else {
+				Button(
+					onClick = onConfirm,
+					modifier = Modifier.fillMaxWidth(),
+					shape = RoundedCornerShape(12.dp),
+				) {
+					Text(
+						text = actionLabel,
+						fontWeight = FontWeight.Bold,
+					)
+				}
 			}
 		}
 	}

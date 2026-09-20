@@ -1,12 +1,18 @@
 package com.ziacik.cookcue.wear
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -69,6 +75,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun WearCookCueScreen() {
 	val context = LocalContext.current
+	val notificationPermissionLauncher = rememberLauncherForActivityResult(
+		ActivityResultContracts.RequestPermission(),
+	) {}
 	val state = WatchSessionStore.snapshot
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
 
@@ -170,6 +179,13 @@ private fun WearCookCueScreen() {
 					message = "Varenie ešte nie je spustené",
 					buttonText = "SPUSTIŤ",
 					onClick = {
+						if (
+							Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+							context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
+							PackageManager.PERMISSION_GRANTED
+						) {
+							notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+						}
 						WearActionSender.send(
 							context,
 							DataLayerProtocol.ACTION_START,
@@ -182,6 +198,15 @@ private fun WearCookCueScreen() {
 				EventState(
 					title = state.eventTitle,
 					actionLabel = state.eventActionLabel.ifBlank { "HOTOVO" },
+					retryActionLabel = state.eventRetryActionLabel,
+					retryAfterSeconds = state.eventRetryAfterSeconds,
+					onDefer = {
+						WearActionSender.send(
+							context,
+							DataLayerProtocol.ACTION_DEFER_EVENT,
+							state.eventTaskId,
+						)
+					},
 					onConfirm = {
 						WearActionSender.send(
 							context,
@@ -440,6 +465,9 @@ private fun CheckGlyph(modifier: Modifier = Modifier) {
 private fun EventState(
 	title: String,
 	actionLabel: String,
+	retryActionLabel: String,
+	retryAfterSeconds: Long,
+	onDefer: () -> Unit,
 	onConfirm: () -> Unit,
 ) {
 	Box(
@@ -488,19 +516,75 @@ private fun EventState(
 
 			Spacer(Modifier.height(12.dp))
 
-			RoundDoneButton(onClick = onConfirm)
+			if (retryAfterSeconds > 0 && retryActionLabel.isNotBlank()) {
+				Row(
+					horizontalArrangement = Arrangement.spacedBy(18.dp),
+					verticalAlignment = Alignment.Top,
+				) {
+					EventChoice(
+						label = retryActionLabel,
+						symbol = "×",
+						onClick = onDefer,
+					)
+					EventChoice(
+						label = actionLabel,
+						symbol = "✓",
+						onClick = onConfirm,
+					)
+				}
+				Spacer(Modifier.height(5.dp))
+				Text(
+					text = "znova o " + formatCompactDuration(retryAfterSeconds),
+					color = CookCueMuted,
+					fontSize = 8.sp,
+					textAlign = TextAlign.Center,
+				)
+			} else {
+				RoundDoneButton(onClick = onConfirm)
+				Spacer(Modifier.height(5.dp))
+				Text(
+					text = actionLabel,
+					color = CookCueMuted,
+					fontSize = 8.sp,
+					textAlign = TextAlign.Center,
+					maxLines = 1,
+					overflow = TextOverflow.Ellipsis,
+				)
+			}
+		}
+	}
+}
 
-			Spacer(Modifier.height(5.dp))
-
+@Composable
+private fun EventChoice(
+	label: String,
+	symbol: String,
+	onClick: () -> Unit,
+) {
+	Column(horizontalAlignment = Alignment.CenterHorizontally) {
+		Button(
+			onClick = onClick,
+			modifier = Modifier.size(40.dp),
+			colors = ButtonDefaults.buttonColors(
+				containerColor = CookCueWineDeep,
+				contentColor = CookCueCream,
+			),
+			shape = CircleShape,
+		) {
 			Text(
-				text = actionLabel,
-				color = CookCueMuted,
-				fontSize = 8.sp,
-				textAlign = TextAlign.Center,
-				maxLines = 1,
-				overflow = TextOverflow.Ellipsis,
+				text = symbol,
+				fontSize = 18.sp,
+				fontWeight = FontWeight.Medium,
 			)
 		}
+		Spacer(Modifier.height(3.dp))
+		Text(
+			text = label,
+			color = CookCueMuted,
+			fontSize = 8.sp,
+			maxLines = 1,
+			overflow = TextOverflow.Ellipsis,
+		)
 	}
 }
 
@@ -546,6 +630,17 @@ private fun SimpleState(
 				)
 			}
 		}
+	}
+}
+
+private fun formatCompactDuration(seconds: Long): String {
+	val safe = seconds.coerceAtLeast(0)
+	val minutes = safe / 60
+	val remainder = safe % 60
+	return when {
+		minutes > 0 && remainder > 0 -> minutes.toString() + "m " + remainder + "s"
+		minutes > 0 -> minutes.toString() + "m"
+		else -> remainder.toString() + "s"
 	}
 }
 

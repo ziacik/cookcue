@@ -7,6 +7,11 @@ import com.google.android.gms.wearable.WearableListenerService
 import com.ziacik.cookcue.core.sync.DataLayerProtocol
 
 class WearDataLayerService : WearableListenerService() {
+	override fun onCreate() {
+		super.onCreate()
+		WearTransitionNotifier.ensureChannel(this)
+	}
+
 	override fun onDataChanged(dataEvents: DataEventBuffer) {
 		try {
 			for (event in dataEvents) {
@@ -14,8 +19,13 @@ class WearDataLayerService : WearableListenerService() {
 					event.type == DataEvent.TYPE_CHANGED &&
 					event.dataItem.uri.path == DataLayerProtocol.SESSION_PATH
 				) {
-					WatchSessionStore.update(
-						DataMapItem.fromDataItem(event.dataItem).dataMap
+					val dataMap = DataMapItem.fromDataItem(event.dataItem).dataMap
+					WatchSessionStore.update(dataMap)
+					WearTransitionNotifier.notifyIfNew(
+						context = this,
+						transitionId = dataMap.getLong(DataLayerProtocol.KEY_TRANSITION_ID),
+						title = dataMap.getString(DataLayerProtocol.KEY_TRANSITION_TITLE).orEmpty(),
+						text = dataMap.getString(DataLayerProtocol.KEY_TRANSITION_TEXT).orEmpty(),
 					)
 				}
 			}

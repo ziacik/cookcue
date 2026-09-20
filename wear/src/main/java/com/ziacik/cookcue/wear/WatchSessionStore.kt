@@ -26,6 +26,8 @@ data class WatchSessionSnapshot(
 	val eventInstruction: String = "",
 	val eventTips: String = "",
 	val eventActionLabel: String = "",
+	val eventRetryActionLabel: String = "",
+	val eventRetryAfterSeconds: Long = 0,
 	val nextTitle: String = "",
 	val nextInSeconds: Long = 0,
 	val canPrevious: Boolean = false,
@@ -57,6 +59,12 @@ object WatchSessionStore {
 			eventInstruction = dataMap.getString(DataLayerProtocol.KEY_EVENT_INSTRUCTION).orEmpty(),
 			eventTips = dataMap.getString(DataLayerProtocol.KEY_EVENT_TIPS).orEmpty(),
 			eventActionLabel = dataMap.getString(DataLayerProtocol.KEY_EVENT_ACTION_LABEL).orEmpty(),
+			eventRetryActionLabel = dataMap
+				.getString(DataLayerProtocol.KEY_EVENT_RETRY_ACTION_LABEL)
+				.orEmpty(),
+			eventRetryAfterSeconds = dataMap.getLong(
+				DataLayerProtocol.KEY_EVENT_RETRY_AFTER_SECONDS,
+			),
 			nextTitle = dataMap.getString(DataLayerProtocol.KEY_NEXT_TITLE).orEmpty(),
 			nextInSeconds = dataMap.getLong(DataLayerProtocol.KEY_NEXT_IN_SECONDS),
 			canPrevious = dataMap.getBoolean(DataLayerProtocol.KEY_CAN_PREVIOUS),
