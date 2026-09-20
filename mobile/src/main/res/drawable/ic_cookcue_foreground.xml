@@ -10,42 +10,25 @@
 		android:scaleX="0.76"
 		android:scaleY="0.76">
 
-		<!-- Thick circular C with flat ends, matching the approved mark -->
 		<path
-			android:pathData="M62,31 A29,29 0,1 0,76,73"
+			android:pathData="M63,31 A29,29 0,1 0,77,73"
 			android:fillColor="#00000000"
 			android:strokeColor="#FFF8F1"
 			android:strokeWidth="15"
 			android:strokeLineCap="butt"
 			android:strokeLineJoin="round" />
 
-		<!-- Gold centre -->
 		<path
 			android:pathData="M51,47 A10,10 0,1 1,51,67 A10,10 0,1 1,51,47"
 			android:fillColor="#C9A86B" />
 
-		<!-- Cue comb -->
-		<path
-			android:pathData="M63,35 L68,23"
-			android:fillColor="#00000000"
-			android:strokeColor="#C9A86B"
-			android:strokeWidth="2.5"
-			android:strokeLineCap="butt" />
-		<path
-			android:pathData="M67,37 L74,25"
-			android:fillColor="#00000000"
-			android:strokeColor="#C9A86B"
-			android:strokeWidth="2.5"
-			android:strokeLineCap="butt" />
-		<path
-			android:pathData="M71,39 L80,28"
-			android:fillColor="#00000000"
-			android:strokeColor="#C9A86B"
-			android:strokeWidth="2.5"
-			android:strokeLineCap="butt" />
+		<path android:pathData="M64,35 L68,36 L74,20 L70,19 Z" android:fillColor="#C9A86B" />
+		<path android:pathData="M69,37 L73,38 L79,22 L75,21 Z" android:fillColor="#C9A86B" />
+		<path android:pathData="M74,39 L78,40 L84,24 L80,23 Z" android:fillColor="#C9A86B" />
+		<path android:pathData="M79,41 L83,42 L89,26 L85,25 Z" android:fillColor="#C9A86B" />
 
 		<path
-			android:pathData="M77,40 L85,29 L92,35 L83,47 Z"
+			android:pathData="M85,44 L94,49 L103,35 L94,30 Z"
 			android:fillColor="#C9A86B" />
 	</group>
 </vector>
