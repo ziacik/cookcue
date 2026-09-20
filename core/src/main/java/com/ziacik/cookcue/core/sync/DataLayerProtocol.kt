@@ -13,6 +13,7 @@ object DataLayerProtocol {
 
 	const val KEY_VERSION = "version"
 	const val KEY_STARTED = "started"
+	const val KEY_RECIPE_TITLE = "recipe_title"
 	const val KEY_CURRENT_TASK_ID = "current_task_id"
 	const val KEY_CURRENT_TITLE = "current_title"
 	const val KEY_CURRENT_INSTRUCTION = "current_instruction"
@@ -22,6 +23,7 @@ object DataLayerProtocol {
 	const val KEY_CURRENT_ELAPSED_SECONDS = "current_elapsed_seconds"
 	const val KEY_BACKGROUND_TITLE = "background_title"
 	const val KEY_BACKGROUND_REMAINING_SECONDS = "background_remaining_seconds"
+	const val KEY_BACKGROUND_ESTIMATE_SECONDS = "background_estimate_seconds"
 	const val KEY_EVENT_TASK_ID = "event_task_id"
 	const val KEY_EVENT_TITLE = "event_title"
 	const val KEY_EVENT_INSTRUCTION = "event_instruction"
