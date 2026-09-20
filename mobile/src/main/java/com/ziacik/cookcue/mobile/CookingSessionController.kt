@@ -45,6 +45,7 @@ object CookingSessionController {
 		selectedRecipeId = recipeId
 		durationOverrides = emptyMap()
 		eventDeferredUntil = emptyMap()
+		markUserAction()
 	}
 
 	var durationOverrides by mutableStateOf<Map<String, Long>>(emptyMap())
@@ -56,10 +57,18 @@ object CookingSessionController {
 	var eventDeferredUntil by mutableStateOf<Map<String, Long>>(emptyMap())
 		private set
 
+	var userActionVersion by mutableStateOf(0L)
+		private set
+
+	private fun markUserAction() {
+		userActionVersion += 1
+	}
+
 	fun start() {
 		durationOverrides = emptyMap()
 		eventDeferredUntil = emptyMap()
 		startedAt = SystemClock.elapsedRealtime()
+		markUserAction()
 	}
 
 	fun restore(
@@ -75,6 +84,7 @@ object CookingSessionController {
 		this.startedAt = startedAt
 		this.durationOverrides = durationOverrides
 		this.eventDeferredUntil = eventDeferredUntil
+		markUserAction()
 	}
 
 	fun completeAction(taskId: String) {
@@ -85,6 +95,7 @@ object CookingSessionController {
 
 		val actualDuration = (snapshot.elapsedSeconds - action.startSeconds).coerceAtLeast(1)
 		durationOverrides = durationOverrides + (taskId to actualDuration)
+		markUserAction()
 	}
 
 	fun confirmEvent(taskId: String) {
@@ -93,6 +104,7 @@ object CookingSessionController {
 		val actualDuration = (snapshot.elapsedSeconds - event.startSeconds).coerceAtLeast(1)
 		durationOverrides = durationOverrides + (taskId to actualDuration)
 		eventDeferredUntil = eventDeferredUntil - taskId
+		markUserAction()
 	}
 
 	fun deferEvent(taskId: String) {
@@ -103,6 +115,7 @@ object CookingSessionController {
 		eventDeferredUntil = eventDeferredUntil + (
 			taskId to snapshot.elapsedSeconds + retryAfterSeconds
 		)
+		markUserAction()
 	}
 
 	fun previous() {
@@ -113,6 +126,7 @@ object CookingSessionController {
 
 		val target = snapshot.previousAction ?: return
 		jumpTo(target)
+		markUserAction()
 	}
 
 	fun next() {
@@ -123,6 +137,7 @@ object CookingSessionController {
 
 		val target = snapshot.nextAction ?: return
 		jumpTo(target)
+		markUserAction()
 	}
 
 	fun snapshot(now: Long = SystemClock.elapsedRealtime()): MobileSessionSnapshot {

@@ -34,6 +34,9 @@ object DataLayerProtocol {
 	const val KEY_NEXT_IN_SECONDS = "next_in_seconds"
 	const val KEY_CAN_PREVIOUS = "can_previous"
 	const val KEY_CAN_NEXT = "can_next"
+	const val KEY_TRANSITION_ID = "transition_id"
+	const val KEY_TRANSITION_TITLE = "transition_title"
+	const val KEY_TRANSITION_TEXT = "transition_text"
 
 	fun encodeAction(
 		action: String,
