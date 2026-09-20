@@ -59,7 +59,7 @@ object BeanSoupRecipe {
 			CookingTask(
 				id = "start-beans",
 				title = "Daj fazuľu variť",
-				durationSeconds = 60,
+				durationSeconds = 2 * 60,
 				dependsOn = setOf("rinse"),
 				resources = uses(COOK, POT, BURNER),
 				instruction = "Do hrnca daj namočenú fazuľu, 800 ml čistej vody, 1/2 kocky zeleninového bujónu, 1 bobkový list a 3 guľky nového korenia. Zapni sporák.",
@@ -140,14 +140,6 @@ object BeanSoupRecipe {
 				instruction = "1 menšiu cibuľu nakrájaj nadrobno.",
 			),
 			CookingTask(
-				id = "prep-garlic",
-				title = "Pretlač cesnak",
-				durationSeconds = 60,
-				dependsOn = setOf("start-beans"),
-				resources = uses(COOK),
-				instruction = "2 strúčiky cesnaku pretlač lisom.",
-			),
-			CookingTask(
 				id = "prep-sausage",
 				title = "Nakrájaj klobásu",
 				durationSeconds = 2 * 60,
@@ -181,10 +173,10 @@ object BeanSoupRecipe {
 			CookingTask(
 				id = "garlic-paprika",
 				title = "Pridaj cesnak a papriku",
-				durationSeconds = 40,
-				dependsOn = setOf("prep-garlic", "saute-onion"),
+				durationSeconds = 90,
+				dependsOn = setOf("saute-onion"),
 				resources = uses(COOK, PAN, BURNER),
-				instruction = "Pridaj 2 pretlačené strúčiky cesnaku a miešaj len 20–30 sekúnd. Pridaj 1/2 ČL sladkej papriky a prakticky hneď 1–2 PL vody z hrnca. Premiešaj.",
+				instruction = "Pretlač 2 strúčiky cesnaku priamo do panvice k cibuli a miešaj 20–30 sekúnd. Pridaj 1/2 ČL sladkej papriky a prakticky hneď 1–2 PL vody z hrnca. Premiešaj.",
 				tips = listOf(
 					"Paprika sa nesmie spáliť, inak zhorkne.",
 				),
