@@ -1,4 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" role="img" aria-label="CookCue mark">
-	<path d="M71 29C61 20 44 20 33 31C20 44 20 64 33 77C44 88 61 88 72 78" fill="none" stroke="#9E3A5A" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
-	<circle cx="78" cy="23" r="6" fill="#D3A64A"/>
+	<path d="M68 30C54 23 36 27 27 41C18 56 22 75 37 84C51 93 69 89 80 76"
+		fill="none" stroke="#5B1120" stroke-width="16" stroke-linecap="butt" stroke-linejoin="round"/>
+	<circle cx="54" cy="54" r="12" fill="#C9A86B"/>
+	<path d="M68 31L73 19M72 33L79 21M76 36L85 25"
+		fill="none" stroke="#C9A86B" stroke-width="3" stroke-linecap="butt"/>
+	<path d="M81 37L91 29L98 38L87 47Z" fill="#C9A86B"/>
 </svg>
