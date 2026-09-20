@@ -442,7 +442,7 @@ private fun WearRemainingDial(remainingSeconds: Long) {
 			Text(
 				text = formatRemaining(remainingSeconds),
 				color = CookCueCream,
-				style = MaterialTheme.typography.headlineMedium,
+				style = MaterialTheme.typography.titleLarge,
 				fontWeight = FontWeight.Bold,
 			)
 			Text(
