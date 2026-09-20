@@ -8,6 +8,7 @@ import com.ziacik.cookcue.core.model.Recipe
 import com.ziacik.cookcue.core.model.ScheduledTask
 import com.ziacik.cookcue.core.model.TaskKind
 import com.ziacik.cookcue.core.recipes.BeanSoupRecipe
+import com.ziacik.cookcue.core.recipes.ScrambledEggsWithOnionRecipe
 import com.ziacik.cookcue.core.scheduler.Scheduler
 
 data class MobileSessionSnapshot(
@@ -23,9 +24,28 @@ data class MobileSessionSnapshot(
 )
 
 object CookingSessionController {
-	val recipe: Recipe = BeanSoupRecipe.recipe
+	val availableRecipes: List<Recipe> = listOf(
+		BeanSoupRecipe.recipe,
+		ScrambledEggsWithOnionRecipe.recipe,
+	)
+
+	var selectedRecipeId by mutableStateOf(BeanSoupRecipe.recipe.id)
+		private set
+
+	val recipe: Recipe
+		get() = availableRecipes.first { it.id == selectedRecipeId }
 
 	private val scheduler = Scheduler()
+
+	fun selectRecipe(recipeId: String) {
+		if (startedAt != null || availableRecipes.none { it.id == recipeId }) {
+			return
+		}
+
+		selectedRecipeId = recipeId
+		durationOverrides = emptyMap()
+		eventDeferredUntil = emptyMap()
+	}
 
 	var durationOverrides by mutableStateOf<Map<String, Long>>(emptyMap())
 		private set
@@ -43,10 +63,15 @@ object CookingSessionController {
 	}
 
 	fun restore(
+		recipeId: String?,
 		startedAt: Long?,
 		durationOverrides: Map<String, Long>,
 		eventDeferredUntil: Map<String, Long> = emptyMap(),
 	) {
+		selectedRecipeId = availableRecipes
+			.firstOrNull { it.id == recipeId }
+			?.id
+			?: BeanSoupRecipe.recipe.id
 		this.startedAt = startedAt
 		this.durationOverrides = durationOverrides
 		this.eventDeferredUntil = eventDeferredUntil
