@@ -46,11 +46,19 @@ class BeanSoupRecipeTest {
 		val finalReady = recipe.tasks.single { it.id == "final-ready" }
 
 		assertEquals(TaskKind.EVENT, beanCheck.kind)
-		assertEquals("FAZUĽA JE SKORO HOTOVÁ", beanCheck.actionLabel)
+		assertEquals("ÁNO", beanCheck.actionLabel)
+		assertEquals("NIE", beanCheck.retryActionLabel)
+		assertEquals(5 * 60L, beanCheck.retryAfterSeconds)
+
 		assertEquals(TaskKind.EVENT, beanReady.kind)
-		assertEquals("FAZUĽA JE MÄKKÁ", beanReady.actionLabel)
+		assertEquals("ÁNO", beanReady.actionLabel)
+		assertEquals("NIE", beanReady.retryActionLabel)
+		assertEquals(5 * 60L, beanReady.retryAfterSeconds)
+
 		assertEquals(TaskKind.EVENT, finalReady.kind)
-		assertEquals("VŠETKO JE MÄKKÉ", finalReady.actionLabel)
+		assertEquals("ÁNO", finalReady.actionLabel)
+		assertEquals("NIE", finalReady.retryActionLabel)
+		assertEquals(5 * 60L, finalReady.retryAfterSeconds)
 	}
 
 	@Test
