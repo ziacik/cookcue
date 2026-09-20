@@ -1,11 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" role="img" aria-label="CookCue app icon">
 	<rect width="108" height="108" rx="24" fill="#5B1120"/>
 	<g transform="translate(54 54) scale(.76) translate(-54 -54)">
-		<path d="M62 31 A29 29 0 1 0 76 73"
-			fill="none" stroke="#FFF8F1" stroke-width="15" stroke-linecap="butt" stroke-linejoin="round"/>
+		<path d="M63 31 A29 29 0 1 0 77 73"
+			fill="none" stroke="#FFF8F1" stroke-width="15" stroke-linecap="butt"/>
 		<circle cx="51" cy="57" r="10" fill="#C9A86B"/>
-		<path d="M63 35L68 23M67 37L74 25M71 39L80 28"
-			fill="none" stroke="#C9A86B" stroke-width="2.5" stroke-linecap="butt"/>
-		<path d="M77 40L85 29L92 35L83 47Z" fill="#C9A86B"/>
+		<path d="M64 35 L68 36 L74 20 L70 19 Z" fill="#C9A86B"/>
+		<path d="M69 37 L73 38 L79 22 L75 21 Z" fill="#C9A86B"/>
+		<path d="M74 39 L78 40 L84 24 L80 23 Z" fill="#C9A86B"/>
+		<path d="M79 41 L83 42 L89 26 L85 25 Z" fill="#C9A86B"/>
+		<path d="M85 44 L94 49 L103 35 L94 30 Z" fill="#C9A86B"/>
 	</g>
 </svg>
