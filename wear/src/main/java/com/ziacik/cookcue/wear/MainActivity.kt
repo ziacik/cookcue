@@ -239,11 +239,13 @@ private fun TimerState(
 ) {
 	val hasTotal = totalSeconds > 0
 	val safeTotal = totalSeconds.coerceAtLeast(1)
+	val overdue = hasTotal && elapsedSeconds > safeTotal
 	val remaining = if (hasTotal) {
 		(safeTotal - elapsedSeconds).coerceAtLeast(0)
 	} else {
 		0
 	}
+	val shownSeconds = if (overdue) elapsedSeconds else remaining
 
 	Box(
 		modifier = Modifier.fillMaxSize(),
@@ -259,7 +261,7 @@ private fun TimerState(
 			horizontalAlignment = Alignment.CenterHorizontally,
 		) {
 			Text(
-				text = if (hasTotal) formatClock(remaining) else "--:--",
+				text = if (hasTotal) formatClock(shownSeconds) else "--:--",
 				color = CookCueCream,
 				fontFamily = FontFamily.Serif,
 				fontSize = 34.sp,
@@ -269,7 +271,11 @@ private fun TimerState(
 			)
 
 			Text(
-				text = if (hasTotal) "z " + formatClock(totalSeconds) else "čakám na celkový čas",
+				text = when {
+					overdue -> "trvá"
+					hasTotal -> "z " + formatClock(totalSeconds)
+					else -> "čakám na celkový čas"
+				},
 				color = CookCueMuted,
 				fontSize = 9.sp,
 				lineHeight = 10.sp,
