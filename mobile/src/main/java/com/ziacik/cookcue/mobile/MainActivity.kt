@@ -68,6 +68,7 @@ class MainActivity : ComponentActivity() {
 private fun CookCueScreen() {
 	val context = LocalContext.current
 	val recipe = CookingSessionController.recipe
+	val selectedRecipeId = CookingSessionController.selectedRecipeId
 	val startedAt = CookingSessionController.startedAt
 	val durationOverrides = CookingSessionController.durationOverrides
 
@@ -85,7 +86,7 @@ private fun CookCueScreen() {
 		MobileSessionSync.publish(context)
 	}
 
-	val snapshot = remember(now, startedAt, durationOverrides) {
+	val snapshot = remember(now, startedAt, durationOverrides, selectedRecipeId) {
 		CookingSessionController.snapshot(now)
 	}
 	val primaryWait = snapshot.background.minByOrNull { it.endSeconds }
@@ -107,6 +108,41 @@ private fun CookCueScreen() {
 		) {
 			item {
 				BrandHeader()
+
+				if (!snapshot.started) {
+					Spacer(Modifier.height(16.dp))
+					Text(
+						text = "Recept",
+						style = MaterialTheme.typography.labelLarge,
+						color = MaterialTheme.colorScheme.onSurfaceVariant,
+						fontWeight = FontWeight.Bold,
+					)
+					Spacer(Modifier.height(8.dp))
+					CookingSessionController.availableRecipes.forEach { option ->
+						if (option.id == selectedRecipeId) {
+							Button(
+								onClick = {},
+								modifier = Modifier.fillMaxWidth(),
+								shape = RoundedCornerShape(14.dp),
+							) {
+								Text(option.title)
+							}
+						} else {
+							OutlinedButton(
+								onClick = {
+									CookingSessionController.selectRecipe(option.id)
+									persistAndSync()
+								},
+								modifier = Modifier.fillMaxWidth(),
+								shape = RoundedCornerShape(14.dp),
+							) {
+								Text(option.title)
+							}
+						}
+						Spacer(Modifier.height(6.dp))
+					}
+				}
+
 				Spacer(Modifier.height(10.dp))
 				Text(
 					text = recipe.title,
@@ -183,18 +219,20 @@ private fun CookCueScreen() {
 						shape = RoundedCornerShape(22.dp),
 					) {
 						Column(modifier = Modifier.padding(18.dp)) {
-							Text(
-								text = "PRED VARENÍM",
-								style = MaterialTheme.typography.labelLarge,
-								color = MaterialTheme.colorScheme.secondary,
-								fontWeight = FontWeight.Bold,
-							)
-							Spacer(Modifier.height(6.dp))
-							Text(
-								text = "120 g suchej fazule namoč na 8–12 hodín vo veľkom množstve studenej vody.",
-								style = MaterialTheme.typography.bodyLarge,
-							)
-							Spacer(Modifier.height(16.dp))
+							recipe.preCookingNote?.let { note ->
+								Text(
+									text = "PRED VARENÍM",
+									style = MaterialTheme.typography.labelLarge,
+									color = MaterialTheme.colorScheme.secondary,
+									fontWeight = FontWeight.Bold,
+								)
+								Spacer(Modifier.height(6.dp))
+								Text(
+									text = note,
+									style = MaterialTheme.typography.bodyLarge,
+								)
+								Spacer(Modifier.height(16.dp))
+							}
 							Button(
 								onClick = {
 									CookingSessionController.start()
