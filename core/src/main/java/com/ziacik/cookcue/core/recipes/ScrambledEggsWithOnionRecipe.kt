@@ -19,12 +19,12 @@ object ScrambledEggsWithOnionRecipe {
 	val recipe = Recipe(
 		id = "scrambled-eggs-onion",
 		title = "Praženica s cibuľou",
-		description = "Pre 2 osoby · jednoduchá klasická praženica",
-		servings = 2,
+		description = "Pre 1 osobu · jednoduchá klasická praženica",
+		servings = 1,
 		ingredients = listOf(
-			Ingredient("vajcia", "4 ks"),
-			Ingredient("malá cibuľa", "1 ks"),
-			Ingredient("maslo alebo olej", "1 PL"),
+			Ingredient("vajcia", "2 ks"),
+			Ingredient("malá cibuľa", "1/2 ks"),
+			Ingredient("maslo alebo olej", "1 ČL"),
 			Ingredient("soľ", "podľa chuti"),
 			Ingredient("čierne korenie", "podľa chuti"),
 		),
@@ -40,7 +40,7 @@ object ScrambledEggsWithOnionRecipe {
 				durationSeconds = 2 * 60,
 				resources = uses(COOK),
 				skill = Skill.KNIFE,
-				instruction = "Ošúp 1 malú cibuľu a nakrájaj ju nadrobno.",
+				instruction = "Ošúp 1/2 malej cibule a nakrájaj ju nadrobno.",
 			),
 			CookingTask(
 				id = "heat-fat",
@@ -48,7 +48,7 @@ object ScrambledEggsWithOnionRecipe {
 				durationSeconds = 60,
 				dependsOn = setOf("prep-onion"),
 				resources = uses(COOK, PAN, BURNER),
-				instruction = "Daj panvicu na stredný výkon a pridaj 1 PL masla alebo oleja. Nechaj tuk zohriať, ale maslo nenechaj zhnednúť.",
+				instruction = "Daj panvicu na stredný výkon a pridaj 1 ČL masla alebo oleja. Nechaj tuk zohriať, ale maslo nenechaj zhnednúť.",
 			),
 			CookingTask(
 				id = "saute-onion",
@@ -67,7 +67,7 @@ object ScrambledEggsWithOnionRecipe {
 				durationSeconds = 60,
 				dependsOn = setOf("saute-onion"),
 				resources = uses(COOK, PAN, BURNER),
-				instruction = "Rozbi 4 vajcia priamo do panvice k cibuli. Pridaj malú štipku soli a vareškou alebo stierkou rozmiešaj bielky so žĺtkami.",
+				instruction = "Rozbi 2 vajcia priamo do panvice k cibuli. Pridaj malú štipku soli a vareškou alebo stierkou rozmiešaj bielky so žĺtkami.",
 			),
 			CookingTask(
 				id = "scramble",
