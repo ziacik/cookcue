@@ -244,7 +244,7 @@ private fun TimerState(
 		Text(
 			text = recipeTitle,
 			color = CookCueCream,
-			fontSize = 10.sp,
+			fontSize = 8.sp,
 			fontWeight = FontWeight.Medium,
 			textAlign = TextAlign.Center,
 			maxLines = 1,
@@ -263,12 +263,12 @@ private fun TimerState(
 		Text(
 			text = "🔥  $taskTitle",
 			color = CookCueCream,
-			fontSize = 11.sp,
+			fontSize = 9.sp,
 			fontWeight = FontWeight.SemiBold,
 			textAlign = TextAlign.Center,
 			maxLines = 2,
 			overflow = TextOverflow.Ellipsis,
-			lineHeight = 13.sp,
+			lineHeight = 11.sp,
 		)
 
 		if (showDone) {
@@ -306,7 +306,7 @@ private fun WearArcTimer(
 	}
 
 	Box(
-		modifier = Modifier.size(108.dp),
+		modifier = Modifier.size(92.dp),
 		contentAlignment = Alignment.Center,
 	) {
 		Canvas(modifier = Modifier.fillMaxSize()) {
@@ -339,15 +339,15 @@ private fun WearArcTimer(
 				text = formatClock(shownSeconds),
 				color = CookCueCream,
 				fontFamily = FontFamily.Serif,
-				fontSize = 30.sp,
+				fontSize = 24.sp,
 				fontWeight = FontWeight.Medium,
-				lineHeight = 31.sp,
+				lineHeight = 25.sp,
 			)
 			Text(
 				text = totalLabel,
 				color = CookCueMuted,
-				fontSize = 9.sp,
-				lineHeight = 10.sp,
+				fontSize = 7.sp,
+				lineHeight = 8.sp,
 			)
 		}
 	}
@@ -357,7 +357,7 @@ private fun WearArcTimer(
 private fun RoundDoneButton(onClick: () -> Unit) {
 	Button(
 		onClick = onClick,
-		modifier = Modifier.size(42.dp),
+		modifier = Modifier.size(32.dp),
 		colors = ButtonDefaults.buttonColors(
 			containerColor = CookCueWineDeep,
 			contentColor = CookCueCream,
@@ -366,7 +366,7 @@ private fun RoundDoneButton(onClick: () -> Unit) {
 	) {
 		Text(
 			text = "✓",
-			fontSize = 20.sp,
+			fontSize = 15.sp,
 			fontWeight = FontWeight.Medium,
 		)
 	}
@@ -382,32 +382,47 @@ private fun EventState(
 	Column(
 		modifier = Modifier
 			.fillMaxSize()
-			.padding(horizontal = 18.dp, vertical = 12.dp),
+			.padding(horizontal = 18.dp, vertical = 8.dp),
 		horizontalAlignment = Alignment.CenterHorizontally,
 	) {
 		Text(
 			text = recipeTitle,
 			color = CookCueCream,
-			fontSize = 10.sp,
+			fontSize = 8.sp,
 			fontWeight = FontWeight.Medium,
+			textAlign = TextAlign.Center,
 			maxLines = 1,
 			overflow = TextOverflow.Ellipsis,
 		)
-		Spacer(Modifier.height(28.dp))
+
+		Spacer(Modifier.height(12.dp))
+
+		Text(
+			text = "ČAKÁ NA TEBA",
+			color = CookCueWine,
+			fontSize = 7.sp,
+			fontWeight = FontWeight.Bold,
+			letterSpacing = 0.7.sp,
+		)
+
+		Spacer(Modifier.height(5.dp))
+
 		Text(
 			text = title,
 			color = CookCueCream,
-			fontSize = 14.sp,
+			fontSize = 10.sp,
 			fontWeight = FontWeight.SemiBold,
 			textAlign = TextAlign.Center,
-			maxLines = 3,
+			maxLines = 2,
 			overflow = TextOverflow.Ellipsis,
-			lineHeight = 17.sp,
+			lineHeight = 12.sp,
 		)
-		Spacer(Modifier.height(12.dp))
+
+		Spacer(Modifier.height(10.dp))
+
 		Button(
 			onClick = onConfirm,
-			modifier = Modifier.size(46.dp),
+			modifier = Modifier.size(32.dp),
 			colors = ButtonDefaults.buttonColors(
 				containerColor = CookCueWineDeep,
 				contentColor = CookCueCream,
@@ -415,22 +430,23 @@ private fun EventState(
 			shape = CircleShape,
 		) {
 			Text(
-				text = if (actionLabel.equals("HOTOVO", ignoreCase = true)) "✓" else "›",
-				fontSize = 20.sp,
+				text = "✓",
+				fontSize = 15.sp,
 				fontWeight = FontWeight.Medium,
 			)
 		}
-		if (!actionLabel.equals("HOTOVO", ignoreCase = true)) {
-			Spacer(Modifier.height(4.dp))
-			Text(
-				text = actionLabel,
-				color = CookCueMuted,
-				fontSize = 8.sp,
-				textAlign = TextAlign.Center,
-				maxLines = 1,
-				overflow = TextOverflow.Ellipsis,
-			)
-		}
+
+		Spacer(Modifier.height(5.dp))
+
+		Text(
+			text = actionLabel,
+			color = CookCueMuted,
+			fontSize = 7.sp,
+			textAlign = TextAlign.Center,
+			maxLines = 2,
+			overflow = TextOverflow.Ellipsis,
+			lineHeight = 8.sp,
+		)
 	}
 }
 
@@ -448,7 +464,7 @@ private fun SimpleState(
 		Text(
 			text = title,
 			color = CookCueCream,
-			fontSize = 11.sp,
+			fontSize = 8.sp,
 			fontWeight = FontWeight.Medium,
 			textAlign = TextAlign.Center,
 		)
@@ -456,7 +472,7 @@ private fun SimpleState(
 		Text(
 			text = message,
 			color = CookCueCream,
-			fontSize = 13.sp,
+			fontSize = 10.sp,
 			fontWeight = FontWeight.SemiBold,
 			textAlign = TextAlign.Center,
 			maxLines = 3,
@@ -467,7 +483,7 @@ private fun SimpleState(
 				onClick = onClick,
 				modifier = Modifier
 					.fillMaxWidth()
-					.height(38.dp),
+					.height(32.dp),
 				colors = ButtonDefaults.buttonColors(
 					containerColor = CookCueWineDeep,
 					contentColor = CookCueCream,
@@ -476,7 +492,7 @@ private fun SimpleState(
 			) {
 				Text(
 					text = buttonText,
-					fontSize = 10.sp,
+					fontSize = 8.sp,
 					fontWeight = FontWeight.Bold,
 				)
 			}
