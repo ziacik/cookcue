@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -183,16 +184,75 @@ private fun WearCookCueScreen() {
 						)
 					}
 					Spacer(Modifier.height(10.dp))
-					PrimaryWearButton(
-						text = state.eventActionLabel,
-						onClick = {
-							WearActionSender.send(
-								context,
-								DataLayerProtocol.ACTION_CONFIRM_EVENT,
-								state.eventTaskId,
-							)
-						},
-					)
+					if (
+						state.eventRetryAfterSeconds > 0 &&
+						state.eventRetryActionLabel.isNotBlank()
+					) {
+						Row(
+							modifier = Modifier.fillMaxWidth(),
+							horizontalArrangement = Arrangement.spacedBy(8.dp),
+						) {
+							Button(
+								onClick = {
+									WearActionSender.send(
+										context,
+										DataLayerProtocol.ACTION_DEFER_EVENT,
+										state.eventTaskId,
+									)
+								},
+								modifier = Modifier.weight(1f),
+								colors = ButtonDefaults.buttonColors(
+									containerColor = CookCueSand,
+									contentColor = CookCueCream,
+								),
+								shape = RoundedCornerShape(18.dp),
+							) {
+								Text(
+									text = state.eventRetryActionLabel,
+									fontWeight = FontWeight.Bold,
+								)
+							}
+							Button(
+								onClick = {
+									WearActionSender.send(
+										context,
+										DataLayerProtocol.ACTION_CONFIRM_EVENT,
+										state.eventTaskId,
+									)
+								},
+								modifier = Modifier.weight(1f),
+								colors = ButtonDefaults.buttonColors(
+									containerColor = CookCueBerry,
+									contentColor = CookCueCream,
+								),
+								shape = RoundedCornerShape(18.dp),
+							) {
+								Text(
+									text = state.eventActionLabel,
+									fontWeight = FontWeight.Bold,
+								)
+							}
+						}
+						Spacer(Modifier.height(5.dp))
+						Text(
+							text = "NIE → znova o " +
+								formatRemaining(state.eventRetryAfterSeconds),
+							color = CookCueMuted,
+							style = MaterialTheme.typography.labelSmall,
+							textAlign = TextAlign.Center,
+						)
+					} else {
+						PrimaryWearButton(
+							text = state.eventActionLabel,
+							onClick = {
+								WearActionSender.send(
+									context,
+									DataLayerProtocol.ACTION_CONFIRM_EVENT,
+									state.eventTaskId,
+								)
+							},
+						)
+					}
 				}
 
 				state.currentTitle.isNotBlank() -> {
