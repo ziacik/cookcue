@@ -83,6 +83,7 @@ private fun CookCueScreen() {
 	val selectedRecipeId = CookingSessionController.selectedRecipeId
 	val startedAt = CookingSessionController.startedAt
 	val durationOverrides = CookingSessionController.durationOverrides
+	val eventDeferredUntil = CookingSessionController.eventDeferredUntil
 	val userActionVersion = CookingSessionController.userActionVersion
 
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
@@ -99,7 +100,13 @@ private fun CookCueScreen() {
 		MobileSessionSync.publish(context)
 	}
 
-	val snapshot = remember(now, startedAt, durationOverrides, selectedRecipeId) {
+	val snapshot = remember(
+		now,
+		startedAt,
+		durationOverrides,
+		eventDeferredUntil,
+		selectedRecipeId,
+	) {
 		CookingSessionController.snapshot(now)
 	}
 	val primaryWait = snapshot.background.minByOrNull { it.endSeconds }
