@@ -78,6 +78,7 @@ data class Recipe(
 	val ingredients: List<Ingredient>,
 	val resourceCapacities: Map<String, Int>,
 	val tasks: List<CookingTask>,
+	val preCookingNote: String? = null,
 	val troubleshooting: List<TroubleshootingTip> = emptyList(),
 )
 
