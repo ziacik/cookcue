@@ -11,6 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -53,6 +54,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -520,69 +522,11 @@ private fun CookCueTopBar(
 
 @Composable
 private fun CueMark(markSize: Dp) {
-	val wine = MaterialTheme.colorScheme.primary
-	Box(modifier = Modifier.size(markSize)) {
-		Canvas(modifier = Modifier.fillMaxSize()) {
-			val stroke = markSize.toPx() * 0.19f
-			val radius = markSize.toPx() * 0.30f
-			val centerX = this.size.width * 0.48f
-			val centerY = this.size.height * 0.53f
-
-			drawArc(
-				color = wine,
-				startAngle = -67f,
-				sweepAngle = 255f,
-				useCenter = false,
-				topLeft = Offset(
-					centerX - radius,
-					centerY - radius,
-				),
-				size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2),
-				style = Stroke(
-					width = stroke,
-					cap = StrokeCap.Butt,
-				),
-			)
-
-			drawCircle(
-				color = CookCueHoney,
-				radius = this.size.width * 0.105f,
-				center = Offset(
-					this.size.width * 0.48f,
-					this.size.height * 0.54f,
-				),
-			)
-
-			val rayColor = CookCueHoney
-			val rayStroke = this.size.width * 0.032f
-			listOf(
-				Offset(0.61f, 0.37f) to Offset(0.68f, 0.18f),
-				Offset(0.66f, 0.39f) to Offset(0.75f, 0.22f),
-				Offset(0.71f, 0.42f) to Offset(0.82f, 0.27f),
-			).forEach { (from, to) ->
-				drawLine(
-					color = rayColor,
-					start = Offset(this.size.width * from.x, this.size.height * from.y),
-					end = Offset(this.size.width * to.x, this.size.height * to.y),
-					strokeWidth = rayStroke,
-					cap = StrokeCap.Butt,
-				)
-			}
-
-			val canvasSize = this.size
-			val block = androidx.compose.ui.graphics.Path().apply {
-				moveTo(canvasSize.width * 0.74f, canvasSize.height * 0.42f)
-				lineTo(canvasSize.width * 0.84f, canvasSize.height * 0.27f)
-				lineTo(canvasSize.width * 0.93f, canvasSize.height * 0.34f)
-				lineTo(canvasSize.width * 0.82f, canvasSize.height * 0.49f)
-				close()
-			}
-			drawPath(
-				path = block,
-				color = CookCueHoney,
-			)
-		}
-	}
+	Image(
+		painter = painterResource(R.drawable.ic_cookcue_mark),
+		contentDescription = null,
+		modifier = Modifier.size(markSize),
+	)
 }
 
 @Composable
