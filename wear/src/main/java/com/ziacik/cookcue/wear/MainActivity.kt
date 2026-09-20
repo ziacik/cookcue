@@ -1,9 +1,14 @@
 package com.ziacik.cookcue.wear
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -66,6 +71,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun WearCookCueScreen() {
 	val context = LocalContext.current
+	val notificationPermissionLauncher = rememberLauncherForActivityResult(
+		ActivityResultContracts.RequestPermission(),
+	) {}
 	val state = WatchSessionStore.snapshot
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
 
@@ -143,6 +151,13 @@ private fun WearCookCueScreen() {
 					PrimaryWearButton(
 						text = "SPUSTIŤ",
 						onClick = {
+							if (
+								Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+								context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
+								PackageManager.PERMISSION_GRANTED
+							) {
+								notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+							}
 							WearActionSender.send(
 								context,
 								DataLayerProtocol.ACTION_START,
