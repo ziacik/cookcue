@@ -1,9 +1,14 @@
 package com.ziacik.cookcue.mobile
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -68,6 +73,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun CookCueScreen() {
 	val context = LocalContext.current
+	val notificationPermissionLauncher = rememberLauncherForActivityResult(
+		ActivityResultContracts.RequestPermission(),
+	) {}
 	val recipe = CookingSessionController.recipe
 	val selectedRecipeId = CookingSessionController.selectedRecipeId
 	val startedAt = CookingSessionController.startedAt
@@ -282,6 +290,13 @@ private fun CookCueScreen() {
 							}
 							Button(
 								onClick = {
+									if (
+										Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+										context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
+										PackageManager.PERMISSION_GRANTED
+									) {
+										notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+									}
 									CookingSessionController.start()
 									persistAndSync()
 								},
