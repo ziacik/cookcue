@@ -9,6 +9,7 @@ object DataLayerProtocol {
 	const val ACTION_PREVIOUS = "previous"
 	const val ACTION_NEXT = "next"
 	const val ACTION_CONFIRM_EVENT = "confirm_event"
+	const val ACTION_DEFER_EVENT = "defer_event"
 	const val ACTION_COMPLETE_ACTIVE = "complete_active"
 
 	const val KEY_VERSION = "version"
@@ -27,6 +28,8 @@ object DataLayerProtocol {
 	const val KEY_EVENT_INSTRUCTION = "event_instruction"
 	const val KEY_EVENT_TIPS = "event_tips"
 	const val KEY_EVENT_ACTION_LABEL = "event_action_label"
+	const val KEY_EVENT_RETRY_ACTION_LABEL = "event_retry_action_label"
+	const val KEY_EVENT_RETRY_AFTER_SECONDS = "event_retry_after_seconds"
 	const val KEY_NEXT_TITLE = "next_title"
 	const val KEY_NEXT_IN_SECONDS = "next_in_seconds"
 	const val KEY_CAN_PREVIOUS = "can_previous"
