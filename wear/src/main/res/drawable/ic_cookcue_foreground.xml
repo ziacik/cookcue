@@ -4,42 +4,49 @@
 	android:viewportWidth="108"
 	android:viewportHeight="108">
 
-	<!-- Thick open C -->
-	<path
-		android:pathData="M68,30 C54,23 36,27 27,41 C18,56 22,75 37,84 C51,93 69,89 80,76"
-		android:fillColor="#00000000"
-		android:strokeColor="#FFF8F1"
-		android:strokeWidth="16"
-		android:strokeLineCap="butt"
-		android:strokeLineJoin="round" />
+	<group
+		android:pivotX="54"
+		android:pivotY="54"
+		android:scaleX="0.82"
+		android:scaleY="0.82">
 
-	<!-- Gold centre -->
-	<path
-		android:pathData="M54,42 A12,12 0,1 1,54,66 A12,12 0,1 1,54,42"
-		android:fillColor="#C9A86B" />
+		<!-- Thick open C -->
+		<path
+			android:pathData="M68,30 C54,23 36,27 27,41 C18,56 22,75 37,84 C51,93 69,89 80,76"
+			android:fillColor="#00000000"
+			android:strokeColor="#FFF8F1"
+			android:strokeWidth="16"
+			android:strokeLineCap="butt"
+			android:strokeLineJoin="round" />
 
-	<!-- Three fine cue rays -->
-	<path
-		android:pathData="M68,31 L73,19"
-		android:fillColor="#00000000"
-		android:strokeColor="#C9A86B"
-		android:strokeWidth="3"
-		android:strokeLineCap="butt" />
-	<path
-		android:pathData="M72,33 L79,21"
-		android:fillColor="#00000000"
-		android:strokeColor="#C9A86B"
-		android:strokeWidth="3"
-		android:strokeLineCap="butt" />
-	<path
-		android:pathData="M76,36 L85,25"
-		android:fillColor="#00000000"
-		android:strokeColor="#C9A86B"
-		android:strokeWidth="3"
-		android:strokeLineCap="butt" />
+		<!-- Gold centre -->
+		<path
+			android:pathData="M54,42 A12,12 0,1 1,54,66 A12,12 0,1 1,54,42"
+			android:fillColor="#C9A86B" />
 
-	<!-- Strong cue block -->
-	<path
-		android:pathData="M81,37 L91,29 L98,38 L87,47 Z"
-		android:fillColor="#C9A86B" />
+		<!-- Three fine cue rays -->
+		<path
+			android:pathData="M68,31 L73,19"
+			android:fillColor="#00000000"
+			android:strokeColor="#C9A86B"
+			android:strokeWidth="3"
+			android:strokeLineCap="butt" />
+		<path
+			android:pathData="M72,33 L79,21"
+			android:fillColor="#00000000"
+			android:strokeColor="#C9A86B"
+			android:strokeWidth="3"
+			android:strokeLineCap="butt" />
+		<path
+			android:pathData="M76,36 L85,25"
+			android:fillColor="#00000000"
+			android:strokeColor="#C9A86B"
+			android:strokeWidth="3"
+			android:strokeLineCap="butt" />
+
+		<!-- Strong cue block -->
+		<path
+			android:pathData="M81,37 L91,29 L98,38 L87,47 Z"
+			android:fillColor="#C9A86B" />
+	</group>
 </vector>
