@@ -1,8 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" role="img" aria-label="CookCue mark">
-	<path d="M68 30C54 23 36 27 27 41C18 56 22 75 37 84C51 93 69 89 80 76"
-		fill="none" stroke="#5B1120" stroke-width="16" stroke-linecap="butt" stroke-linejoin="round"/>
-	<circle cx="54" cy="54" r="12" fill="#C9A86B"/>
-	<path d="M68 31L73 19M72 33L79 21M76 36L85 25"
-		fill="none" stroke="#C9A86B" stroke-width="3" stroke-linecap="butt"/>
-	<path d="M81 37L91 29L98 38L87 47Z" fill="#C9A86B"/>
+	<path d="M77.76 70.63 A29 29 0 1 1 61.51 25.99"
+		fill="none" stroke="#5B1120" stroke-width="15" stroke-linecap="butt"/>
+	<path d="M62.96 26.42 A29 29 0 0 1 66.26 27.72
+			 M67.61 28.39 A29 29 0 0 1 70.63 30.24
+			 M71.85 31.15 A29 29 0 0 1 74.51 33.49
+			 M75.55 34.60 A29 29 0 0 1 77.76 37.37
+			 M78.86 39.06 A29 29 0 0 1 82.26 47.48"
+		fill="none" stroke="#C9A86B" stroke-width="15" stroke-linecap="butt"/>
+	<circle cx="54" cy="54" r="10" fill="#C9A86B"/>
 </svg>

@@ -11,6 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +30,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -37,6 +39,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,6 +54,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -86,6 +90,7 @@ private fun CookCueScreen() {
 	val userActionVersion = CookingSessionController.userActionVersion
 
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
+	var showStopCookingDialog by remember { mutableStateOf(false) }
 
 	LaunchedEffect(startedAt) {
 		while (startedAt != null) {
@@ -160,6 +165,36 @@ private fun CookCueScreen() {
 		MobileSessionSync.publish(context)
 	}
 
+	if (showStopCookingDialog) {
+		AlertDialog(
+			onDismissRequest = { showStopCookingDialog = false },
+			title = {
+				Text("Ukončiť aktuálne varenie?")
+			},
+			text = {
+				Text("Rozrobený postup sa ukončí a vrátiš sa na výber receptu.")
+			},
+			confirmButton = {
+				TextButton(
+					onClick = {
+						showStopCookingDialog = false
+						CookingSessionController.stop()
+						persistAndSync()
+					},
+				) {
+					Text("UKONČIŤ")
+				}
+			},
+			dismissButton = {
+				TextButton(
+					onClick = { showStopCookingDialog = false },
+				) {
+					Text("SPÄŤ")
+				}
+			},
+		)
+	}
+
 	Scaffold(
 		containerColor = MaterialTheme.colorScheme.background,
 	) { padding ->
@@ -170,7 +205,11 @@ private fun CookCueScreen() {
 			contentPadding = PaddingValues(bottom = 28.dp),
 		) {
 			item {
-				CookCueTopBar(recipe.title)
+				CookCueTopBar(
+					recipeTitle = recipe.title,
+					showRecipesAction = snapshot.started,
+					onRecipes = { showStopCookingDialog = true },
+				)
 			}
 
 			if (!snapshot.started) {
@@ -440,15 +479,19 @@ private fun CookCueScreen() {
 }
 
 @Composable
-private fun CookCueTopBar(recipeTitle: String) {
+private fun CookCueTopBar(
+	recipeTitle: String,
+	showRecipesAction: Boolean,
+	onRecipes: () -> Unit,
+) {
 	Column {
 		Row(
 			modifier = Modifier
 				.fillMaxWidth()
-				.padding(horizontal = 18.dp, vertical = 14.dp),
+				.padding(horizontal = 18.dp, vertical = 11.dp),
 			verticalAlignment = Alignment.CenterVertically,
 		) {
-			CueMark(27.dp)
+			CueMark(30.dp)
 			Spacer(Modifier.width(10.dp))
 			Text(
 				text = recipeTitle,
@@ -458,12 +501,18 @@ private fun CookCueTopBar(recipeTitle: String) {
 				),
 				modifier = Modifier.weight(1f),
 			)
-			Text(
-				text = "CookCue",
-				style = MaterialTheme.typography.labelSmall,
-				color = MaterialTheme.colorScheme.primary,
-				letterSpacing = 0.7.sp,
-			)
+			if (showRecipesAction) {
+				TextButton(
+					onClick = onRecipes,
+					contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+				) {
+					Text(
+						text = "RECEPTY",
+						style = MaterialTheme.typography.labelMedium,
+						fontWeight = FontWeight.Bold,
+					)
+				}
+			}
 		}
 		HorizontalDivider(
 			color = MaterialTheme.colorScheme.outline.copy(alpha = 0.75f),
@@ -472,24 +521,60 @@ private fun CookCueTopBar(recipeTitle: String) {
 }
 
 @Composable
-private fun CueMark(size: Dp) {
-	val primary = MaterialTheme.colorScheme.primary
-	Box(modifier = Modifier.size(size)) {
+private fun CueMark(markSize: Dp) {
+	val wine = MaterialTheme.colorScheme.primary
+	Box(modifier = Modifier.size(markSize)) {
 		Canvas(modifier = Modifier.fillMaxSize()) {
+			val stroke = this.size.width * 0.19f
+			val radius = this.size.width * 0.30f
+			val center = Offset(
+				this.size.width * 0.50f,
+				this.size.height * 0.50f,
+			)
+			val topLeft = Offset(
+				center.x - radius,
+				center.y - radius,
+			)
+			val arcSize = androidx.compose.ui.geometry.Size(radius * 2, radius * 2)
+
 			drawArc(
-				color = primary,
-				startAngle = 45f,
-				sweepAngle = 275f,
+				color = wine,
+				startAngle = 35f,
+				sweepAngle = 250f,
 				useCenter = false,
+				topLeft = topLeft,
+				size = arcSize,
 				style = Stroke(
-					width = 3.5.dp.toPx(),
-					cap = StrokeCap.Round,
+					width = stroke,
+					cap = StrokeCap.Butt,
 				),
 			)
+
+			listOf(
+				-72f to 7f,
+				-62f to 7f,
+				-52f to 7f,
+				-42f to 7f,
+				-31f to 18f,
+			).forEach { (startAngle, sweepAngle) ->
+				drawArc(
+					color = CookCueHoney,
+					startAngle = startAngle,
+					sweepAngle = sweepAngle,
+					useCenter = false,
+					topLeft = topLeft,
+					size = arcSize,
+					style = Stroke(
+						width = stroke,
+						cap = StrokeCap.Butt,
+					),
+				)
+			}
+
 			drawCircle(
 				color = CookCueHoney,
-				radius = 2.7.dp.toPx(),
-				center = Offset(this.size.width * 0.76f, this.size.height * 0.20f),
+				radius = this.size.width * 0.105f,
+				center = center,
 			)
 		}
 	}

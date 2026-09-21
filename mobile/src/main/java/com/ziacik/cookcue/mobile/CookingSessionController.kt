@@ -71,6 +71,13 @@ object CookingSessionController {
 		markUserAction()
 	}
 
+	fun stop() {
+		startedAt = null
+		durationOverrides = emptyMap()
+		eventDeferredUntil = emptyMap()
+		markUserAction()
+	}
+
 	fun restore(
 		recipeId: String?,
 		startedAt: Long?,
