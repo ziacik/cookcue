@@ -522,11 +522,62 @@ private fun CookCueTopBar(
 
 @Composable
 private fun CueMark(markSize: Dp) {
-	Image(
-		painter = painterResource(R.drawable.ic_cookcue_mark),
-		contentDescription = null,
-		modifier = Modifier.size(markSize),
-	)
+	val wine = MaterialTheme.colorScheme.primary
+	Box(modifier = Modifier.size(markSize)) {
+		Canvas(modifier = Modifier.fillMaxSize()) {
+			val stroke = this.size.width * 0.19f
+			val radius = this.size.width * 0.30f
+			val center = Offset(
+				this.size.width * 0.50f,
+				this.size.height * 0.50f,
+			)
+			val topLeft = Offset(
+				center.x - radius,
+				center.y - radius,
+			)
+			val arcSize = androidx.compose.ui.geometry.Size(radius * 2, radius * 2)
+
+			drawArc(
+				color = wine,
+				startAngle = 35f,
+				sweepAngle = 250f,
+				useCenter = false,
+				topLeft = topLeft,
+				size = arcSize,
+				style = Stroke(
+					width = stroke,
+					cap = StrokeCap.Butt,
+				),
+			)
+
+			listOf(
+				-72f to 7f,
+				-62f to 7f,
+				-52f to 7f,
+				-42f to 7f,
+				-31f to 18f,
+			).forEach { (startAngle, sweepAngle) ->
+				drawArc(
+					color = CookCueHoney,
+					startAngle = startAngle,
+					sweepAngle = sweepAngle,
+					useCenter = false,
+					topLeft = topLeft,
+					size = arcSize,
+					style = Stroke(
+						width = stroke,
+						cap = StrokeCap.Butt,
+					),
+				)
+			}
+
+			drawCircle(
+				color = CookCueHoney,
+				radius = this.size.width * 0.105f,
+				center = center,
+			)
+		}
+	}
 }
 
 @Composable
