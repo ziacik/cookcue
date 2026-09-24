@@ -67,7 +67,7 @@ object ScrambledEggsWithOnionRecipe {
 				durationSeconds = 2 * 60,
 				dependsOn = setOf("saute-onion"),
 				resources = uses(COOK, PAN, BURNER),
-				instruction = "Rozbi 2 vajcia priamo do panvice k cibuli. Pridaj malú štipku soli a vareškou alebo stierkou rozmiešaj bielky so žĺtkami.",
+				instruction = "Rozbi 2 vajcia priamo do panvice k cibuli. Hneď ich osol malou štipkou soli a vareškou alebo stierkou rozmiešaj bielky so žĺtkami, aby sa soľ rovnomerne rozložila.",
 			),
 			CookingTask(
 				id = "scramble",
@@ -86,7 +86,7 @@ object ScrambledEggsWithOnionRecipe {
 				durationSeconds = 2 * 60,
 				dependsOn = setOf("scramble"),
 				resources = uses(COOK, PAN),
-				instruction = "Ochutnaj, podľa potreby pridaj trochu soli a čierneho korenia a hneď podávaj.",
+				instruction = "Ochutnaj. Ak treba, už len jemne dosoľ a pridaj čierne korenie. Hneď podávaj.",
 			),
 		),
 		troubleshooting = listOf(
