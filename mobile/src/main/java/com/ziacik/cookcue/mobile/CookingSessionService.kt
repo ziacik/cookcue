@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -64,7 +65,7 @@ class CookingSessionService : Service() {
 	override fun onBind(intent: Intent?): IBinder? = null
 
 	private suspend fun monitorSession() {
-		while (isActive) {
+		while (currentCoroutineContext().isActive) {
 			val snapshot = CookingSessionController.snapshot()
 			if (!snapshot.started) {
 				stopSelf()
