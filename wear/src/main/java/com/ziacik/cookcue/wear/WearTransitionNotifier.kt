@@ -9,6 +9,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import kotlin.math.abs
 
 object WearTransitionNotifier {
@@ -17,6 +19,25 @@ object WearTransitionNotifier {
 	private const val PREFS = "transition_notifications"
 	private const val KEY_LAST_TRANSITION_ID = "last_transition_id"
 	private const val MAX_TRANSITION_AGE_MS = 30_000L
+
+	private fun vibrate(context: Context) {
+		val vibrator = context.getSystemService(Vibrator::class.java)
+		if (!vibrator.hasVibrator()) {
+			return
+		}
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			vibrator.vibrate(
+				VibrationEffect.createWaveform(
+					longArrayOf(0, 140, 90, 240),
+					-1,
+				),
+			)
+		} else {
+			@Suppress("DEPRECATION")
+			vibrator.vibrate(longArrayOf(0, 140, 90, 240), -1)
+		}
+	}
 
 	fun ensureChannel(context: Context) {
 		val manager = context.getSystemService(NotificationManager::class.java)
@@ -51,6 +72,7 @@ object WearTransitionNotifier {
 			return
 		}
 		preferences.edit().putLong(KEY_LAST_TRANSITION_ID, transitionId).apply()
+		vibrate(context)
 
 		if (
 			Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
