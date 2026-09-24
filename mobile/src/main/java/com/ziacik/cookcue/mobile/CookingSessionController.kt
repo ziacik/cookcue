@@ -49,7 +49,7 @@ object CookingSessionController {
 		selectedRecipeId = recipeId
 		durationOverrides = emptyMap()
 		eventDeferredUntil = emptyMap()
-		markUserAction()
+		markSilentTransition()
 	}
 
 	var durationOverrides by mutableStateOf<Map<String, Long>>(emptyMap())
@@ -64,8 +64,16 @@ object CookingSessionController {
 	var userActionVersion by mutableStateOf(0L)
 		private set
 
+	var silentTransitionVersion by mutableStateOf(0L)
+		private set
+
 	private fun markUserAction() {
 		userActionVersion += 1
+	}
+
+	private fun markSilentTransition() {
+		silentTransitionVersion += 1
+		markUserAction()
 	}
 
 	fun start() {
@@ -126,7 +134,7 @@ object CookingSessionController {
 		eventDeferredUntil = eventDeferredUntil + (
 			taskId to snapshot.elapsedSeconds + retryAfterSeconds
 		)
-		markUserAction()
+		markSilentTransition()
 	}
 
 	fun previous() {
@@ -137,7 +145,7 @@ object CookingSessionController {
 
 		val target = snapshot.previousAction ?: return
 		jumpTo(target)
-		markUserAction()
+		markSilentTransition()
 	}
 
 	fun next() {
@@ -148,7 +156,7 @@ object CookingSessionController {
 
 		val target = snapshot.nextAction ?: return
 		jumpTo(target)
-		markUserAction()
+		markSilentTransition()
 	}
 
 	fun snapshot(now: Long = SystemClock.elapsedRealtime()): MobileSessionSnapshot {
