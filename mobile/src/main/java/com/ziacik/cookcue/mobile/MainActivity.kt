@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -67,6 +68,7 @@ import kotlinx.coroutines.delay
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
 		setContent {
 			CookCueTheme {
@@ -88,6 +90,7 @@ private fun CookCueScreen() {
 	val durationOverrides = CookingSessionController.durationOverrides
 	val eventDeferredUntil = CookingSessionController.eventDeferredUntil
 	val userActionVersion = CookingSessionController.userActionVersion
+	val silentTransitionVersion = CookingSessionController.silentTransitionVersion
 
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
 	var showStopCookingDialog by remember { mutableStateOf(false) }
@@ -124,26 +127,28 @@ private fun CookCueScreen() {
 	val transitionCue = snapshot.transitionCue()
 	var transitionInitialized by remember { mutableStateOf(false) }
 	var previousTransitionKey by remember { mutableStateOf<String?>(null) }
-	var previousUserActionVersion by remember { mutableLongStateOf(userActionVersion) }
+	var previousSilentTransitionVersion by remember {
+		mutableLongStateOf(silentTransitionVersion)
+	}
 
-	LaunchedEffect(snapshot.started, transitionCue?.key, userActionVersion) {
+	LaunchedEffect(snapshot.started, transitionCue?.key, silentTransitionVersion) {
 		if (!snapshot.started) {
 			transitionInitialized = false
 			previousTransitionKey = null
-			previousUserActionVersion = userActionVersion
+			previousSilentTransitionVersion = silentTransitionVersion
 			return@LaunchedEffect
 		}
 
 		if (!transitionInitialized) {
 			transitionInitialized = true
 			previousTransitionKey = transitionCue?.key
-			previousUserActionVersion = userActionVersion
+			previousSilentTransitionVersion = silentTransitionVersion
 			return@LaunchedEffect
 		}
 
-		val changedByUser = userActionVersion != previousUserActionVersion
+		val changedSilently = silentTransitionVersion != previousSilentTransitionVersion
 		val changedStep = transitionCue?.key != previousTransitionKey
-		if (changedStep && !changedByUser && transitionCue != null) {
+		if (changedStep && !changedSilently && transitionCue != null) {
 			val transitionId = System.currentTimeMillis()
 			MobileTransitionNotifier.notify(context, transitionCue)
 			MobileSessionSync.publish(
@@ -157,7 +162,58 @@ private fun CookCueScreen() {
 		}
 
 		previousTransitionKey = transitionCue?.key
-		previousUserActionVersion = userActionVersion
+		previousSilentTransitionVersion = silentTransitionVersion
+	}
+
+	val overdueReminderSlot = current?.let { action ->
+		val elapsed = (snapshot.elapsedSeconds - action.startSeconds).coerceAtLeast(0)
+		if (elapsed < action.task.durationSeconds) {
+			null
+		} else {
+			(elapsed - action.task.durationSeconds) / 60
+		}
+	}
+	var previousOverdueReminderKey by remember { mutableStateOf<String?>(null) }
+
+	LaunchedEffect(snapshot.started, current?.task?.id, overdueReminderSlot) {
+		if (!snapshot.started || current == null || overdueReminderSlot == null) {
+			previousOverdueReminderKey = null
+			return@LaunchedEffect
+		}
+
+		val reminderKey = current.task.id + ":" + overdueReminderSlot
+		if (previousOverdueReminderKey == reminderKey) {
+			return@LaunchedEffect
+		}
+		previousOverdueReminderKey = reminderKey
+
+		val cue = TransitionCue(
+			key = "overdue:" + reminderKey,
+			title = "Skontroluj: " + current.task.title,
+			text = "Odhadovaný čas už uplynul. Pozri, či je krok hotový. " +
+				current.task.instruction,
+		)
+		val transitionId = System.currentTimeMillis()
+		MobileTransitionNotifier.notify(context, cue)
+		MobileSessionSync.publish(
+			context,
+			TransitionSignal(
+				id = transitionId,
+				title = cue.title,
+				text = cue.text,
+			),
+		)
+	}
+
+	LaunchedEffect(snapshot.started) {
+		if (
+			snapshot.started &&
+			Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+			context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
+			PackageManager.PERMISSION_GRANTED
+		) {
+			notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+		}
 	}
 
 	fun persistAndSync() {
