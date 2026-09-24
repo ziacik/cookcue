@@ -37,7 +37,7 @@ object ScrambledEggsWithOnionRecipe {
 			CookingTask(
 				id = "prep-onion",
 				title = "Nakrájaj cibuľu",
-				durationSeconds = 2 * 60,
+				durationSeconds = 4 * 60,
 				resources = uses(COOK),
 				skill = Skill.KNIFE,
 				instruction = "Ošúp 1/2 malej cibule a nakrájaj ju nadrobno.",
@@ -64,7 +64,7 @@ object ScrambledEggsWithOnionRecipe {
 			CookingTask(
 				id = "add-eggs",
 				title = "Pridaj vajcia",
-				durationSeconds = 60,
+				durationSeconds = 2 * 60,
 				dependsOn = setOf("saute-onion"),
 				resources = uses(COOK, PAN, BURNER),
 				instruction = "Rozbi 2 vajcia priamo do panvice k cibuli. Pridaj malú štipku soli a vareškou alebo stierkou rozmiešaj bielky so žĺtkami.",
@@ -83,7 +83,7 @@ object ScrambledEggsWithOnionRecipe {
 			CookingTask(
 				id = "finish",
 				title = "Dochuť a podávaj",
-				durationSeconds = 30,
+				durationSeconds = 2 * 60,
 				dependsOn = setOf("scramble"),
 				resources = uses(COOK, PAN),
 				instruction = "Ochutnaj, podľa potreby pridaj trochu soli a čierneho korenia a hneď podávaj.",
