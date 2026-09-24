@@ -56,7 +56,6 @@ import kotlinx.coroutines.delay
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
 		setContent {
 			MaterialTheme {
@@ -82,6 +81,18 @@ private fun WearCookCueScreen() {
 	) {}
 	val state = WatchSessionStore.snapshot
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
+
+	val keepScreenAwake =
+		state.started && (state.currentTaskId.isNotBlank() || state.eventTaskId.isNotBlank())
+
+	LaunchedEffect(keepScreenAwake) {
+		val window = (context as? ComponentActivity)?.window ?: return@LaunchedEffect
+		if (keepScreenAwake) {
+			window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+		} else {
+			window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+		}
+	}
 
 	LaunchedEffect(state.started) {
 		if (
