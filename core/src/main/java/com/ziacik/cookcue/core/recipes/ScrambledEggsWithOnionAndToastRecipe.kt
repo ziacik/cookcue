@@ -105,7 +105,7 @@ object ScrambledEggsWithOnionAndToastRecipe {
 				durationSeconds = 2 * 60,
 				dependsOn = setOf("butter-toast"),
 				resources = uses(COOK, PAN, BURNER),
-				instruction = "Vráť panvicu na stredný výkon. Rozbi 2 vajcia priamo do panvice k cibuli. Pridaj malú štipku soli a vareškou alebo stierkou rozmiešaj bielky so žĺtkami.",
+				instruction = "Vráť panvicu na stredný výkon. Rozbi 2 vajcia priamo do panvice k cibuli. Hneď ich osol malou štipkou soli a vareškou alebo stierkou rozmiešaj bielky so žĺtkami, aby sa soľ rovnomerne rozložila.",
 			),
 			CookingTask(
 				id = "scramble",
@@ -124,7 +124,7 @@ object ScrambledEggsWithOnionAndToastRecipe {
 				durationSeconds = 2 * 60,
 				dependsOn = setOf("scramble"),
 				resources = uses(COOK, PAN),
-				instruction = "Ochutnaj, podľa potreby pridaj trochu soli a čierneho korenia a hneď podávaj s maslovými toastami.",
+				instruction = "Ochutnaj. Ak treba, už len jemne dosoľ a pridaj čierne korenie. Hneď podávaj s maslovými toastami.",
 			),
 		),
 		troubleshooting = listOf(
