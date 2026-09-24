@@ -46,7 +46,7 @@ object FriedCheeseWithBoiledPotatoesRecipe {
 			CookingTask(
 				id = "prep-potatoes",
 				title = "Ošúp a nakrájaj zemiaky",
-				durationSeconds = 4 * 60,
+				durationSeconds = 7 * 60,
 				resources = uses(COOK, SINK),
 				skill = Skill.PEELING,
 				instruction = "Ošúp 300 g zemiakov a nakrájaj ich na približne rovnako veľké kúsky, asi 3–4 cm. Opláchni ich studenou vodou.",
@@ -54,7 +54,7 @@ object FriedCheeseWithBoiledPotatoesRecipe {
 			CookingTask(
 				id = "start-potatoes",
 				title = "Daj zemiaky variť",
-				durationSeconds = 60,
+				durationSeconds = 3 * 60,
 				dependsOn = setOf("prep-potatoes"),
 				resources = uses(COOK, POT, BURNER),
 				instruction = "Daj zemiaky do hrnca, zalej ich studenou vodou asi 2 cm nad zemiaky a pridaj približne 1/2 ČL soli. Zapni sporák na vysoký výkon.",
@@ -93,7 +93,7 @@ object FriedCheeseWithBoiledPotatoesRecipe {
 			CookingTask(
 				id = "prep-cheese",
 				title = "Priprav eidam",
-				durationSeconds = 60,
+				durationSeconds = 3 * 60,
 				dependsOn = setOf("start-potatoes"),
 				resources = uses(COOK),
 				instruction = "Vyber 150 g eidamu z chladničky až teraz. Ak je v jednom hrubom kuse, priprav plátok hrubý približne 1–1,5 cm. Povrch osušíš papierovou utierkou, aby sa naň trojobal dobre chytil.",
@@ -101,7 +101,7 @@ object FriedCheeseWithBoiledPotatoesRecipe {
 			CookingTask(
 				id = "setup-breading",
 				title = "Priprav trojobal",
-				durationSeconds = 2 * 60,
+				durationSeconds = 4 * 60,
 				dependsOn = setOf("prep-cheese"),
 				resources = uses(COOK),
 				instruction = "Priprav tri taniere: hladká múka, rozšľahané vajce a strúhanka. Vajce rozšľahaj vidličkou so štipkou soli.",
@@ -109,7 +109,7 @@ object FriedCheeseWithBoiledPotatoesRecipe {
 			CookingTask(
 				id = "bread-cheese",
 				title = "Dvakrát obaľ eidam",
-				durationSeconds = 4 * 60,
+				durationSeconds = 8 * 60,
 				dependsOn = setOf("setup-breading"),
 				resources = uses(COOK),
 				instruction = "Eidam obaľ takto: múka → vajce → strúhanka → vajce → strúhanka. Pri druhom vajci a strúhanke dôkladne obaľ hlavne hrany a rohy.",
@@ -121,7 +121,7 @@ object FriedCheeseWithBoiledPotatoesRecipe {
 			CookingTask(
 				id = "drain-potatoes",
 				title = "Zlej a dochuť zemiaky",
-				durationSeconds = 2 * 60,
+				durationSeconds = 4 * 60,
 				dependsOn = setOf("potatoes-ready"),
 				resources = uses(COOK, POT, SINK),
 				instruction = "Zlej vodu zo zemiakov. Vráť ich do teplého hrnca, podľa chuti dosoľ a voliteľne pridaj 1 ČL masla. Prikry ich, aby zostali teplé.",
@@ -156,7 +156,7 @@ object FriedCheeseWithBoiledPotatoesRecipe {
 			CookingTask(
 				id = "serve",
 				title = "Nechaj odkvapkať a podávaj",
-				durationSeconds = 60,
+				durationSeconds = 3 * 60,
 				dependsOn = setOf("fry-second-side"),
 				resources = uses(COOK),
 				instruction = "Vyber eidam na papierovú utierku a nechaj ho asi 30 sekúnd odkvapkať. Hneď podávaj s teplými varenými zemiakmi.",
