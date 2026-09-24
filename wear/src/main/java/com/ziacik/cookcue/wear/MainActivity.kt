@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -55,6 +56,7 @@ import kotlinx.coroutines.delay
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
 		setContent {
 			MaterialTheme {
@@ -80,6 +82,17 @@ private fun WearCookCueScreen() {
 	) {}
 	val state = WatchSessionStore.snapshot
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
+
+	LaunchedEffect(state.started) {
+		if (
+			state.started &&
+			Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+			context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
+			PackageManager.PERMISSION_GRANTED
+		) {
+			notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+		}
+	}
 
 	LaunchedEffect(state.receivedAtElapsedRealtime, state.started) {
 		var ticks = 0
