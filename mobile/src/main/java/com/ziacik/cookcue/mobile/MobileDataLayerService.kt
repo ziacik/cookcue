@@ -34,6 +34,7 @@ class MobileDataLayerService : WearableListenerService() {
 				MobileSessionPersistence.save(applicationContext)
 			}
 			MobileSessionSync.publish(applicationContext)
+			CookingSessionService.syncRunningState(applicationContext)
 		}
 	}
 }
