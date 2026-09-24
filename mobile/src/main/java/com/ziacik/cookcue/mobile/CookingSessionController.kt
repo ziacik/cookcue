@@ -9,6 +9,7 @@ import com.ziacik.cookcue.core.model.ScheduledTask
 import com.ziacik.cookcue.core.model.TaskKind
 import com.ziacik.cookcue.core.recipes.BeanSoupRecipe
 import com.ziacik.cookcue.core.recipes.FriedCheeseWithBoiledPotatoesRecipe
+import com.ziacik.cookcue.core.recipes.ScrambledEggsWithOnionAndToastRecipe
 import com.ziacik.cookcue.core.recipes.ScrambledEggsWithOnionRecipe
 import com.ziacik.cookcue.core.scheduler.Scheduler
 
@@ -28,6 +29,7 @@ object CookingSessionController {
 	val availableRecipes: List<Recipe> = listOf(
 		BeanSoupRecipe.recipe,
 		ScrambledEggsWithOnionRecipe.recipe,
+		ScrambledEggsWithOnionAndToastRecipe.recipe,
 		FriedCheeseWithBoiledPotatoesRecipe.recipe,
 	)
 
