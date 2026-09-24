@@ -53,14 +53,14 @@ object BeanSoupRecipe {
 			CookingTask(
 				id = "rinse",
 				title = "Zlej a opláchni fazuľu",
-				durationSeconds = 2 * 60,
+				durationSeconds = 3 * 60,
 				resources = uses(COOK, SINK),
 				instruction = "120 g suchej fazule má byť namočených 8–12 hodín vo veľkom množstve studenej vody. Namáčaciu vodu vylej a fazuľu opláchni.",
 			),
 			CookingTask(
 				id = "start-beans",
 				title = "Daj fazuľu variť",
-				durationSeconds = 2 * 60,
+				durationSeconds = 4 * 60,
 				dependsOn = setOf("rinse"),
 				resources = uses(COOK, POT, BURNER),
 				instruction = "Do hrnca daj namočenú fazuľu, 800 ml čistej vody, 1/2 kocky zeleninového bujónu, 1 bobkový list a 3 guľky nového korenia. Zapni sporák.",
@@ -116,7 +116,7 @@ object BeanSoupRecipe {
 			CookingTask(
 				id = "prep-carrot",
 				title = "Nakrájaj mrkvu",
-				durationSeconds = 3 * 60,
+				durationSeconds = 5 * 60,
 				dependsOn = setOf("start-beans"),
 				resources = uses(COOK),
 				skill = Skill.PEELING,
@@ -125,7 +125,7 @@ object BeanSoupRecipe {
 			CookingTask(
 				id = "prep-potato",
 				title = "Nakrájaj zemiak",
-				durationSeconds = 4 * 60,
+				durationSeconds = 6 * 60,
 				dependsOn = setOf("start-beans"),
 				resources = uses(COOK),
 				skill = Skill.PEELING,
@@ -134,7 +134,7 @@ object BeanSoupRecipe {
 			CookingTask(
 				id = "prep-onion",
 				title = "Nakrájaj cibuľu",
-				durationSeconds = 3 * 60,
+				durationSeconds = 5 * 60,
 				dependsOn = setOf("start-beans"),
 				resources = uses(COOK),
 				skill = Skill.KNIFE,
@@ -143,11 +143,19 @@ object BeanSoupRecipe {
 			CookingTask(
 				id = "prep-sausage",
 				title = "Nakrájaj klobásu",
-				durationSeconds = 2 * 60,
+				durationSeconds = 4 * 60,
 				dependsOn = setOf("start-beans"),
 				resources = uses(COOK),
 				skill = Skill.KNIFE,
 				instruction = "150 g klobásy nakrájaj na kolieska; väčšie kolieska pokojne prekroj ešte napoly.",
+			),
+			CookingTask(
+				id = "prep-garlic-spices",
+				title = "Priprav cesnak a papriku",
+				durationSeconds = 4 * 60,
+				dependsOn = setOf("start-beans"),
+				resources = uses(COOK),
+				instruction = "Ošúp 2 strúčiky cesnaku a priprav lis. Odmeraj 1/2 ČL sladkej papriky a nechaj ju poruke, aby si ju potom nemusel hľadať pri horúcej panvici.",
 			),
 			CookingTask(
 				id = "brown-sausage",
@@ -175,7 +183,7 @@ object BeanSoupRecipe {
 				id = "garlic-paprika",
 				title = "Pridaj cesnak a papriku",
 				durationSeconds = 90,
-				dependsOn = setOf("saute-onion"),
+				dependsOn = setOf("saute-onion", "prep-garlic-spices"),
 				resources = uses(COOK, PAN, BURNER),
 				instruction = "Pretlač 2 strúčiky cesnaku priamo do panvice k cibuli a miešaj 20–30 sekúnd. Pridaj 1/2 ČL sladkej papriky a prakticky hneď 1–2 PL vody z hrnca. Premiešaj.",
 				tips = listOf(
@@ -185,7 +193,7 @@ object BeanSoupRecipe {
 			CookingTask(
 				id = "combine",
 				title = "Spoj všetko v hrnci",
-				durationSeconds = 2 * 60,
+				durationSeconds = 4 * 60,
 				dependsOn = setOf(
 					"beans-ready",
 					"garlic-paprika",
@@ -198,7 +206,7 @@ object BeanSoupRecipe {
 			CookingTask(
 				id = "adjust-water",
 				title = "Nastav množstvo vody",
-				durationSeconds = 2 * 60,
+				durationSeconds = 4 * 60,
 				dependsOn = setOf("combine"),
 				resources = uses(COOK, POT),
 				instruction = "Ak ingrediencie trčia nad hladinu, dolej horúcu vodu. Začni približne 100–150 ml, hneď premiešaj a pozri. Ak treba, hneď pridaj ďalšiu dávku; medzi dolievaniami nemusíš čakať.",
@@ -234,7 +242,7 @@ object BeanSoupRecipe {
 			CookingTask(
 				id = "season",
 				title = "Finálne dochuť",
-				durationSeconds = 3 * 60,
+				durationSeconds = 6 * 60,
 				dependsOn = setOf("final-ready"),
 				resources = uses(COOK, POT),
 				instruction = "Vypni sporák. Pridaj 1/2 ČL soli, premiešaj a ochutnaj. Ak treba, pridávaj po troške; celkovo približne do 3/4 ČL. Pridaj čierne korenie – na začiatok asi 2–3 otočenia mlynčeka. 1/2 ČL majoránu rozdrv medzi prstami alebo dlaňami, nasyp do polievky a premiešaj. Pridaj 1/4 ČL kvasného liehového octu (8 %), premiešaj a ochutnaj.",
@@ -254,7 +262,7 @@ object BeanSoupRecipe {
 			CookingTask(
 				id = "final-taste",
 				title = "Ešte raz ochutnaj",
-				durationSeconds = 60,
+				durationSeconds = 3 * 60,
 				dependsOn = setOf("rest"),
 				resources = uses(COOK, POT),
 				instruction = "Po 5 minútach ešte raz ochutnaj a podľa potreby použi krízovú pomoc nižšie.",
