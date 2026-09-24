@@ -42,7 +42,7 @@ object ScrambledEggsWithOnionAndToastRecipe {
 			CookingTask(
 				id = "prep-onion",
 				title = "Nakrájaj cibuľu",
-				durationSeconds = 2 * 60,
+				durationSeconds = 4 * 60,
 				resources = uses(COOK),
 				skill = Skill.KNIFE,
 				instruction = "Ošúp 1/2 malej cibule a nakrájaj ju nadrobno.",
@@ -66,7 +66,7 @@ object ScrambledEggsWithOnionAndToastRecipe {
 			CookingTask(
 				id = "start-toast",
 				title = "Daj toasty do toastovača",
-				durationSeconds = 20,
+				durationSeconds = 60,
 				dependsOn = setOf("saute-onion-first"),
 				resources = uses(COOK, TOASTER),
 				instruction = "Vlož 2 krajce toastového chleba do toastovača a spusti opekanie na bežný stupeň.",
@@ -86,7 +86,7 @@ object ScrambledEggsWithOnionAndToastRecipe {
 				durationSeconds = 2 * 60,
 				dependsOn = setOf("start-toast"),
 				resources = uses(COOK, PAN, BURNER),
-				instruction = "Pokračuj v restovaní cibule ďalšie približne 2 minúty. Občas premiešaj. Hotová je, keď zmäkne a prestane voňať surovo.",
+				instruction = "Pokračuj v restovaní cibule ďalšie približne 2 minúty. Občas premiešaj. Keď je mäkká a prestane voňať surovo, odstav panvicu zo sporáka, aby sa cibuľa počas natierania toastov nespálila.",
 				tips = listOf(
 					"Ak začne rýchlo hnednúť, stiahni výkon.",
 				),
@@ -102,10 +102,10 @@ object ScrambledEggsWithOnionAndToastRecipe {
 			CookingTask(
 				id = "add-eggs",
 				title = "Pridaj vajcia",
-				durationSeconds = 60,
+				durationSeconds = 2 * 60,
 				dependsOn = setOf("butter-toast"),
 				resources = uses(COOK, PAN, BURNER),
-				instruction = "Rozbi 2 vajcia priamo do panvice k cibuli. Pridaj malú štipku soli a vareškou alebo stierkou rozmiešaj bielky so žĺtkami.",
+				instruction = "Vráť panvicu na stredný výkon. Rozbi 2 vajcia priamo do panvice k cibuli. Pridaj malú štipku soli a vareškou alebo stierkou rozmiešaj bielky so žĺtkami.",
 			),
 			CookingTask(
 				id = "scramble",
@@ -121,7 +121,7 @@ object ScrambledEggsWithOnionAndToastRecipe {
 			CookingTask(
 				id = "finish",
 				title = "Dochuť a podávaj",
-				durationSeconds = 30,
+				durationSeconds = 2 * 60,
 				dependsOn = setOf("scramble"),
 				resources = uses(COOK, PAN),
 				instruction = "Ochutnaj, podľa potreby pridaj trochu soli a čierneho korenia a hneď podávaj s maslovými toastami.",
