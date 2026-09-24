@@ -94,7 +94,7 @@ object ScrambledEggsWithOnionAndToastRecipe {
 			CookingTask(
 				id = "butter-toast",
 				title = "Natri toasty maslom",
-				durationSeconds = 30,
+				durationSeconds = 3 * 60,
 				dependsOn = setOf("toast", "saute-onion-finish"),
 				resources = uses(COOK),
 				instruction = "Vyber opečené toasty a ešte teplé ich natri maslom.",
