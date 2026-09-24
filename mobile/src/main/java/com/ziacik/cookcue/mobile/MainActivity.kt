@@ -68,7 +68,6 @@ import kotlinx.coroutines.delay
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
 		setContent {
 			CookCueTheme {
@@ -89,8 +88,6 @@ private fun CookCueScreen() {
 	val startedAt = CookingSessionController.startedAt
 	val durationOverrides = CookingSessionController.durationOverrides
 	val eventDeferredUntil = CookingSessionController.eventDeferredUntil
-	val userActionVersion = CookingSessionController.userActionVersion
-	val silentTransitionVersion = CookingSessionController.silentTransitionVersion
 
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
 	var showStopCookingDialog by remember { mutableStateOf(false) }
@@ -105,6 +102,7 @@ private fun CookCueScreen() {
 	LaunchedEffect(Unit) {
 		MobileSessionPersistence.ensureLoaded(context)
 		MobileSessionSync.publish(context)
+		CookingSessionService.syncRunningState(context)
 	}
 
 	val snapshot = remember(
@@ -124,87 +122,6 @@ private fun CookCueScreen() {
 	val secondaryBackground = snapshot.background.filterNot {
 		it.task.id == displayedWait?.task?.id
 	}
-	val transitionCue = snapshot.transitionCue()
-	var transitionInitialized by remember { mutableStateOf(false) }
-	var previousTransitionKey by remember { mutableStateOf<String?>(null) }
-	var previousSilentTransitionVersion by remember {
-		mutableLongStateOf(silentTransitionVersion)
-	}
-
-	LaunchedEffect(snapshot.started, transitionCue?.key, silentTransitionVersion) {
-		if (!snapshot.started) {
-			transitionInitialized = false
-			previousTransitionKey = null
-			previousSilentTransitionVersion = silentTransitionVersion
-			return@LaunchedEffect
-		}
-
-		if (!transitionInitialized) {
-			transitionInitialized = true
-			previousTransitionKey = transitionCue?.key
-			previousSilentTransitionVersion = silentTransitionVersion
-			return@LaunchedEffect
-		}
-
-		val changedSilently = silentTransitionVersion != previousSilentTransitionVersion
-		val changedStep = transitionCue?.key != previousTransitionKey
-		if (changedStep && !changedSilently && transitionCue != null) {
-			val transitionId = System.currentTimeMillis()
-			MobileTransitionNotifier.notify(context, transitionCue)
-			MobileSessionSync.publish(
-				context,
-				TransitionSignal(
-					id = transitionId,
-					title = transitionCue.title,
-					text = transitionCue.text,
-				),
-			)
-		}
-
-		previousTransitionKey = transitionCue?.key
-		previousSilentTransitionVersion = silentTransitionVersion
-	}
-
-	val overdueReminderSlot = current?.let { action ->
-		val elapsed = (snapshot.elapsedSeconds - action.startSeconds).coerceAtLeast(0)
-		if (elapsed < action.task.durationSeconds) {
-			null
-		} else {
-			(elapsed - action.task.durationSeconds) / 60
-		}
-	}
-	var previousOverdueReminderKey by remember { mutableStateOf<String?>(null) }
-
-	LaunchedEffect(snapshot.started, current?.task?.id, overdueReminderSlot) {
-		if (!snapshot.started || current == null || overdueReminderSlot == null) {
-			previousOverdueReminderKey = null
-			return@LaunchedEffect
-		}
-
-		val reminderKey = current.task.id + ":" + overdueReminderSlot
-		if (previousOverdueReminderKey == reminderKey) {
-			return@LaunchedEffect
-		}
-		previousOverdueReminderKey = reminderKey
-
-		val cue = TransitionCue(
-			key = "overdue:" + reminderKey,
-			title = "Skontroluj: " + current.task.title,
-			text = "Odhadovaný čas už uplynul. Pozri, či je krok hotový. " +
-				current.task.instruction,
-		)
-		val transitionId = System.currentTimeMillis()
-		MobileTransitionNotifier.notify(context, cue)
-		MobileSessionSync.publish(
-			context,
-			TransitionSignal(
-				id = transitionId,
-				title = cue.title,
-				text = cue.text,
-			),
-		)
-	}
-
 	LaunchedEffect(snapshot.started) {
 		if (
 			snapshot.started &&
@@ -216,9 +133,22 @@ private fun CookCueScreen() {
 		}
 	}
 
+	val keepScreenAwake =
+		snapshot.started && (current != null || snapshot.pendingEvents.isNotEmpty())
+
+	LaunchedEffect(keepScreenAwake) {
+		val window = (context as? ComponentActivity)?.window ?: return@LaunchedEffect
+		if (keepScreenAwake) {
+			window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+		} else {
+			window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+		}
+	}
+
 	fun persistAndSync() {
 		MobileSessionPersistence.save(context)
 		MobileSessionSync.publish(context)
+		CookingSessionService.syncRunningState(context)
 	}
 
 	if (showStopCookingDialog) {
