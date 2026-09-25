@@ -1,6 +1,7 @@
 package com.ziacik.cookcue.core.recipes
 
 import com.ziacik.cookcue.core.model.TaskKind
+import com.ziacik.cookcue.core.scheduler.Scheduler
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -9,15 +10,77 @@ class ParboiledFriesRecipeTest {
 	private val recipe = ParboiledFriesRecipe.recipe
 
 	@Test
-	fun recipeUsesParboilAndDoubleFryMethod() {
-		val parboil = recipe.tasks.single { it.id == "parboil" }
-		val firstFry = recipe.tasks.single { it.id == "first-fry" }
-		val secondFry = recipe.tasks.single { it.id == "second-fry" }
+	fun waterHeatsWhilePotatoesAreRinsed() {
+		val schedule = Scheduler().schedule(recipe)
+		val rinse = schedule.single { it.task.id == "rinse-potatoes" }
+		val water = schedule.single { it.task.id == "water-boiling" }
 
-		assertEquals(TaskKind.WAIT, parboil.kind)
-		assertEquals(4 * 60L, parboil.durationSeconds)
-		assertTrue(firstFry.instruction.contains("5–6 minút"))
-		assertTrue(secondFry.instruction.contains("2–3 minúty"))
+		assertTrue(rinse.startSeconds < water.endSeconds)
+		assertTrue(water.startSeconds < rinse.endSeconds)
+	}
+
+	@Test
+	fun dryingTakesTenMinutesIncludingDrainingAndFryerHeatsInParallel() {
+		val schedule = Scheduler().schedule(recipe)
+		val drain = schedule.single { it.task.id == "drain-spread" }
+		val dry = schedule.single { it.task.id == "dry-fries" }
+		val heat = schedule.single { it.task.id == "heat-fryer-155" }
+
+		assertEquals(60L, drain.task.durationSeconds)
+		assertEquals(9 * 60L, dry.task.durationSeconds)
+		assertEquals(10 * 60L, dry.endSeconds - drain.startSeconds)
+		assertEquals(dry.startSeconds, heat.startSeconds)
+		assertTrue(heat.endSeconds <= dry.endSeconds)
+	}
+
+	@Test
+	fun firstFryStartsOnlyAfterBasketLoading() {
+		val load = recipe.tasks.single { it.id == "load-first-basket" }
+		val firstFry = recipe.tasks.single { it.id == "first-fry" }
+
+		assertEquals(60L, load.durationSeconds)
+		assertEquals(setOf("load-first-basket"), firstFry.dependsOn)
+		assertEquals(6 * 60L, firstFry.durationSeconds)
+		assertEquals(TaskKind.WAIT, firstFry.kind)
+	}
+
+	@Test
+	fun secondHeatAndCoolingRunTogetherForFiveMinutes() {
+		val configured = ParboiledFriesRecipe.create(
+			FryerTimingProfile(
+				coldTo155Seconds = 7 * 60,
+				from155To180Seconds = 5 * 60,
+			)
+		)
+		val schedule = Scheduler().schedule(configured)
+		val cool = schedule.single { it.task.id == "cool-fries" }
+		val heat = schedule.single { it.task.id == "heat-fryer-180" }
+		val lower = schedule.single { it.task.id == "lower-second-basket" }
+
+		assertEquals(cool.startSeconds, heat.startSeconds)
+		assertEquals(5 * 60L, cool.task.durationSeconds)
+		assertEquals(5 * 60L, heat.task.durationSeconds)
+		assertTrue(lower.startSeconds >= cool.endSeconds)
+		assertTrue(lower.startSeconds >= heat.endSeconds)
+	}
+
+	@Test
+	fun fryerWarmupTimesAreConfigurable() {
+		val configured = ParboiledFriesRecipe.create(
+			FryerTimingProfile(
+				coldTo155Seconds = 8 * 60,
+				from155To180Seconds = 4 * 60,
+			)
+		)
+
+		assertEquals(
+			8 * 60L,
+			configured.tasks.single { it.id == "heat-fryer-155" }.durationSeconds,
+		)
+		assertEquals(
+			4 * 60L,
+			configured.tasks.single { it.id == "heat-fryer-180" }.durationSeconds,
+		)
 	}
 
 	@Test
@@ -27,19 +90,6 @@ class ParboiledFriesRecipeTest {
 		assertEquals(TaskKind.EVENT, check.kind)
 		assertEquals("EŠTE NIE", check.retryActionLabel)
 		assertEquals(60L, check.retryAfterSeconds)
-	}
-
-	@Test
-	fun friesDryAndCoolBetweenCookingStages() {
-		val airDry = recipe.tasks.single { it.id == "air-dry" }
-		val firstFry = recipe.tasks.single { it.id == "first-fry" }
-		val cool = recipe.tasks.single { it.id == "cool-fries" }
-		val secondFry = recipe.tasks.single { it.id == "second-fry" }
-
-		assertEquals(TaskKind.WAIT, airDry.kind)
-		assertTrue("heat-oil-low" in firstFry.dependsOn)
-		assertEquals(TaskKind.WAIT, cool.kind)
-		assertTrue("heat-oil-high" in secondFry.dependsOn)
 	}
 
 	@Test
