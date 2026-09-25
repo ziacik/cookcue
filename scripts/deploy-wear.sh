@@ -6,8 +6,24 @@ cd "$ROOT"
 
 SERIAL="${1:-${ANDROID_SERIAL:-}}"
 
+list_connected_devices() {
+	while IFS=$'\t' read -r serial state; do
+		if [[ "$state" == "device" ]]; then
+			printf '%s\n' "$serial"
+		fi
+	done < <(adb devices)
+}
+
+print_connected_devices() {
+	while IFS=$'\t' read -r serial details; do
+		if [[ "$details" == device* ]]; then
+			printf '%s\t%s\n' "$serial" "$details"
+		fi
+	done < <(adb devices -l)
+}
+
 if [[ -z "$SERIAL" ]]; then
-	mapfile -t DEVICES < <(adb devices | awk 'NR > 1 && $2 == "device" {print $1}')
+	mapfile -t DEVICES < <(list_connected_devices)
 
 	case "${#DEVICES[@]}" in
 		0)
@@ -19,7 +35,7 @@ if [[ -z "$SERIAL" ]]; then
 			;;
 		*)
 			echo "Multiple ADB targets found:"
-			adb devices -l | awk 'NR > 1 && $2 == "device"'
+			print_connected_devices
 			echo
 			PS3="Select target: "
 			select SERIAL in "${DEVICES[@]}"; do
