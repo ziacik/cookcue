@@ -27,6 +27,7 @@ class CookingSessionService : Service() {
 	private var previousTransitionKey: String? = null
 	private var previousSilentTransitionVersion = 0L
 	private var previousOverdueReminderKey: String? = null
+	private var previousCompleted = false
 	private var previousOngoingText: String? = null
 
 	override fun onCreate() {
@@ -74,6 +75,7 @@ class CookingSessionService : Service() {
 
 			updateOngoingNotification(snapshot)
 			handleTransition(snapshot)
+			handleCompletion(snapshot)
 			handleOverdueReminder(snapshot)
 
 			delay(500)
@@ -101,6 +103,19 @@ class CookingSessionService : Service() {
 
 		previousTransitionKey = cue?.key
 		previousSilentTransitionVersion = silentTransitionVersion
+	}
+
+	private fun handleCompletion(snapshot: MobileSessionSnapshot) {
+		if (snapshot.completed && !previousCompleted) {
+			sendCue(
+				TransitionCue(
+					key = "completed",
+					title = "Varenie je hotové",
+					text = "Všetky kroky sú dokončené. Ukonči varenie v CookCue.",
+				),
+			)
+		}
+		previousCompleted = snapshot.completed
 	}
 
 	private fun handleOverdueReminder(snapshot: MobileSessionSnapshot) {
@@ -193,6 +208,9 @@ class CookingSessionService : Service() {
 	}
 
 	private fun sessionText(snapshot: MobileSessionSnapshot): String {
+		if (snapshot.completed) {
+			return "Varenie je hotové — ukonči varenie"
+		}
 		snapshot.pendingEvents.firstOrNull()?.let {
 			return "Skontroluj: " + it.task.title
 		}
