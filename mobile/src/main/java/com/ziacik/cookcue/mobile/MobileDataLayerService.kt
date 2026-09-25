@@ -27,6 +27,7 @@ class MobileDataLayerService : WearableListenerService() {
 				DataLayerProtocol.ACTION_CONFIRM_EVENT -> CookingSessionController.confirmEvent(taskId)
 				DataLayerProtocol.ACTION_DEFER_EVENT -> CookingSessionController.deferEvent(taskId)
 				DataLayerProtocol.ACTION_COMPLETE_ACTIVE -> CookingSessionController.completeAction(taskId)
+				DataLayerProtocol.ACTION_STOP -> CookingSessionController.stop()
 				else -> return@post
 			}
 
