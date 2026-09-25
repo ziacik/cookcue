@@ -15,6 +15,7 @@ import com.ziacik.cookcue.core.scheduler.Scheduler
 
 data class MobileSessionSnapshot(
 	val started: Boolean,
+	val completed: Boolean,
 	val elapsedSeconds: Long,
 	val schedule: List<ScheduledTask>,
 	val currentAction: ScheduledTask?,
@@ -250,8 +251,17 @@ object CookingSessionController {
 				it.startSeconds > elapsedSeconds
 		}
 
+		val completed =
+			start != null &&
+				unconfirmedManualTaskIds.isEmpty() &&
+				currentAction == null &&
+				pendingEvents.isEmpty() &&
+				background.isEmpty() &&
+				nextScheduled == null
+
 		return MobileSessionSnapshot(
 			started = start != null,
+			completed = completed,
 			elapsedSeconds = elapsedSeconds,
 			schedule = schedule,
 			currentAction = currentAction,
