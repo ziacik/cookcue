@@ -10,6 +10,7 @@ import com.ziacik.cookcue.core.sync.DataLayerProtocol
 data class WatchSessionSnapshot(
 	val synced: Boolean = false,
 	val started: Boolean = false,
+	val completed: Boolean = false,
 	val recipeTitle: String = "",
 	val currentTaskId: String = "",
 	val currentTitle: String = "",
@@ -43,6 +44,7 @@ object WatchSessionStore {
 		snapshot = WatchSessionSnapshot(
 			synced = true,
 			started = dataMap.getBoolean(DataLayerProtocol.KEY_STARTED),
+			completed = dataMap.getBoolean(DataLayerProtocol.KEY_COMPLETED),
 			recipeTitle = dataMap.getString(DataLayerProtocol.KEY_RECIPE_TITLE).orEmpty(),
 			currentTaskId = dataMap.getString(DataLayerProtocol.KEY_CURRENT_TASK_ID).orEmpty(),
 			currentTitle = dataMap.getString(DataLayerProtocol.KEY_CURRENT_TITLE).orEmpty(),
