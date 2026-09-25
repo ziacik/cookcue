@@ -6,40 +6,56 @@ cd "$ROOT"
 
 SERIAL="${1:-${ANDROID_SERIAL:-}}"
 
-list_connected_devices() {
-	while IFS=$'\t' read -r serial state; do
-		if [[ "$state" == "device" ]]; then
-			printf '%s\n' "$serial"
-		fi
-	done < <(adb devices)
-}
+DEVICE_SERIALS=()
+DEVICE_LABELS=()
 
-print_connected_devices() {
+load_connected_devices() {
 	while IFS=$'\t' read -r serial details; do
-		if [[ "$details" == device* ]]; then
-			printf '%s\t%s\n' "$serial" "$details"
+		[[ "$details" == device* ]] || continue
+
+		DEVICE_SERIALS+=("$serial")
+
+		local model=""
+		local product=""
+		if [[ "$details" =~ model:([^[:space:]]+) ]]; then
+			model="${BASH_REMATCH[1]}"
 		fi
+		if [[ "$details" =~ product:([^[:space:]]+) ]]; then
+			product="${BASH_REMATCH[1]}"
+		fi
+
+		local label=""
+		if [[ -n "$model" ]]; then
+			label+="model:$model"
+		fi
+		if [[ -n "$product" ]]; then
+			[[ -n "$label" ]] && label+="  "
+			label+="product:$product"
+		fi
+		[[ -n "$label" ]] && label+="  "
+		label+="$serial"
+
+		DEVICE_LABELS+=("$label")
 	done < <(adb devices -l)
 }
 
 if [[ -z "$SERIAL" ]]; then
-	mapfile -t DEVICES < <(list_connected_devices)
+	load_connected_devices
 
-	case "${#DEVICES[@]}" in
+	case "${#DEVICE_SERIALS[@]}" in
 		0)
 			echo "No usable ADB device found." >&2
 			exit 1
 			;;
 		1)
-			SERIAL="${DEVICES[0]}"
+			SERIAL="${DEVICE_SERIALS[0]}"
 			;;
 		*)
 			echo "Multiple ADB targets found:"
-			print_connected_devices
-			echo
 			PS3="Select target: "
-			select SERIAL in "${DEVICES[@]}"; do
-				if [[ -n "$SERIAL" ]]; then
+			select LABEL in "${DEVICE_LABELS[@]}"; do
+				if [[ -n "$LABEL" ]]; then
+					SERIAL="${DEVICE_SERIALS[REPLY - 1]}"
 					break
 				fi
 				echo "Invalid selection." >&2
