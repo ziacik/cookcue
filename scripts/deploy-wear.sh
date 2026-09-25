@@ -10,32 +10,37 @@ DEVICE_SERIALS=()
 DEVICE_LABELS=()
 
 load_connected_devices() {
-	while IFS=$'\t' read -r serial details; do
-		[[ "$details" == device* ]] || continue
+	while IFS= read -r line; do
+		[[ -z "$line" || "$line" == "List of devices attached" ]] && continue
 
-		DEVICE_SERIALS+=("$serial")
+		if [[ "$line" =~ ^(.*[^[:space:]])[[:space:]]+device([[:space:]].*)?$ ]]; then
+			local serial="${BASH_REMATCH[1]}"
+			local details="${BASH_REMATCH[2]:-}"
 
-		local model=""
-		local product=""
-		if [[ "$details" =~ model:([^[:space:]]+) ]]; then
-			model="${BASH_REMATCH[1]}"
-		fi
-		if [[ "$details" =~ product:([^[:space:]]+) ]]; then
-			product="${BASH_REMATCH[1]}"
-		fi
+			DEVICE_SERIALS+=("$serial")
 
-		local label=""
-		if [[ -n "$model" ]]; then
-			label+="model:$model"
-		fi
-		if [[ -n "$product" ]]; then
+			local model=""
+			local product=""
+			if [[ "$details" =~ model:([^[:space:]]+) ]]; then
+				model="${BASH_REMATCH[1]}"
+			fi
+			if [[ "$details" =~ product:([^[:space:]]+) ]]; then
+				product="${BASH_REMATCH[1]}"
+			fi
+
+			local label=""
+			if [[ -n "$model" ]]; then
+				label+="model:$model"
+			fi
+			if [[ -n "$product" ]]; then
+				[[ -n "$label" ]] && label+="  "
+				label+="product:$product"
+			fi
 			[[ -n "$label" ]] && label+="  "
-			label+="product:$product"
-		fi
-		[[ -n "$label" ]] && label+="  "
-		label+="$serial"
+			label+="$serial"
 
-		DEVICE_LABELS+=("$label")
+			DEVICE_LABELS+=("$label")
+		fi
 	done < <(adb devices -l)
 }
 
