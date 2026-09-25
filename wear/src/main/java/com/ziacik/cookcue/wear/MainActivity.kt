@@ -83,7 +83,12 @@ private fun WearCookCueScreen() {
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
 
 	val keepScreenAwake =
-		state.started && (state.currentTaskId.isNotBlank() || state.eventTaskId.isNotBlank())
+		state.started &&
+			(
+				state.currentTaskId.isNotBlank() ||
+					state.eventTaskId.isNotBlank() ||
+					state.completed
+			)
 
 	LaunchedEffect(keepScreenAwake) {
 		val window = (context as? ComponentActivity)?.window ?: return@LaunchedEffect
@@ -213,6 +218,19 @@ private fun WearCookCueScreen() {
 						WearActionSender.send(
 							context,
 							DataLayerProtocol.ACTION_START,
+						)
+					},
+				)
+			}
+
+			state.completed -> {
+				SimpleState(
+					message = "Varenie je hotové ✓",
+					buttonText = "UKONČIŤ",
+					onClick = {
+						WearActionSender.send(
+							context,
+							DataLayerProtocol.ACTION_STOP,
 						)
 					},
 				)
