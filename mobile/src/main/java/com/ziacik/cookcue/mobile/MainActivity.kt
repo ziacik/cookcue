@@ -134,7 +134,8 @@ private fun CookCueScreen() {
 	}
 
 	val keepScreenAwake =
-		snapshot.started && (current != null || snapshot.pendingEvents.isNotEmpty())
+		snapshot.started &&
+			(current != null || snapshot.pendingEvents.isNotEmpty() || snapshot.completed)
 
 	LaunchedEffect(keepScreenAwake) {
 		val window = (context as? ComponentActivity)?.window ?: return@LaunchedEffect
@@ -308,6 +309,15 @@ private fun CookCueScreen() {
 									stepCount = snapshot.schedule.size,
 									actionLabel = null,
 									onAction = {},
+								)
+							}
+
+							snapshot.completed -> {
+								CompletionCard(
+									onFinish = {
+										CookingSessionController.stop()
+										persistAndSync()
+									},
 								)
 							}
 
@@ -837,6 +847,54 @@ private fun TimerDial(
 				style = MaterialTheme.typography.labelSmall,
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
 			)
+		}
+	}
+}
+
+@Composable
+private fun CompletionCard(
+	onFinish: () -> Unit,
+) {
+	Surface(
+		modifier = Modifier.fillMaxWidth(),
+		color = MaterialTheme.colorScheme.primaryContainer,
+		shape = RoundedCornerShape(20.dp),
+	) {
+		Column(
+			modifier = Modifier.padding(20.dp),
+			horizontalAlignment = Alignment.CenterHorizontally,
+		) {
+			Text(
+				text = "✓",
+				style = MaterialTheme.typography.displaySmall,
+				color = MaterialTheme.colorScheme.primary,
+			)
+			Spacer(Modifier.height(8.dp))
+			Text(
+				text = "Varenie je hotové",
+				style = MaterialTheme.typography.headlineMedium.copy(
+					fontFamily = FontFamily.Serif,
+					fontWeight = FontWeight.SemiBold,
+				),
+			)
+			Spacer(Modifier.height(5.dp))
+			Text(
+				text = "Všetky kroky sú dokončené.",
+				style = MaterialTheme.typography.bodyMedium,
+				color = MaterialTheme.colorScheme.onSurfaceVariant,
+			)
+			Spacer(Modifier.height(18.dp))
+			Button(
+				onClick = onFinish,
+				modifier = Modifier.fillMaxWidth(),
+				shape = RoundedCornerShape(12.dp),
+			) {
+				Text(
+					text = "UKONČIŤ VARENIE",
+					fontWeight = FontWeight.Bold,
+					modifier = Modifier.padding(vertical = 4.dp),
+				)
+			}
 		}
 	}
 }
