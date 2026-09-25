@@ -11,9 +11,11 @@ object DataLayerProtocol {
 	const val ACTION_CONFIRM_EVENT = "confirm_event"
 	const val ACTION_DEFER_EVENT = "defer_event"
 	const val ACTION_COMPLETE_ACTIVE = "complete_active"
+	const val ACTION_STOP = "stop"
 
 	const val KEY_VERSION = "version"
 	const val KEY_STARTED = "started"
+	const val KEY_COMPLETED = "completed"
 	const val KEY_RECIPE_TITLE = "recipe_title"
 	const val KEY_CURRENT_TASK_ID = "current_task_id"
 	const val KEY_CURRENT_TITLE = "current_title"
