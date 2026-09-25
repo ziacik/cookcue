@@ -9,6 +9,7 @@ import com.ziacik.cookcue.core.model.ScheduledTask
 import com.ziacik.cookcue.core.model.TaskKind
 import com.ziacik.cookcue.core.recipes.BeanSoupRecipe
 import com.ziacik.cookcue.core.recipes.FriedCheeseWithBoiledPotatoesRecipe
+import com.ziacik.cookcue.core.recipes.ParboiledFriesRecipe
 import com.ziacik.cookcue.core.recipes.ScrambledEggsWithOnionAndToastRecipe
 import com.ziacik.cookcue.core.recipes.ScrambledEggsWithOnionRecipe
 import com.ziacik.cookcue.core.scheduler.Scheduler
@@ -32,6 +33,7 @@ object CookingSessionController {
 		ScrambledEggsWithOnionRecipe.recipe,
 		ScrambledEggsWithOnionAndToastRecipe.recipe,
 		FriedCheeseWithBoiledPotatoesRecipe.recipe,
+		ParboiledFriesRecipe.recipe,
 	)
 
 	var selectedRecipeId by mutableStateOf(BeanSoupRecipe.recipe.id)
