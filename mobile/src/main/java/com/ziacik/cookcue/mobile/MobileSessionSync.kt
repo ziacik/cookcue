@@ -26,6 +26,7 @@ object MobileSessionSync {
 		request.dataMap.apply {
 			putLong(DataLayerProtocol.KEY_VERSION, System.currentTimeMillis())
 			putBoolean(DataLayerProtocol.KEY_STARTED, snapshot.started)
+			putBoolean(DataLayerProtocol.KEY_COMPLETED, snapshot.completed)
 			putString(DataLayerProtocol.KEY_RECIPE_TITLE, CookingSessionController.recipe.title)
 
 			putString(DataLayerProtocol.KEY_CURRENT_TASK_ID, current?.task?.id.orEmpty())
