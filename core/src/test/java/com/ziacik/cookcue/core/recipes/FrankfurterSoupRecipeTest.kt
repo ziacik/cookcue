@@ -2,6 +2,7 @@ package com.ziacik.cookcue.core.recipes
 
 import com.ziacik.cookcue.core.model.TaskKind
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -9,34 +10,51 @@ class FrankfurterSoupRecipeTest {
 	private val recipe = FrankfurterSoupRecipe.recipe
 
 	@Test
-	fun recipeHasExpectedIngredientsAndServingCount() {
+	fun recipeIsNonCreamyAndUsesBouillon() {
 		val ingredients = recipe.ingredients.associate { it.name to it.amount }
 
 		assertEquals(2, recipe.servings)
 		assertEquals("2 ks (cca 150 g)", ingredients["frankfurtské párky"])
-		assertEquals("2 ks (cca 300 g)", ingredients["stredné zemiaky"])
-		assertEquals("100 ml", ingredients["smotana na varenie"])
+		assertEquals("cca 250 g", ingredients["zemiaky"])
+		assertEquals("4 strúčiky", ingredients["cesnak"])
 		assertEquals("1 PL", ingredients["hladká múka"])
-		assertEquals("700 ml", ingredients["voda"])
+		assertEquals("1 PL", ingredients["gulášové korenie"])
+		assertEquals("1 kocka", ingredients["bujón"])
+		assertEquals("750 ml", ingredients["voda"])
+		assertFalse(ingredients.keys.any { it.contains("smot", ignoreCase = true) })
 	}
 
 	@Test
-	fun heatingLiquidAndPotatoPrepCanOverlap() {
-		val waitForBoil = recipe.tasks.single { it.id == "wait-for-boil" }
+	fun sausagesAreBrownedAndRemovedBeforeOnionBase() {
+		val brownSausages = recipe.tasks.single { it.id == "brown-sausages" }
+		val removeSausages = recipe.tasks.single { it.id == "remove-sausages" }
+		val sauteOnion = recipe.tasks.single { it.id == "saute-onion" }
+
+		assertTrue("prep-sausages" in brownSausages.dependsOn)
+		assertTrue("brown-sausages" in removeSausages.dependsOn)
+		assertTrue("prep-onion" in sauteOnion.dependsOn)
+	}
+
+	@Test
+	fun flourGarlicSpiceAndBouillonFollowTheIntendedOrder() {
+		val flour = recipe.tasks.single { it.id == "add-flour" }
+		val garlicSpice = recipe.tasks.single { it.id == "garlic-spice" }
+		val liquid = recipe.tasks.single { it.id == "add-bouillon-water" }
+
+		assertTrue("saute-onion" in flour.dependsOn)
+		assertTrue("add-flour" in garlicSpice.dependsOn)
+		assertTrue("garlic-spice" in liquid.dependsOn)
+		assertTrue(liquid.instruction.contains("1 kocku bujónu"))
+	}
+
+	@Test
+	fun potatoPrepRunsDuringBaseSimmer() {
+		val baseSimmer = recipe.tasks.single { it.id == "base-simmer" }
 		val prepPotatoes = recipe.tasks.single { it.id == "prep-potatoes" }
 
-		assertEquals(TaskKind.EVENT, waitForBoil.kind)
-		assertTrue("add-liquid" in waitForBoil.dependsOn)
-		assertTrue("add-liquid" in prepPotatoes.dependsOn)
-	}
-
-	@Test
-	fun sausageAndSlurryPrepHappenWhilePotatoesCook() {
-		val prepSausages = recipe.tasks.single { it.id == "prep-sausages" }
-		val mixSlurry = recipe.tasks.single { it.id == "mix-slurry" }
-
-		assertTrue("add-potatoes" in prepSausages.dependsOn)
-		assertTrue("add-potatoes" in mixSlurry.dependsOn)
+		assertEquals(TaskKind.WAIT, baseSimmer.kind)
+		assertEquals(15 * 60L, baseSimmer.durationSeconds)
+		assertTrue("wait-for-boil" in prepPotatoes.dependsOn)
 	}
 
 	@Test
@@ -50,12 +68,12 @@ class FrankfurterSoupRecipeTest {
 	}
 
 	@Test
-	fun slurryComesOnlyAfterPotatoesAndSausages() {
-		val addSausages = recipe.tasks.single { it.id == "add-sausages" }
-		val addSlurry = recipe.tasks.single { it.id == "add-slurry" }
+	fun brownedSausagesAndRemainingGarlicReturnAtTheEnd() {
+		val finish = recipe.tasks.single { it.id == "finish-soup" }
 
-		assertTrue("potatoes-ready" in addSausages.dependsOn)
-		assertTrue("heat-sausages" in addSlurry.dependsOn)
-		assertTrue("mix-slurry" in addSlurry.dependsOn)
+		assertTrue("potatoes-ready" in finish.dependsOn)
+		assertTrue("prep-finish" in finish.dependsOn)
+		assertTrue(finish.instruction.contains("opečené párky"))
+		assertTrue(finish.instruction.contains("zostávajúce 2 strúčiky cesnaku"))
 	}
 }
