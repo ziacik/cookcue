@@ -1,0 +1,11 @@
+{
+	"schemaVersion": 1,
+	"recipes": [
+		{
+			"id": "frankfurter-soup",
+			"version": 1,
+			"file": "frankfurter-soup.json",
+			"minAppVersion": 1
+		}
+	]
+}
