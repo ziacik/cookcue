@@ -1,0 +1,339 @@
+{
+	"schemaVersion": 1,
+	"id": "frankfurter-soup",
+	"title": "Frankfurtská polievka",
+	"description": "Pre 2 osoby · bez smotany · opečené párky, zemiaky a paprikový základ s bujónom",
+	"servings": 2,
+	"ingredients": [
+		{
+			"name": "frankfurtské párky",
+			"amount": "2 ks (cca 150 g)"
+		},
+		{
+			"name": "zemiaky",
+			"amount": "cca 250 g"
+		},
+		{
+			"name": "cibuľa",
+			"amount": "1 väčšia ks"
+		},
+		{
+			"name": "cesnak",
+			"amount": "4 strúčiky"
+		},
+		{
+			"name": "hladká múka",
+			"amount": "1 PL"
+		},
+		{
+			"name": "gulášové korenie",
+			"amount": "1 PL"
+		},
+		{
+			"name": "bujón",
+			"amount": "1 kocka"
+		},
+		{
+			"name": "voda",
+			"amount": "750 ml"
+		},
+		{
+			"name": "olej",
+			"amount": "1 PL"
+		},
+		{
+			"name": "petržlenová vňať",
+			"amount": "1 PL nasekanej alebo podľa chuti"
+		},
+		{
+			"name": "soľ",
+			"amount": "podľa chuti, opatrne kvôli bujónu"
+		}
+	],
+	"resourceCapacities": {
+		"cook": 1,
+		"pot": 1,
+		"burner": 1
+	},
+	"tasks": [
+		{
+			"id": "prep-sausages",
+			"title": "Nakrájaj párky",
+			"durationSeconds": 240,
+			"resources": [
+				"cook"
+			],
+			"skill": "KNIFE",
+			"instruction": "2 frankfurtské párky nakrájaj na kolieska hrubé približne 5–8 mm."
+		},
+		{
+			"id": "brown-sausages",
+			"title": "Opeč párky",
+			"durationSeconds": 300,
+			"dependsOn": [
+				"prep-sausages"
+			],
+			"resources": [
+				"cook",
+				"pot",
+				"burner"
+			],
+			"instruction": "Do hrnca daj 1 PL oleja a rozohrej ho na strednom výkone. Pridaj párky a opekaj ich za občasného miešania, kým na viacerých miestach jemne nezhnednú."
+		},
+		{
+			"id": "remove-sausages",
+			"title": "Vyber párky bokom",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"brown-sausages"
+			],
+			"resources": [
+				"cook",
+				"pot"
+			],
+			"instruction": "Opečené párky vyber dierovanou lyžicou alebo lyžicou na tanier. Tuk a opečenú chuť nechaj v hrnci."
+		},
+		{
+			"id": "prep-onion",
+			"title": "Nakrájaj cibuľu",
+			"durationSeconds": 300,
+			"dependsOn": [
+				"remove-sausages"
+			],
+			"resources": [
+				"cook"
+			],
+			"skill": "KNIFE",
+			"instruction": "Ošúp 1 väčšiu cibuľu a nakrájaj ju nadrobno."
+		},
+		{
+			"id": "saute-onion",
+			"title": "Pomaly opeč cibuľu",
+			"durationSeconds": 360,
+			"dependsOn": [
+				"prep-onion"
+			],
+			"resources": [
+				"cook",
+				"pot",
+				"burner"
+			],
+			"instruction": "Daj cibuľu do toho istého hrnca a opekaj ju na strednom až stredne nízkom výkone, kým zmäkne a jemne zozlatne. Priebežne miešaj.",
+			"tips": [
+				"Ak sa dno začína pripaľovať, pridaj 1–2 PL vody a oškrab vareškou opečené kúsky zo dna."
+			]
+		},
+		{
+			"id": "add-flour",
+			"title": "Pridaj múku",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"saute-onion"
+			],
+			"resources": [
+				"cook",
+				"pot",
+				"burner"
+			],
+			"instruction": "Prisyp 1 PL hladkej múky a asi 1 minútu ju s cibuľou miešaj a opekaj na miernejšom výkone. Nesmie sa pripáliť."
+		},
+		{
+			"id": "garlic-spice",
+			"title": "Pridaj cesnak a gulášové korenie",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"add-flour"
+			],
+			"resources": [
+				"cook",
+				"pot",
+				"burner"
+			],
+			"instruction": "Pretlač priamo do hrnca 2 strúčiky cesnaku a pridaj 1 PL gulášového korenia. Miešaj iba asi 20–30 sekúnd a hneď pokračuj zaliatím.",
+			"tips": [
+				"Korenený základ nenechávaj dlho nasucho na horúcom dne, aby nezhorkol."
+			]
+		},
+		{
+			"id": "add-bouillon-water",
+			"title": "Zalej vodou a pridaj bujón",
+			"durationSeconds": 240,
+			"dependsOn": [
+				"garlic-spice"
+			],
+			"resources": [
+				"cook",
+				"pot",
+				"burner"
+			],
+			"instruction": "Postupne prilievaj 750 ml vody a pritom stále miešaj, aby sa múka rozmiešala bez hrudiek. Pridaj 1 kocku bujónu a premiešaj odo dna."
+		},
+		{
+			"id": "wait-for-boil",
+			"title": "Priveď základ do varu",
+			"durationSeconds": 420,
+			"dependsOn": [
+				"add-bouillon-water"
+			],
+			"resources": [
+				"pot",
+				"burner"
+			],
+			"kind": "EVENT",
+			"instruction": "Keď polievka začne normálne vrieť, potvrď to. Potom stiahni výkon na mierny var.",
+			"actionLabel": "VRIE"
+		},
+		{
+			"id": "base-simmer",
+			"title": "Povar základ 15 minút",
+			"durationSeconds": 900,
+			"dependsOn": [
+				"wait-for-boil"
+			],
+			"resources": [
+				"pot",
+				"burner"
+			],
+			"kind": "WAIT",
+			"instruction": "Nechaj základ 15 minút mierne prebublávať. Počas toho pripravíš zemiaky a zvyšný cesnak."
+		},
+		{
+			"id": "prep-potatoes",
+			"title": "Ošúp a nakrájaj zemiaky",
+			"durationSeconds": 540,
+			"dependsOn": [
+				"wait-for-boil"
+			],
+			"resources": [
+				"cook"
+			],
+			"skill": "PEELING",
+			"instruction": "Ošúp približne 250 g zemiakov a nakrájaj ich na kocky asi 1,5 cm. Snaž sa o podobnú veľkosť, aby zmäkli naraz."
+		},
+		{
+			"id": "prep-finish",
+			"title": "Priprav cesnak a petržlen",
+			"durationSeconds": 240,
+			"dependsOn": [
+				"prep-potatoes"
+			],
+			"resources": [
+				"cook"
+			],
+			"instruction": "Ošúp zostávajúce 2 strúčiky cesnaku a nechaj ich pripravené pri lise. Ak používaš čerstvú petržlenovú vňať, nasekaj približne 1 PL."
+		},
+		{
+			"id": "add-potatoes",
+			"title": "Pridaj zemiaky",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"base-simmer",
+				"prep-potatoes"
+			],
+			"resources": [
+				"cook",
+				"pot",
+				"burner"
+			],
+			"instruction": "Pridaj nakrájané zemiaky do polievky, premiešaj a nechaj znovu rozbehnúť mierny var."
+		},
+		{
+			"id": "potatoes-minimum-cook",
+			"title": "Var zemiaky aspoň 12 minút",
+			"durationSeconds": 720,
+			"dependsOn": [
+				"add-potatoes"
+			],
+			"resources": [
+				"pot",
+				"burner"
+			],
+			"kind": "WAIT",
+			"instruction": "Zemiaky var miernym varom aspoň 12 minút. Potom skontroluješ, či sú mäkké."
+		},
+		{
+			"id": "potatoes-ready",
+			"title": "Skontroluj zemiaky",
+			"durationSeconds": 180,
+			"dependsOn": [
+				"potatoes-minimum-cook"
+			],
+			"resources": [
+				"pot",
+				"burner"
+			],
+			"kind": "EVENT",
+			"instruction": "Pichni vidličkou do jednej z väčších kociek. Ide vidlička ľahko dnu a zemiak už nemá tvrdý stred?",
+			"actionLabel": "ÁNO",
+			"retryActionLabel": "NIE",
+			"retryAfterSeconds": 180
+		},
+		{
+			"id": "finish-soup",
+			"title": "Vráť párky a pridaj cesnak",
+			"durationSeconds": 180,
+			"dependsOn": [
+				"potatoes-ready",
+				"prep-finish"
+			],
+			"resources": [
+				"cook",
+				"pot",
+				"burner"
+			],
+			"instruction": "Vráť do hrnca opečené párky a pretlač zostávajúce 2 strúčiky cesnaku. Premiešaj a nechaj veľmi mierne povariť 2–3 minúty."
+		},
+		{
+			"id": "season-finish",
+			"title": "Dochuť a pridaj petržlen",
+			"durationSeconds": 180,
+			"dependsOn": [
+				"finish-soup"
+			],
+			"resources": [
+				"cook",
+				"pot"
+			],
+			"instruction": "Vypni sporák. Ochutnaj a až teraz podľa potreby dosoľ — bujón aj párky už soľ obsahujú. Pridaj petržlenovú vňať a premiešaj."
+		},
+		{
+			"id": "rest",
+			"title": "Nechaj polievku postáť",
+			"durationSeconds": 180,
+			"dependsOn": [
+				"season-finish"
+			],
+			"resources": [
+				"pot"
+			],
+			"kind": "WAIT",
+			"instruction": "Nechaj polievku 3 minúty postáť, potom ešte raz ochutnaj a podávaj."
+		}
+	],
+	"troubleshooting": [
+		{
+			"problem": "Zemiaky sú stále tvrdé",
+			"advice": "Pokračuj vo varení po 3 minútach a znovu ich skontroluj vidličkou."
+		},
+		{
+			"problem": "V polievke sú hrudky múky",
+			"advice": "Skús ich rozmiešať metličkou. Nabudúce prilievaj vodu do múčneho základu postupne a stále miešaj."
+		},
+		{
+			"problem": "Polievka je príliš hustá",
+			"advice": "Pridávaj po troške horúcu vodu, vždy premiešaj a znovu ochutnaj."
+		},
+		{
+			"problem": "Polievka je príliš riedka",
+			"advice": "Var ju ešte pár minút bez pokrievky. Múka aj zemiaky ju pri ďalšom varení trochu zahustia."
+		},
+		{
+			"problem": "Polievka je príliš slaná",
+			"advice": "Zrieď ju trochou horúcej vody. Ďalší bujón už nepridávaj."
+		},
+		{
+			"problem": "Základ sa pripaľuje",
+			"advice": "Stiahni výkon a pridaj 1–2 PL vody. Opečené kúsky zo dna uvoľni vareškou, ale ak sú čierne a horké, nezoškrabuj ich do polievky."
+		}
+	]
+}
