@@ -77,7 +77,7 @@ internal object RemoteRecipeRepository {
 	private fun refreshBlocking(context: Context): List<Recipe> {
 		val indexJson = downloadUtf8(INDEX_URL)
 		val entries = decodeCatalog(indexJson)
-		val cacheDir = cacheDir(context).also(File::mkdirs)
+		val cacheDir = cacheDir(context).also { it.mkdirs() }
 
 		val recipes = entries.mapNotNull { entry ->
 			if (entry.minAppVersion > BuildConfig.VERSION_CODE) {
