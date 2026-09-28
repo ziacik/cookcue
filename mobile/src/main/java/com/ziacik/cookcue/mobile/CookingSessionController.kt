@@ -1,5 +1,6 @@
 package com.ziacik.cookcue.mobile
 
+import android.content.Context
 import android.os.SystemClock
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,7 +30,7 @@ data class MobileSessionSnapshot(
 )
 
 object CookingSessionController {
-	val availableRecipes: List<Recipe> = listOf(
+	private val bundledRecipes: List<Recipe> = listOf(
 		BeanSoupRecipe.recipe,
 		ScrambledEggsWithOnionRecipe.recipe,
 		ScrambledEggsWithOnionAndToastRecipe.recipe,
@@ -37,6 +38,39 @@ object CookingSessionController {
 		FrankfurterSoupRecipe.recipe,
 		ParboiledFriesRecipe.recipe,
 	)
+
+	var availableRecipes by mutableStateOf(bundledRecipes)
+		private set
+
+	private var remoteRecipesInitialized = false
+	private var pendingRemoteRecipes: List<Recipe>? = null
+
+	fun initialize(context: Context) {
+		if (remoteRecipesInitialized) {
+			return
+		}
+		remoteRecipesInitialized = true
+
+		installRemoteRecipes(RemoteRecipeRepository.loadCached(context))
+		RemoteRecipeRepository.refresh(context) { recipes ->
+			if (startedAt == null) {
+				installRemoteRecipes(recipes)
+			} else {
+				pendingRemoteRecipes = recipes
+			}
+		}
+	}
+
+	private fun installRemoteRecipes(remoteRecipes: List<Recipe>) {
+		val merged = linkedMapOf<String, Recipe>()
+		bundledRecipes.forEach { merged[it.id] = it }
+		remoteRecipes.forEach { merged[it.id] = it }
+		availableRecipes = merged.values.toList()
+
+		if (availableRecipes.none { it.id == selectedRecipeId }) {
+			selectedRecipeId = bundledRecipes.first().id
+		}
+	}
 
 	var selectedRecipeId by mutableStateOf(BeanSoupRecipe.recipe.id)
 		private set
@@ -93,6 +127,11 @@ object CookingSessionController {
 		durationOverrides = emptyMap()
 		eventDeferredUntil = emptyMap()
 		markUserAction()
+
+		pendingRemoteRecipes?.let { recipes ->
+			pendingRemoteRecipes = null
+			installRemoteRecipes(recipes)
+		}
 	}
 
 	fun restore(
