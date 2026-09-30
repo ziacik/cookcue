@@ -6,6 +6,12 @@
 			"version": 1,
 			"file": "frankfurter-soup.json",
 			"minAppVersion": 1
+		},
+		{
+			"id": "tuna-spread",
+			"version": 1,
+			"file": "tuna-spread.json",
+			"minAppVersion": 1
 		}
 	]
 }
