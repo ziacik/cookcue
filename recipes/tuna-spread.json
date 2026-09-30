@@ -1,0 +1,135 @@
+{
+	"schemaVersion": 1,
+	"id": "tuna-spread",
+	"title": "Tuniaková nátierka",
+	"description": "Bez vajca · tuniak, syrokrém, maslo, cibuľa, horčica a korenie",
+	"servings": 2,
+	"ingredients": [
+		{
+			"name": "tuniak v konzerve",
+			"amount": "1 konzerva (cca 120–150 g po scedení)"
+		},
+		{
+			"name": "syrokrém",
+			"amount": "100 g"
+		},
+		{
+			"name": "maslo",
+			"amount": "30 g, zmäknuté"
+		},
+		{
+			"name": "cibuľa",
+			"amount": "cca 1/4 strednej cibule"
+		},
+		{
+			"name": "horčica",
+			"amount": "1 ČL"
+		},
+		{
+			"name": "soľ",
+			"amount": "podľa chuti"
+		},
+		{
+			"name": "mleté čierne korenie",
+			"amount": "podľa chuti"
+		},
+		{
+			"name": "citrónová šťava",
+			"amount": "1 ČL, voliteľné"
+		}
+	],
+	"resourceCapacities": {
+		"cook": 1
+	},
+	"preCookingNote": "Maslo sa mieša oveľa ľahšie, keď nie je úplne studené. Ak si ho práve vytiahol z chladničky, nakrájaj ho na malé kúsky.",
+	"tasks": [
+		{
+			"id": "drain-tuna",
+			"title": "Sceď tuniaka",
+			"durationSeconds": 120,
+			"resources": [
+				"cook"
+			],
+			"instruction": "Otvor konzervu a tuniaka dobre sceď. Nemusíš ho vytlačiť úplne dosucha, ale v nátierke nechceme prebytočnú tekutinu."
+		},
+		{
+			"id": "chop-onion",
+			"title": "Nakrájaj cibuľu nadrobno",
+			"durationSeconds": 240,
+			"dependsOn": [
+				"drain-tuna"
+			],
+			"resources": [
+				"cook"
+			],
+			"skill": "KNIFE",
+			"instruction": "Ošúp približne štvrtinu strednej cibule a nakrájaj ju čo najjemnejšie. Veľké kúsky cibule by v nátierke príliš dominovali."
+		},
+		{
+			"id": "mix-base",
+			"title": "Vymiešaj syrokrém, maslo a horčicu",
+			"durationSeconds": 180,
+			"dependsOn": [
+				"chop-onion"
+			],
+			"resources": [
+				"cook"
+			],
+			"instruction": "Do misky daj 100 g syrokrému, 30 g zmäknutého masla a 1 ČL horčice. Vidličkou alebo lyžicou ich vymiešaj na čo najhladší základ."
+		},
+		{
+			"id": "add-tuna-onion",
+			"title": "Primiešaj tuniaka a cibuľu",
+			"durationSeconds": 180,
+			"dependsOn": [
+				"mix-base"
+			],
+			"resources": [
+				"cook"
+			],
+			"instruction": "Pridaj scedeného tuniaka a nadrobno nakrájanú cibuľu. Tuniaka vidličkou rozober na menšie kúsky a všetko dôkladne premiešaj."
+		},
+		{
+			"id": "season",
+			"title": "Dochuť nátierku",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"add-tuna-onion"
+			],
+			"resources": [
+				"cook"
+			],
+			"instruction": "Pridaj trochu čierneho korenia a až potom opatrne soľ — tuniak, syrokrém aj horčica už môžu byť slané. Ak chceš sviežejšiu chuť, pridaj 1 ČL citrónovej šťavy. Premiešaj a ochutnaj."
+		},
+		{
+			"id": "finish",
+			"title": "Dolaď konzistenciu a podávaj",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"season"
+			],
+			"resources": [
+				"cook"
+			],
+			"instruction": "Ak je nátierka príliš hustá alebo suchá, pridaj ešte trochu syrokrému. Ak je príliš jemná, pridaj trochu viac horčice alebo čierneho korenia. Podávaj hneď alebo ju odlož do chladničky."
+		}
+	],
+	"troubleshooting": [
+		{
+			"problem": "Nátierka je príliš suchá",
+			"advice": "Primiešaj po lyžici syrokrému, kým nebude krémovejšia."
+		},
+		{
+			"problem": "Je príliš výrazná cibuľa",
+			"advice": "Primiešaj trochu syrokrému alebo tuniaka. Nabudúce daj menej cibule alebo ju nakrájaj ešte jemnejšie."
+		},
+		{
+			"problem": "Je málo výrazná",
+			"advice": "Pridaj po troške horčicu, čierne korenie alebo pár kvapiek citrónovej šťavy a vždy znovu ochutnaj."
+		},
+		{
+			"problem": "Je príliš slaná",
+			"advice": "Soľ už nepridávaj; zjemni ju ďalším syrokrémom alebo kúskom masla."
+		}
+	]
+}
