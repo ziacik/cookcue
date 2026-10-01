@@ -326,11 +326,48 @@
 			}
 		},
 		{
+			"id": "ray",
+			"title": "Ray",
+			"durationSeconds": 600,
+			"dependsOn": [
+				"seed-sprout"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Pri Vodnej veži vo Vydrici sa zastavte pri minimalistickom svetelnom objekte z oceľových prvkov. Je prakticky po ceste, takže ho netreba obetovať ani pri tesnejšom programe.",
+			"tips": [
+				"Inštalácia je vonku a funguje všetky tri večery 19:00–24:00."
+			],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Vodn%C3%A1%20ve%C5%BEa%2C%20Vydrica%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/442"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-02T19:00:00+02:00",
+						"end": "2026-10-02T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
 			"id": "geofonia",
 			"title": "GEOFÓNIA",
 			"durationSeconds": 1800,
 			"dependsOn": [
-				"seed-sprout"
+				"ray"
 			],
 			"resources": [
 				"visitor"
@@ -573,11 +610,89 @@
 			}
 		},
 		{
+			"id": "wellness",
+			"title": "Wellness",
+			"durationSeconds": 900,
+			"dependsOn": [
+				"aftereal"
+			],
+			"resources": [
+				"visitor"
+			],
+			"optional": true,
+			"instruction": "Voliteľná zastávka na nádvorí Mirbachovho paláca. Inštalácia pracuje s uterákmi, hmlou a figúrami; návštevníci môžu z uterákov vytvárať vlastné objekty a pridať ich do diela.",
+			"tips": [
+				"Voliteľné: ak budete v sklze alebo sa vám nebude chcieť, pokojne stlač PRESKOČIŤ.",
+				"Otvorené je do 23:00."
+			],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Franti%C5%A1k%C3%A1nske%20n%C3%A1mestie%2011%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/449"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-03T19:00:00+02:00",
+						"end": "2026-10-03T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "the-lights",
+			"title": "The Lights Are Not What They Seem",
+			"durationSeconds": 900,
+			"dependsOn": [
+				"wellness"
+			],
+			"resources": [
+				"visitor"
+			],
+			"optional": true,
+			"instruction": "Voliteľná komornejšia zastávka v Galérii Edison FilmHub na Baštovej 6. Svetelné objekty pracujú s motívom svetlušiek, fragmentmi prírody a hudbou od Stroona.",
+			"tips": [
+				"Voliteľné: skôr atmosférická než veľká wow-inštalácia.",
+				"Vstup je cez kaviareň a otvorené je do 23:00."
+			],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Ba%C5%A1tov%C3%A1%206%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/450"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-03T19:00:00+02:00",
+						"end": "2026-10-03T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
 			"id": "zakouti-evoluce",
 			"title": "Zákoutí evoluce",
 			"durationSeconds": 1200,
 			"dependsOn": [
-				"aftereal"
+				"the-lights"
 			],
 			"resources": [
 				"visitor"

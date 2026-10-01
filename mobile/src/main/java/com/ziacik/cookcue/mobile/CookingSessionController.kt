@@ -188,6 +188,17 @@ object CookingSessionController {
 		markUserAction()
 	}
 
+	fun skipAction(taskId: String) {
+		val snapshot = snapshot()
+		val action = snapshot.currentAction
+			?.takeIf { it.task.id == taskId && it.task.optional }
+			?: return
+
+		durationOverrides = durationOverrides + (taskId to 1L)
+		taskStartOverrides = taskStartOverrides + (taskId to action.startSeconds)
+		markUserAction()
+	}
+
 	fun confirmEvent(taskId: String) {
 		val snapshot = snapshot()
 		val event = snapshot.pendingEvents.firstOrNull { it.task.id == taskId } ?: return

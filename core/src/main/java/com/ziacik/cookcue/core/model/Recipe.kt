@@ -73,6 +73,7 @@ data class CookingTask(
 	val actionLabel: String? = null,
 	val retryActionLabel: String? = null,
 	val retryAfterSeconds: Long? = null,
+	val optional: Boolean = false,
 	val links: List<TaskLink> = emptyList(),
 	val itineraryTiming: ItineraryTiming? = null,
 ) {

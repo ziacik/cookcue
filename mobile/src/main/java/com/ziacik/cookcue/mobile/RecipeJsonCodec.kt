@@ -74,6 +74,7 @@ internal object RecipeJsonCodec {
 			actionLabel = task.optionalString("actionLabel"),
 			retryActionLabel = task.optionalString("retryActionLabel"),
 			retryAfterSeconds = task.optionalLong("retryAfterSeconds"),
+			optional = task.optBoolean("optional", false),
 			links = task.optJSONArray("links")
 				?.mapObjects { link ->
 					TaskLink(

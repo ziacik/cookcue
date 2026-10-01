@@ -311,6 +311,11 @@ private fun CookCueScreen() {
 									stepNumber = activeStepIndex.takeIf { it >= 0 }?.plus(1),
 									stepCount = snapshot.schedule.size,
 									actionLabel = "HOTOVO",
+									optional = current.task.optional,
+									onSkip = {
+										CookingSessionController.skipAction(current.task.id)
+										persistAndSync()
+									},
 									onAction = {
 										CookingSessionController.completeAction(current.task.id)
 										persistAndSync()
@@ -334,6 +339,8 @@ private fun CookCueScreen() {
 									stepNumber = activeStepIndex.takeIf { it >= 0 }?.plus(1),
 									stepCount = snapshot.schedule.size,
 									actionLabel = null,
+									optional = false,
+									onSkip = {},
 									onAction = {},
 								)
 							}
@@ -727,6 +734,8 @@ private fun CurrentStepCard(
 	stepNumber: Int?,
 	stepCount: Int,
 	actionLabel: String?,
+	optional: Boolean,
+	onSkip: () -> Unit,
 	onAction: () -> Unit,
 ) {
 	Surface(
@@ -749,7 +758,7 @@ private fun CurrentStepCard(
 					shape = RoundedCornerShape(50),
 				) {
 					Text(
-						text = "TERAZ",
+						text = if (optional) "VOLITEĽNÉ · TERAZ" else "TERAZ",
 						style = MaterialTheme.typography.labelMedium,
 						fontWeight = FontWeight.Bold,
 						color = MaterialTheme.colorScheme.primary,
@@ -822,19 +831,50 @@ private fun CurrentStepCard(
 
 			if (actionLabel != null) {
 				Spacer(Modifier.height(14.dp))
-				Button(
-					onClick = onAction,
-					modifier = Modifier.fillMaxWidth(),
-					shape = RoundedCornerShape(12.dp),
-					colors = ButtonDefaults.buttonColors(
-						containerColor = MaterialTheme.colorScheme.primary,
-					),
-				) {
-					Text(
-						text = "✓  $actionLabel",
-						fontWeight = FontWeight.Bold,
-						modifier = Modifier.padding(vertical = 4.dp),
-					)
+				if (optional) {
+					Row(
+						modifier = Modifier.fillMaxWidth(),
+						horizontalArrangement = Arrangement.spacedBy(10.dp),
+					) {
+						OutlinedButton(
+							onClick = onSkip,
+							modifier = Modifier.weight(1f),
+							shape = RoundedCornerShape(12.dp),
+						) {
+							Text(
+								text = "PRESKOČIŤ",
+								fontWeight = FontWeight.Bold,
+							)
+						}
+						Button(
+							onClick = onAction,
+							modifier = Modifier.weight(1f),
+							shape = RoundedCornerShape(12.dp),
+							colors = ButtonDefaults.buttonColors(
+								containerColor = MaterialTheme.colorScheme.primary,
+							),
+						) {
+							Text(
+								text = "✓  $actionLabel",
+								fontWeight = FontWeight.Bold,
+							)
+						}
+					}
+				} else {
+					Button(
+						onClick = onAction,
+						modifier = Modifier.fillMaxWidth(),
+						shape = RoundedCornerShape(12.dp),
+						colors = ButtonDefaults.buttonColors(
+							containerColor = MaterialTheme.colorScheme.primary,
+						),
+					) {
+						Text(
+							text = "✓  $actionLabel",
+							fontWeight = FontWeight.Bold,
+							modifier = Modifier.padding(vertical = 4.dp),
+						)
+					}
 				}
 			}
 		}
@@ -1309,7 +1349,8 @@ private fun PlanRowContent(
 			Text(
 				text = if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
 					formatScheduledStart(recipe, item) + " · ~" +
-						formatRemaining(item.endSeconds - item.startSeconds)
+						formatRemaining(item.endSeconds - item.startSeconds) +
+						if (item.task.optional) " · voliteľné" else ""
 				} else if (item.task.kind == TaskKind.EVENT) {
 					"odhad ~" + formatRemaining(item.endSeconds - item.startSeconds)
 				} else {
