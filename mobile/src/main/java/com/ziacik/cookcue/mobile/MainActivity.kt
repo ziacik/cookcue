@@ -63,6 +63,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
 import com.ziacik.cookcue.core.model.LocationProximitySensor
 import com.ziacik.cookcue.core.model.Recipe
 import com.ziacik.cookcue.core.model.ScheduleMode
@@ -256,7 +257,12 @@ private fun CookCueScreen() {
 					nearbySuggestion = null
 					persistAndSync()
 				} else {
-					if (nearbySuggestion?.taskId != match.taskId) {
+					val activityVisible =
+						(context as? ComponentActivity)
+							?.lifecycle
+							?.currentState
+							?.isAtLeast(Lifecycle.State.RESUMED) == true
+					if (!activityVisible && nearbySuggestion?.taskId != match.taskId) {
 						MobileTransitionNotifier.notify(
 							context,
 							TransitionCue(
