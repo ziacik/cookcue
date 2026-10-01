@@ -71,7 +71,15 @@ class LocationSensorMonitor(
 	override fun onProviderEnabled(provider: String) = Unit
 
 	override fun onProviderDisabled(provider: String) {
-		onSuggestion(null)
+		val anyEnabled = listOf(
+			LocationManager.NETWORK_PROVIDER,
+			LocationManager.GPS_PROVIDER,
+		).any { candidate ->
+			runCatching { locationManager.isProviderEnabled(candidate) }.getOrDefault(false)
+		}
+		if (!anyEnabled) {
+			onSuggestion(null)
+		}
 	}
 
 	@Deprecated("Deprecated in Android SDK")
@@ -85,11 +93,9 @@ class LocationSensorMonitor(
 		val ageMillis =
 			(SystemClock.elapsedRealtimeNanos() - current.elapsedRealtimeNanos) / 1_000_000
 		if (ageMillis > MAX_LOCATION_AGE_MILLIS) {
-			onSuggestion(null)
 			return
 		}
 		if (current.hasAccuracy() && current.accuracy > MAX_LOCATION_ACCURACY_METERS) {
-			onSuggestion(null)
 			return
 		}
 
