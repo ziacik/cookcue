@@ -295,7 +295,7 @@ object CookingSessionController {
 		}
 	}
 
-	fun setAppVisible(visible: Boolean) {
+	fun updateAppVisible(visible: Boolean) {
 		appVisible = visible
 	}
 
