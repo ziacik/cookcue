@@ -90,7 +90,6 @@ object MobileTransitionNotifier {
 			.setContentIntent(contentIntent)
 			.setAutoCancel(true)
 			.setCategory(Notification.CATEGORY_REMINDER)
-			.setPriority(Notification.PRIORITY_HIGH)
 			.setLocalOnly(true)
 			.build()
 
