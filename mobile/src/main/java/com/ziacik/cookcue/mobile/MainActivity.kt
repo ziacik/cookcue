@@ -136,13 +136,13 @@ private fun CookCueScreen() {
 
 	DisposableEffect(context) {
 		val activity = context as? ComponentActivity
-		CookingSessionController.setAppVisible(
+		CookingSessionController.updateAppVisible(
 			activity?.lifecycle?.currentState?.isAtLeast(Lifecycle.State.RESUMED) == true,
 		)
 		val observer = LifecycleEventObserver { _, event ->
 			when (event) {
 				Lifecycle.Event.ON_RESUME -> {
-					CookingSessionController.setAppVisible(true)
+					CookingSessionController.updateAppVisible(true)
 					fineLocationPermissionGranted =
 						context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
 							PackageManager.PERMISSION_GRANTED
@@ -150,13 +150,13 @@ private fun CookCueScreen() {
 						CookingSessionService.syncRunningState(context)
 					}
 				}
-				Lifecycle.Event.ON_PAUSE -> CookingSessionController.setAppVisible(false)
+				Lifecycle.Event.ON_PAUSE -> CookingSessionController.updateAppVisible(false)
 				else -> Unit
 			}
 		}
 		activity?.lifecycle?.addObserver(observer)
 		onDispose {
-			CookingSessionController.setAppVisible(false)
+			CookingSessionController.updateAppVisible(false)
 			activity?.lifecycle?.removeObserver(observer)
 		}
 	}
