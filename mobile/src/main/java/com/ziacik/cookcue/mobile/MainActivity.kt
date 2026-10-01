@@ -64,6 +64,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.ziacik.cookcue.core.model.LocationProximitySensor
 import com.ziacik.cookcue.core.model.Recipe
 import com.ziacik.cookcue.core.model.ScheduleMode
@@ -136,6 +137,24 @@ private fun CookCueScreen() {
 
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
 	var showStopCookingDialog by remember { mutableStateOf(false) }
+
+	DisposableEffect(context) {
+		val activity = context as? ComponentActivity
+		val observer = LifecycleEventObserver { _, event ->
+			if (event == Lifecycle.Event.ON_RESUME) {
+				fineLocationPermissionGranted =
+					context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
+						PackageManager.PERMISSION_GRANTED
+				if (CookingSessionController.startedAt != null) {
+					CookingSessionService.syncRunningState(context)
+				}
+			}
+		}
+		activity?.lifecycle?.addObserver(observer)
+		onDispose {
+			activity?.lifecycle?.removeObserver(observer)
+		}
+	}
 
 	LaunchedEffect(startedAt) {
 		while (startedAt != null) {
