@@ -114,8 +114,12 @@ class CookingSessionService : Service() {
 			sendCue(
 				TransitionCue(
 					key = "completed",
-					title = "Varenie je hotové",
-					text = "Všetky kroky sú dokončené. Ukonči varenie v CookCue.",
+					title = if (isItinerary()) "Itinerár je hotový" else "Varenie je hotové",
+					text = if (isItinerary()) {
+						"Všetky zastávky sú vybavené. Ukonči itinerár v CookCue."
+					} else {
+						"Všetky kroky sú dokončené. Ukonči varenie v CookCue."
+					},
 				),
 			)
 		}
@@ -226,7 +230,11 @@ class CookingSessionService : Service() {
 
 	private fun sessionText(snapshot: MobileSessionSnapshot): String {
 		if (snapshot.completed) {
-			return "Varenie je hotové — ukonči varenie"
+			return if (isItinerary()) {
+				"Itinerár je hotový — ukonči itinerár"
+			} else {
+				"Varenie je hotové — ukonči varenie"
+			}
 		}
 		snapshot.pendingEvents.firstOrNull()?.let {
 			return "Skontroluj: " + it.task.title
@@ -237,16 +245,24 @@ class CookingSessionService : Service() {
 		snapshot.background.minByOrNull { it.endSeconds }?.let {
 			return "Čakám: " + it.task.title
 		}
-		return "CookCue stráži varenie"
+		return if (isItinerary()) {
+			"CookCue stráži itinerár"
+		} else {
+			"CookCue stráži varenie"
+		}
+	}
+
+	private fun isItinerary(): Boolean {
+		return CookingSessionController.recipe.scheduleMode == ScheduleMode.ITINERARY
 	}
 
 	private fun ensureSessionChannel() {
 		val channel = NotificationChannel(
 			SESSION_CHANNEL_ID,
-			"Prebiehajúce varenie",
+			"Prebiehajúca aktivita",
 			NotificationManager.IMPORTANCE_LOW,
 		).apply {
-			description = "Udržiava aktívny recept a časovače spoľahlivo spustené."
+			description = "Udržiava aktívny recept alebo itinerár spoľahlivo spustený."
 			setSound(null, null)
 			enableVibration(false)
 		}
