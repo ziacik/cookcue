@@ -12,6 +12,12 @@
 			"version": 2,
 			"file": "tuna-spread.json",
 			"minAppVersion": 1
+		},
+		{
+			"id": "tchibo-esperto-descaling",
+			"version": 1,
+			"file": "tchibo-esperto-descaling.json",
+			"minAppVersion": 1
 		}
 	]
 }
