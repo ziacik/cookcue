@@ -62,12 +62,14 @@ enum class SensorActivationMode {
 sealed interface TaskSensor
 
 data class LocationProximitySensor(
-	val locationQuery: String,
+	val latitude: Double,
+	val longitude: Double,
 	val radiusMeters: Float = 80f,
 	val activationMode: SensorActivationMode = SensorActivationMode.SUGGEST,
 ) : TaskSensor {
 	init {
-		require(locationQuery.isNotBlank())
+		require(latitude in -90.0..90.0)
+		require(longitude in -180.0..180.0)
 		require(radiusMeters > 0f)
 	}
 }
