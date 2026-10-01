@@ -54,6 +54,24 @@ data class TaskLink(
 	}
 }
 
+enum class SensorActivationMode {
+	SUGGEST,
+	AUTO_ACTIVATE,
+}
+
+sealed interface TaskSensor
+
+data class LocationProximitySensor(
+	val locationQuery: String,
+	val radiusMeters: Float = 80f,
+	val activationMode: SensorActivationMode = SensorActivationMode.SUGGEST,
+) : TaskSensor {
+	init {
+		require(locationQuery.isNotBlank())
+		require(radiusMeters > 0f)
+	}
+}
+
 enum class Skill {
 	GENERAL,
 	KNIFE,
@@ -75,6 +93,7 @@ data class CookingTask(
 	val retryAfterSeconds: Long? = null,
 	val optional: Boolean = false,
 	val links: List<TaskLink> = emptyList(),
+	val sensors: List<TaskSensor> = emptyList(),
 	val itineraryTiming: ItineraryTiming? = null,
 ) {
 	init {
