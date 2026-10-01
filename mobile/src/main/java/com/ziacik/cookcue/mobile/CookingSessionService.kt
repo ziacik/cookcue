@@ -24,6 +24,8 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import com.ziacik.cookcue.core.model.LocationProximitySensor
 import com.ziacik.cookcue.core.model.ScheduleMode
+import com.ziacik.cookcue.core.model.SensorActivationMode
+import com.ziacik.cookcue.core.model.TaskKind
 
 class CookingSessionService : Service() {
 	private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -34,6 +36,8 @@ class CookingSessionService : Service() {
 	private var previousOverdueReminderKey: String? = null
 	private var previousCompleted = false
 	private var previousOngoingText: String? = null
+	private val locationSensorMonitor by lazy { LocationSensorMonitor(applicationContext) }
+	private var monitoredLocationTaskIds: Set<String> = emptySet()
 
 	override fun onCreate() {
 		super.onCreate()
@@ -64,6 +68,7 @@ class CookingSessionService : Service() {
 
 	override fun onDestroy() {
 		monitorJob?.cancel()
+		stopLocationMonitoring()
 		scope.cancel()
 		super.onDestroy()
 	}
@@ -78,6 +83,7 @@ class CookingSessionService : Service() {
 				return
 			}
 
+			syncLocationMonitoring(snapshot)
 			updateOngoingNotification(snapshot)
 			handleTransition(snapshot)
 			handleCompletion(snapshot)
@@ -85,6 +91,98 @@ class CookingSessionService : Service() {
 
 			delay(500)
 		}
+	}
+
+	private fun syncLocationMonitoring(snapshot: MobileSessionSnapshot) {
+		if (
+			!snapshot.started ||
+			CookingSessionController.recipe.scheduleMode != ScheduleMode.ITINERARY ||
+			checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) !=
+				PackageManager.PERMISSION_GRANTED ||
+			!locationServicesEnabled()
+		) {
+			stopLocationMonitoring()
+			return
+		}
+
+		val nowEpochSeconds = System.currentTimeMillis() / 1000
+		val eligibleTasks = CookingSessionController.recipe.tasks.filter { task ->
+			val timing = task.itineraryTiming
+			val withinAvailability =
+				timing == null ||
+					timing.availabilityWindows.isEmpty() ||
+					timing.availabilityWindows.any { window ->
+						nowEpochSeconds in window.startEpochSeconds until window.endEpochSeconds
+					}
+			task.kind == TaskKind.ACTIVE &&
+				snapshot.taskProgress[task.id] == TaskProgress.PENDING &&
+				withinAvailability &&
+				task.sensors.any { it is LocationProximitySensor }
+		}
+		val ids = eligibleTasks.mapTo(linkedSetOf()) { it.id }
+		if (ids.isEmpty()) {
+			stopLocationMonitoring()
+			return
+		}
+		if (ids == monitoredLocationTaskIds) {
+			return
+		}
+
+		monitoredLocationTaskIds = ids
+		locationSensorMonitor.start(eligibleTasks, ::handleNearbySuggestion)
+	}
+
+	private fun handleNearbySuggestion(match: NearbyTaskSuggestion?) {
+		if (match == null) {
+			CookingSessionController.clearNearbySuggestion()
+			return
+		}
+		if (CookingSessionController.isNearbySuggestionSnoozed(match.taskId)) {
+			CookingSessionController.clearNearbySuggestion()
+			return
+		}
+
+		val snapshot = CookingSessionController.snapshot()
+		if (snapshot.taskProgress[match.taskId] != TaskProgress.PENDING) {
+			CookingSessionController.clearNearbySuggestion()
+			return
+		}
+
+		if (
+			match.activationMode == SensorActivationMode.AUTO_ACTIVATE &&
+			snapshot.currentAction == null
+		) {
+			CookingSessionController.activateTask(
+				taskId = match.taskId,
+				silentTransition = false,
+			)
+			CookingSessionController.clearNearbySuggestion()
+			MobileSessionPersistence.save(applicationContext)
+			MobileSessionSync.publish(applicationContext)
+			return
+		}
+
+		val changed = CookingSessionController.updateNearbySuggestion(match)
+		if (changed && !CookingSessionController.appVisible) {
+			MobileTransitionNotifier.notify(
+				this,
+				TransitionCue(
+					key = "nearby:" + match.taskId,
+					title = "Si blízko: " + match.taskTitle,
+					text = "Otvor CookCue a aktivuj túto zastávku.",
+				),
+			)
+		}
+	}
+
+	private fun stopLocationMonitoring() {
+		if (monitoredLocationTaskIds.isEmpty()) {
+			CookingSessionController.clearNearbySuggestion()
+			return
+		}
+		monitoredLocationTaskIds = emptySet()
+		locationSensorMonitor.stop()
+		CookingSessionController.clearNearbySuggestion()
 	}
 
 	private fun handleTransition(snapshot: MobileSessionSnapshot) {
