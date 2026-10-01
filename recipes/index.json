@@ -9,7 +9,7 @@
 		},
 		{
 			"id": "tuna-spread",
-			"version": 1,
+			"version": 2,
 			"file": "tuna-spread.json",
 			"minAppVersion": 1
 		}
