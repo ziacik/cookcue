@@ -5,8 +5,11 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.content.Intent
+import android.location.LocationManager
 import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
@@ -19,6 +22,10 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import com.ziacik.cookcue.core.model.LocationProximitySensor
+import com.ziacik.cookcue.core.model.ScheduleMode
+import com.ziacik.cookcue.core.model.SensorActivationMode
+import com.ziacik.cookcue.core.model.TaskKind
 
 class CookingSessionService : Service() {
 	private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -29,11 +36,14 @@ class CookingSessionService : Service() {
 	private var previousOverdueReminderKey: String? = null
 	private var previousCompleted = false
 	private var previousOngoingText: String? = null
+	private val locationSensorMonitor by lazy { LocationSensorMonitor(applicationContext) }
+	private var monitoredLocationTaskIds: Set<String> = emptySet()
 
 	override fun onCreate() {
 		super.onCreate()
 		ensureSessionChannel()
 		MobileTransitionNotifier.ensureChannel(this)
+		CookingSessionController.initialize(applicationContext)
 		MobileSessionPersistence.ensureLoaded(applicationContext)
 	}
 
@@ -59,6 +69,7 @@ class CookingSessionService : Service() {
 
 	override fun onDestroy() {
 		monitorJob?.cancel()
+		stopLocationMonitoring()
 		scope.cancel()
 		super.onDestroy()
 	}
@@ -73,6 +84,7 @@ class CookingSessionService : Service() {
 				return
 			}
 
+			syncLocationMonitoring(snapshot)
 			updateOngoingNotification(snapshot)
 			handleTransition(snapshot)
 			handleCompletion(snapshot)
@@ -80,6 +92,98 @@ class CookingSessionService : Service() {
 
 			delay(500)
 		}
+	}
+
+	private fun syncLocationMonitoring(snapshot: MobileSessionSnapshot) {
+		if (
+			!snapshot.started ||
+			CookingSessionController.recipe.scheduleMode != ScheduleMode.ITINERARY ||
+			checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) !=
+				PackageManager.PERMISSION_GRANTED ||
+			!locationServicesEnabled()
+		) {
+			stopLocationMonitoring()
+			return
+		}
+
+		val nowEpochSeconds = System.currentTimeMillis() / 1000
+		val eligibleTasks = CookingSessionController.recipe.tasks.filter { task ->
+			val timing = task.itineraryTiming
+			val withinAvailability =
+				timing == null ||
+					timing.availabilityWindows.isEmpty() ||
+					timing.availabilityWindows.any { window ->
+						nowEpochSeconds in window.startEpochSeconds until window.endEpochSeconds
+					}
+			task.kind == TaskKind.ACTIVE &&
+				snapshot.taskProgress[task.id] == TaskProgress.PENDING &&
+				withinAvailability &&
+				task.sensors.any { it is LocationProximitySensor }
+		}
+		val ids = eligibleTasks.mapTo(linkedSetOf()) { it.id }
+		if (ids.isEmpty()) {
+			stopLocationMonitoring()
+			return
+		}
+		if (ids == monitoredLocationTaskIds) {
+			return
+		}
+
+		monitoredLocationTaskIds = ids
+		locationSensorMonitor.start(eligibleTasks, ::handleNearbySuggestion)
+	}
+
+	private fun handleNearbySuggestion(match: NearbyTaskSuggestion?) {
+		if (match == null) {
+			CookingSessionController.clearNearbySuggestion()
+			return
+		}
+		if (CookingSessionController.isNearbySuggestionSnoozed(match.taskId)) {
+			CookingSessionController.clearNearbySuggestion()
+			return
+		}
+
+		val snapshot = CookingSessionController.snapshot()
+		if (snapshot.taskProgress[match.taskId] != TaskProgress.PENDING) {
+			CookingSessionController.clearNearbySuggestion()
+			return
+		}
+
+		if (
+			match.activationMode == SensorActivationMode.AUTO_ACTIVATE &&
+			snapshot.currentAction == null
+		) {
+			CookingSessionController.activateTask(
+				taskId = match.taskId,
+				silentTransition = false,
+			)
+			CookingSessionController.clearNearbySuggestion()
+			MobileSessionPersistence.save(applicationContext)
+			MobileSessionSync.publish(applicationContext)
+			return
+		}
+
+		val changed = CookingSessionController.updateNearbySuggestion(match)
+		if (changed && !CookingSessionController.appVisible) {
+			MobileTransitionNotifier.notify(
+				this,
+				TransitionCue(
+					key = "nearby:" + match.taskId,
+					title = "Si blízko: " + match.taskTitle,
+					text = "Otvor CookCue a aktivuj túto zastávku.",
+				),
+			)
+		}
+	}
+
+	private fun stopLocationMonitoring() {
+		if (monitoredLocationTaskIds.isEmpty()) {
+			CookingSessionController.clearNearbySuggestion()
+			return
+		}
+		monitoredLocationTaskIds = emptySet()
+		locationSensorMonitor.stop()
+		CookingSessionController.clearNearbySuggestion()
 	}
 
 	private fun handleTransition(snapshot: MobileSessionSnapshot) {
@@ -110,8 +214,12 @@ class CookingSessionService : Service() {
 			sendCue(
 				TransitionCue(
 					key = "completed",
-					title = "Varenie je hotové",
-					text = "Všetky kroky sú dokončené. Ukonči varenie v CookCue.",
+					title = if (isItinerary()) "Itinerár je hotový" else "Varenie je hotové",
+					text = if (isItinerary()) {
+						"Všetky zastávky sú vybavené. Ukonči itinerár v CookCue."
+					} else {
+						"Všetky kroky sú dokončené. Ukonči varenie v CookCue."
+					},
 				),
 			)
 		}
@@ -165,11 +273,36 @@ class CookingSessionService : Service() {
 		val notification = buildSessionNotification(snapshot)
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-			startForeground(
-				SESSION_NOTIFICATION_ID,
-				notification,
-				ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC,
-			)
+			val recipe = CookingSessionController.recipe
+			val locationMode =
+				recipe.scheduleMode == ScheduleMode.ITINERARY &&
+					recipe.tasks.any { task ->
+						task.sensors.any { it is LocationProximitySensor }
+					} &&
+					checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
+						PackageManager.PERMISSION_GRANTED &&
+					locationServicesEnabled()
+			if (locationMode) {
+				try {
+					startForeground(
+						SESSION_NOTIFICATION_ID,
+						notification,
+						ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION,
+					)
+				} catch (_: SecurityException) {
+					startForeground(
+						SESSION_NOTIFICATION_ID,
+						notification,
+						ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC,
+					)
+				}
+			} else {
+				startForeground(
+					SESSION_NOTIFICATION_ID,
+					notification,
+					ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC,
+				)
+			}
 		} else {
 			startForeground(SESSION_NOTIFICATION_ID, notification)
 		}
@@ -209,7 +342,11 @@ class CookingSessionService : Service() {
 
 	private fun sessionText(snapshot: MobileSessionSnapshot): String {
 		if (snapshot.completed) {
-			return "Varenie je hotové — ukonči varenie"
+			return if (isItinerary()) {
+				"Itinerár je hotový — ukonči itinerár"
+			} else {
+				"Varenie je hotové — ukonči varenie"
+			}
 		}
 		snapshot.pendingEvents.firstOrNull()?.let {
 			return "Skontroluj: " + it.task.title
@@ -220,16 +357,38 @@ class CookingSessionService : Service() {
 		snapshot.background.minByOrNull { it.endSeconds }?.let {
 			return "Čakám: " + it.task.title
 		}
-		return "CookCue stráži varenie"
+		return if (isItinerary()) {
+			"CookCue stráži itinerár"
+		} else {
+			"CookCue stráži varenie"
+		}
+	}
+
+	private fun isItinerary(): Boolean {
+		return CookingSessionController.recipe.scheduleMode == ScheduleMode.ITINERARY
+	}
+
+	private fun locationServicesEnabled(): Boolean {
+		val manager = getSystemService(LocationManager::class.java)
+		return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+			manager.isLocationEnabled
+		} else {
+			listOf(
+				LocationManager.GPS_PROVIDER,
+				LocationManager.NETWORK_PROVIDER,
+			).any { provider ->
+				runCatching { manager.isProviderEnabled(provider) }.getOrDefault(false)
+			}
+		}
 	}
 
 	private fun ensureSessionChannel() {
 		val channel = NotificationChannel(
 			SESSION_CHANNEL_ID,
-			"Prebiehajúce varenie",
+			"Prebiehajúca aktivita",
 			NotificationManager.IMPORTANCE_LOW,
 		).apply {
-			description = "Udržiava aktívny recept a časovače spoľahlivo spustené."
+			description = "Udržiava aktívny recept alebo itinerár spoľahlivo spustený."
 			setSound(null, null)
 			enableVibration(false)
 		}

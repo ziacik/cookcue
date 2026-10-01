@@ -42,6 +42,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -62,6 +63,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import com.ziacik.cookcue.core.model.LocationProximitySensor
 import com.ziacik.cookcue.core.model.Recipe
 import com.ziacik.cookcue.core.model.ScheduleMode
 import com.ziacik.cookcue.core.model.ScheduledTask
@@ -89,17 +93,73 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun CookCueScreen() {
 	val context = LocalContext.current
+	var notificationPermissionResolved by remember {
+		mutableStateOf(
+			Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+				context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) ==
+					PackageManager.PERMISSION_GRANTED
+		)
+	}
 	val notificationPermissionLauncher = rememberLauncherForActivityResult(
 		ActivityResultContracts.RequestPermission(),
-	) {}
+	) {
+		notificationPermissionResolved = true
+	}
+	var fineLocationPermissionGranted by remember {
+		mutableStateOf(
+			context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
+				PackageManager.PERMISSION_GRANTED
+		)
+	}
+	val locationPermissionLauncher = rememberLauncherForActivityResult(
+		ActivityResultContracts.RequestMultiplePermissions(),
+	) { grants ->
+		fineLocationPermissionGranted =
+			grants[Manifest.permission.ACCESS_FINE_LOCATION] == true
+		if (fineLocationPermissionGranted) {
+			CookingSessionService.syncRunningState(context)
+		}
+	}
 	val recipe = CookingSessionController.recipe
 	val selectedRecipeId = CookingSessionController.selectedRecipeId
 	val startedAt = CookingSessionController.startedAt
 	val durationOverrides = CookingSessionController.durationOverrides
+	val skippedTaskIds = CookingSessionController.skippedTaskIds
+	val activeTaskOverrideId = CookingSessionController.activeTaskOverrideId
+	val activeTaskOverrideStartedAtSeconds =
+		CookingSessionController.activeTaskOverrideStartedAtSeconds
 	val eventDeferredUntil = CookingSessionController.eventDeferredUntil
+	val nearbySuggestion = CookingSessionController.nearbySuggestion
 
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
 	var showStopCookingDialog by remember { mutableStateOf(false) }
+
+	DisposableEffect(context) {
+		val activity = context as? ComponentActivity
+		CookingSessionController.updateAppVisible(
+			activity?.lifecycle?.currentState?.isAtLeast(Lifecycle.State.RESUMED) == true,
+		)
+		val observer = LifecycleEventObserver { _, event ->
+			when (event) {
+				Lifecycle.Event.ON_RESUME -> {
+					CookingSessionController.updateAppVisible(true)
+					fineLocationPermissionGranted =
+						context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
+							PackageManager.PERMISSION_GRANTED
+					if (CookingSessionController.startedAt != null) {
+						CookingSessionService.syncRunningState(context)
+					}
+				}
+				Lifecycle.Event.ON_PAUSE -> CookingSessionController.updateAppVisible(false)
+				else -> Unit
+			}
+		}
+		activity?.lifecycle?.addObserver(observer)
+		onDispose {
+			CookingSessionController.updateAppVisible(false)
+			activity?.lifecycle?.removeObserver(observer)
+		}
+	}
 
 	LaunchedEffect(startedAt) {
 		while (startedAt != null) {
@@ -118,6 +178,9 @@ private fun CookCueScreen() {
 		now,
 		startedAt,
 		durationOverrides,
+		skippedTaskIds,
+		activeTaskOverrideId,
+		activeTaskOverrideStartedAtSeconds,
 		eventDeferredUntil,
 		selectedRecipeId,
 	) {
@@ -159,6 +222,34 @@ private fun CookCueScreen() {
 		MobileSessionPersistence.save(context)
 		MobileSessionSync.publish(context)
 		CookingSessionService.syncRunningState(context)
+	}
+
+	val hasLocationSensors =
+		recipe.scheduleMode == ScheduleMode.ITINERARY &&
+			recipe.tasks.any { task ->
+				task.sensors.any { it is LocationProximitySensor }
+			}
+
+	LaunchedEffect(
+		snapshot.started,
+		recipe.id,
+		hasLocationSensors,
+		fineLocationPermissionGranted,
+		notificationPermissionResolved,
+	) {
+		if (
+			snapshot.started &&
+			hasLocationSensors &&
+			notificationPermissionResolved &&
+			!fineLocationPermissionGranted
+		) {
+			locationPermissionLauncher.launch(
+				arrayOf(
+					Manifest.permission.ACCESS_FINE_LOCATION,
+					Manifest.permission.ACCESS_COARSE_LOCATION,
+				)
+			)
+		}
 	}
 
 	if (showStopCookingDialog) {
@@ -292,6 +383,26 @@ private fun CookCueScreen() {
 					}
 				}
 			} else {
+				nearbySuggestion?.let { suggestion ->
+					item {
+						Column(
+							modifier = Modifier.padding(horizontal = 16.dp),
+						) {
+							Spacer(Modifier.height(12.dp))
+							NearbySuggestionCard(
+								suggestion = suggestion,
+								onDismiss = {
+									CookingSessionController.dismissNearbySuggestion(suggestion.taskId)
+									persistAndSync()
+								},
+								onActivate = {
+									CookingSessionController.activateTask(suggestion.taskId)
+									persistAndSync()
+								},
+							)
+						}
+					}
+				}
 				item {
 					Column(
 						modifier = Modifier.padding(horizontal = 16.dp),
@@ -486,8 +597,13 @@ private fun CookCueScreen() {
 					index = index,
 					item = item,
 					recipe = recipe,
+					progress = snapshot.taskProgress[item.task.id] ?: TaskProgress.PENDING,
 					active = item.task.id == activeTaskId,
 					isLast = index == snapshot.schedule.lastIndex,
+					onActivate = {
+						CookingSessionController.activateTask(item.task.id)
+						persistAndSync()
+					},
 				)
 			}
 
@@ -1154,6 +1270,52 @@ private fun PendingEventCard(
 }
 
 @Composable
+private fun NearbySuggestionCard(
+	suggestion: NearbyTaskSuggestion,
+	onDismiss: () -> Unit,
+	onActivate: () -> Unit,
+) {
+	Surface(
+		modifier = Modifier.fillMaxWidth(),
+		color = MaterialTheme.colorScheme.secondaryContainer,
+		shape = RoundedCornerShape(18.dp),
+	) {
+		Column(modifier = Modifier.padding(16.dp)) {
+			SmallLabel("SI BLÍZKO")
+			Spacer(Modifier.height(6.dp))
+			Text(
+				text = suggestion.taskTitle,
+				style = MaterialTheme.typography.titleLarge,
+				fontWeight = FontWeight.SemiBold,
+			)
+			Text(
+				text = "Približne " + suggestion.distanceMeters.toInt() + " m od teba.",
+				style = MaterialTheme.typography.bodyMedium,
+				color = MaterialTheme.colorScheme.onSecondaryContainer,
+			)
+			Spacer(Modifier.height(12.dp))
+			Row(
+				modifier = Modifier.fillMaxWidth(),
+				horizontalArrangement = Arrangement.spacedBy(10.dp),
+			) {
+				OutlinedButton(
+					onClick = onDismiss,
+					modifier = Modifier.weight(1f),
+				) {
+					Text("TERAZ NIE")
+				}
+				Button(
+					onClick = onActivate,
+					modifier = Modifier.weight(1f),
+				) {
+					Text("AKTIVOVAŤ")
+				}
+			}
+		}
+	}
+}
+
+@Composable
 private fun CompactTimers(
 	items: List<Pair<String, String>>,
 ) {
@@ -1253,8 +1415,10 @@ private fun PlanRow(
 	index: Int,
 	item: ScheduledTask,
 	recipe: Recipe,
+	progress: TaskProgress,
 	active: Boolean,
 	isLast: Boolean,
+	onActivate: () -> Unit,
 ) {
 	Row(
 		modifier = Modifier
@@ -1309,7 +1473,7 @@ private fun PlanRow(
 					MaterialTheme.colorScheme.outline.copy(alpha = 0.8f),
 				),
 			) {
-				PlanRowContent(item, recipe, active = true)
+				PlanRowContent(item, recipe, progress, active = true, onActivate = onActivate)
 			}
 		} else {
 			Box(
@@ -1317,7 +1481,7 @@ private fun PlanRow(
 					.weight(1f)
 					.padding(bottom = 8.dp),
 			) {
-				PlanRowContent(item, recipe, active = false)
+				PlanRowContent(item, recipe, progress, active = false, onActivate = onActivate)
 			}
 		}
 	}
@@ -1327,7 +1491,9 @@ private fun PlanRow(
 private fun PlanRowContent(
 	item: ScheduledTask,
 	recipe: Recipe,
+	progress: TaskProgress,
 	active: Boolean,
+	onActivate: () -> Unit,
 ) {
 	Row(
 		modifier = Modifier
@@ -1340,7 +1506,15 @@ private fun PlanRowContent(
 	) {
 		Column(modifier = Modifier.weight(1f)) {
 			Text(
-				text = item.task.title,
+				text = if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
+					when (progress) {
+						TaskProgress.COMPLETED -> "✓ " + item.task.title
+						TaskProgress.SKIPPED -> "↷ " + item.task.title
+						else -> item.task.title
+					}
+				} else {
+					item.task.title
+				},
 				style = MaterialTheme.typography.bodyMedium,
 				fontWeight = if (active) FontWeight.Bold else FontWeight.Medium,
 				color = MaterialTheme.colorScheme.onSurface,
@@ -1359,12 +1533,40 @@ private fun PlanRowContent(
 				style = MaterialTheme.typography.bodySmall,
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
 			)
+			if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
+				Text(
+					text = when (progress) {
+						TaskProgress.COMPLETED -> "absolvované"
+						TaskProgress.SKIPPED -> "preskočené"
+						TaskProgress.ACTIVE -> "aktívne"
+						TaskProgress.PENDING -> "čaká"
+					},
+					style = MaterialTheme.typography.labelSmall,
+					color = MaterialTheme.colorScheme.onSurfaceVariant,
+				)
+			}
 			if (item.task.links.isNotEmpty()) {
 				Spacer(Modifier.height(3.dp))
 				TaskLinks(item.task.links, compact = true)
 			}
+			if (
+				recipe.scheduleMode == ScheduleMode.ITINERARY &&
+					item.task.kind == TaskKind.ACTIVE &&
+					progress == TaskProgress.PENDING
+			) {
+				TextButton(
+					onClick = onActivate,
+					contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
+				) {
+					Text(
+						text = "AKTIVOVAŤ",
+						style = MaterialTheme.typography.labelSmall,
+						fontWeight = FontWeight.Bold,
+					)
+				}
+			}
 		}
-		if (active) {
+		if (active || (recipe.scheduleMode == ScheduleMode.ITINERARY && progress == TaskProgress.ACTIVE)) {
 			Text(
 				text = "▶",
 				style = MaterialTheme.typography.labelLarge,
@@ -1443,6 +1645,7 @@ private fun formatScheduledStart(
 		.atZone(zone)
 		.format(formatter)
 }
+
 
 private fun formatRemaining(seconds: Long): String {
 	val safe = seconds.coerceAtLeast(0)

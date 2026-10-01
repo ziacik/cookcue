@@ -11,6 +11,11 @@ object MobileSessionPersistence {
 	private const val KEY_DURATION_OVERRIDES = "duration-overrides"
 	private const val KEY_TASK_START_OVERRIDES = "task-start-overrides"
 	private const val KEY_EVENT_DEFERRED_UNTIL = "event-deferred-until"
+	private const val KEY_SKIPPED_TASK_IDS = "skipped-task-ids"
+	private const val KEY_ACTIVE_TASK_OVERRIDE_ID = "active-task-override-id"
+	private const val KEY_ACTIVE_TASK_OVERRIDE_STARTED_AT = "active-task-override-started-at"
+	private const val KEY_NEARBY_SNOOZE_TASK_ID = "nearby-snooze-task-id"
+	private const val KEY_NEARBY_SNOOZE_UNTIL = "nearby-snooze-until"
 
 	@Volatile
 	private var loaded = false
@@ -41,6 +46,19 @@ object MobileSessionPersistence {
 			val eventDeferredUntil = decodeOverrides(
 				prefs.getString(KEY_EVENT_DEFERRED_UNTIL, null).orEmpty()
 			)
+			val skippedTaskIds = decodeSet(
+				prefs.getString(KEY_SKIPPED_TASK_IDS, null).orEmpty()
+			)
+			val activeTaskOverrideId = prefs.getString(KEY_ACTIVE_TASK_OVERRIDE_ID, null)
+			val storedActiveTaskOverrideStartedAt =
+				prefs.getLong(KEY_ACTIVE_TASK_OVERRIDE_STARTED_AT, -1L)
+			val activeTaskOverrideStartedAtSeconds =
+				storedActiveTaskOverrideStartedAt.takeIf { it >= 0L }
+			val nearbySuggestionSnoozeTaskId =
+				prefs.getString(KEY_NEARBY_SNOOZE_TASK_ID, null)
+			val storedNearbySnoozeUntil = prefs.getLong(KEY_NEARBY_SNOOZE_UNTIL, 0L)
+			val nearbySuggestionSnoozeUntil =
+				storedNearbySnoozeUntil.takeIf { it > SystemClock.elapsedRealtime() } ?: 0L
 
 			CookingSessionController.restore(
 				recipeId = recipeId,
@@ -48,6 +66,11 @@ object MobileSessionPersistence {
 				sessionStartedWallClockMillis = startedWallClock,
 				durationOverrides = overrides,
 				taskStartOverrides = taskStartOverrides,
+				skippedTaskIds = skippedTaskIds,
+				activeTaskOverrideId = activeTaskOverrideId,
+				activeTaskOverrideStartedAtSeconds = activeTaskOverrideStartedAtSeconds,
+				nearbySuggestionSnoozeTaskId = nearbySuggestionSnoozeTaskId,
+				nearbySuggestionSnoozeUntilElapsedRealtime = nearbySuggestionSnoozeUntil,
 				eventDeferredUntil = eventDeferredUntil,
 			)
 			loaded = true
@@ -59,6 +82,7 @@ object MobileSessionPersistence {
 		val overrides = encodeMap(CookingSessionController.durationOverrides)
 		val taskStartOverrides = encodeMap(CookingSessionController.taskStartOverrides)
 		val eventDeferredUntil = encodeMap(CookingSessionController.eventDeferredUntil)
+		val skippedTaskIds = encodeSet(CookingSessionController.skippedTaskIds)
 
 		context
 			.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
@@ -75,6 +99,20 @@ object MobileSessionPersistence {
 			.putString(KEY_DURATION_OVERRIDES, overrides)
 			.putString(KEY_TASK_START_OVERRIDES, taskStartOverrides)
 			.putString(KEY_EVENT_DEFERRED_UNTIL, eventDeferredUntil)
+			.putString(KEY_SKIPPED_TASK_IDS, skippedTaskIds)
+			.putString(KEY_ACTIVE_TASK_OVERRIDE_ID, CookingSessionController.activeTaskOverrideId)
+			.putLong(
+				KEY_ACTIVE_TASK_OVERRIDE_STARTED_AT,
+				CookingSessionController.activeTaskOverrideStartedAtSeconds ?: -1L,
+			)
+			.putString(
+				KEY_NEARBY_SNOOZE_TASK_ID,
+				CookingSessionController.nearbySuggestionSnoozeTaskId,
+			)
+			.putLong(
+				KEY_NEARBY_SNOOZE_UNTIL,
+				CookingSessionController.nearbySuggestionSnoozeUntilElapsedRealtime,
+			)
 			.apply()
 	}
 
@@ -82,6 +120,17 @@ object MobileSessionPersistence {
 		return value.entries.joinToString(";") { (taskId, number) ->
 			taskId + "=" + number
 		}
+	}
+
+	private fun encodeSet(value: Set<String>): String {
+		return value.joinToString(";")
+	}
+
+	private fun decodeSet(value: String): Set<String> {
+		return value
+			.split(';')
+			.filter(String::isNotBlank)
+			.toSet()
 	}
 
 	private fun decodeOverrides(value: String): Map<String, Long> {

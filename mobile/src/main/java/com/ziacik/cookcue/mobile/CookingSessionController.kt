@@ -18,6 +18,13 @@ import com.ziacik.cookcue.core.recipes.ScrambledEggsWithOnionRecipe
 import com.ziacik.cookcue.core.scheduler.ItineraryScheduler
 import com.ziacik.cookcue.core.scheduler.Scheduler
 
+enum class TaskProgress {
+	PENDING,
+	ACTIVE,
+	COMPLETED,
+	SKIPPED,
+}
+
 data class MobileSessionSnapshot(
 	val started: Boolean,
 	val completed: Boolean,
@@ -29,6 +36,7 @@ data class MobileSessionSnapshot(
 	val previousAction: ScheduledTask?,
 	val nextAction: ScheduledTask?,
 	val nextScheduled: ScheduledTask?,
+	val taskProgress: Map<String, TaskProgress>,
 )
 
 object CookingSessionController {
@@ -91,6 +99,12 @@ object CookingSessionController {
 		selectedRecipeId = recipeId
 		durationOverrides = emptyMap()
 		taskStartOverrides = emptyMap()
+		skippedTaskIds = emptySet()
+		activeTaskOverrideId = null
+		activeTaskOverrideStartedAtSeconds = null
+		nearbySuggestion = null
+		nearbySuggestionSnoozeTaskId = null
+		nearbySuggestionSnoozeUntilElapsedRealtime = 0L
 		eventDeferredUntil = emptyMap()
 		markSilentTransition()
 	}
@@ -108,6 +122,27 @@ object CookingSessionController {
 		private set
 
 	var eventDeferredUntil by mutableStateOf<Map<String, Long>>(emptyMap())
+		private set
+
+	var skippedTaskIds by mutableStateOf<Set<String>>(emptySet())
+		private set
+
+	var activeTaskOverrideId by mutableStateOf<String?>(null)
+		private set
+
+	var activeTaskOverrideStartedAtSeconds by mutableStateOf<Long?>(null)
+		private set
+
+	var nearbySuggestion by mutableStateOf<NearbyTaskSuggestion?>(null)
+		private set
+
+	var nearbySuggestionSnoozeTaskId by mutableStateOf<String?>(null)
+		private set
+
+	var nearbySuggestionSnoozeUntilElapsedRealtime by mutableStateOf(0L)
+		private set
+
+	var appVisible by mutableStateOf(false)
 		private set
 
 	var userActionVersion by mutableStateOf(0L)
@@ -128,6 +163,12 @@ object CookingSessionController {
 	fun start() {
 		durationOverrides = emptyMap()
 		taskStartOverrides = emptyMap()
+		skippedTaskIds = emptySet()
+		activeTaskOverrideId = null
+		activeTaskOverrideStartedAtSeconds = null
+		nearbySuggestion = null
+		nearbySuggestionSnoozeTaskId = null
+		nearbySuggestionSnoozeUntilElapsedRealtime = 0L
 		eventDeferredUntil = emptyMap()
 		sessionStartedWallClockMillis = System.currentTimeMillis()
 		startedAt = SystemClock.elapsedRealtime()
@@ -139,6 +180,12 @@ object CookingSessionController {
 		sessionStartedWallClockMillis = null
 		durationOverrides = emptyMap()
 		taskStartOverrides = emptyMap()
+		skippedTaskIds = emptySet()
+		activeTaskOverrideId = null
+		activeTaskOverrideStartedAtSeconds = null
+		nearbySuggestion = null
+		nearbySuggestionSnoozeTaskId = null
+		nearbySuggestionSnoozeUntilElapsedRealtime = 0L
 		eventDeferredUntil = emptyMap()
 		markUserAction()
 
@@ -154,6 +201,11 @@ object CookingSessionController {
 		sessionStartedWallClockMillis: Long? = null,
 		durationOverrides: Map<String, Long>,
 		taskStartOverrides: Map<String, Long> = emptyMap(),
+		skippedTaskIds: Set<String> = emptySet(),
+		activeTaskOverrideId: String? = null,
+		activeTaskOverrideStartedAtSeconds: Long? = null,
+		nearbySuggestionSnoozeTaskId: String? = null,
+		nearbySuggestionSnoozeUntilElapsedRealtime: Long = 0L,
 		eventDeferredUntil: Map<String, Long> = emptyMap(),
 	) {
 		selectedRecipeId = availableRecipes
@@ -172,6 +224,12 @@ object CookingSessionController {
 		this.sessionStartedWallClockMillis = sessionStartedWallClockMillis
 		this.durationOverrides = durationOverrides
 		this.taskStartOverrides = taskStartOverrides
+		this.skippedTaskIds = skippedTaskIds
+		this.activeTaskOverrideId = activeTaskOverrideId
+		this.activeTaskOverrideStartedAtSeconds = activeTaskOverrideStartedAtSeconds
+		this.nearbySuggestion = null
+		this.nearbySuggestionSnoozeTaskId = nearbySuggestionSnoozeTaskId
+		this.nearbySuggestionSnoozeUntilElapsedRealtime = nearbySuggestionSnoozeUntilElapsedRealtime
 		this.eventDeferredUntil = eventDeferredUntil
 		markUserAction()
 	}
@@ -185,6 +243,11 @@ object CookingSessionController {
 		val actualDuration = (snapshot.elapsedSeconds - action.startSeconds).coerceAtLeast(1)
 		durationOverrides = durationOverrides + (taskId to actualDuration)
 		taskStartOverrides = taskStartOverrides + (taskId to action.startSeconds)
+		skippedTaskIds = skippedTaskIds - taskId
+		if (activeTaskOverrideId == taskId) {
+			activeTaskOverrideId = null
+			activeTaskOverrideStartedAtSeconds = null
+		}
 		markUserAction()
 	}
 
@@ -196,7 +259,82 @@ object CookingSessionController {
 
 		durationOverrides = durationOverrides + (taskId to 1L)
 		taskStartOverrides = taskStartOverrides + (taskId to action.startSeconds)
+		skippedTaskIds = skippedTaskIds + taskId
+		if (activeTaskOverrideId == taskId) {
+			activeTaskOverrideId = null
+			activeTaskOverrideStartedAtSeconds = null
+		}
 		markUserAction()
+	}
+
+	fun activateTask(
+		taskId: String,
+		silentTransition: Boolean = true,
+	) {
+		if (recipe.scheduleMode != ScheduleMode.ITINERARY || startedAt == null) {
+			return
+		}
+
+		val task = recipe.tasks.firstOrNull {
+			it.id == taskId && it.kind == TaskKind.ACTIVE
+		} ?: return
+		if (task.id in durationOverrides) {
+			return
+		}
+
+		val elapsedSeconds = currentElapsedSeconds()
+		activeTaskOverrideId = task.id
+		activeTaskOverrideStartedAtSeconds = elapsedSeconds
+		if (nearbySuggestion?.taskId == task.id) {
+			nearbySuggestion = null
+		}
+		if (silentTransition) {
+			markSilentTransition()
+		} else {
+			markUserAction()
+		}
+	}
+
+	fun updateAppVisible(visible: Boolean) {
+		appVisible = visible
+	}
+
+	fun updateNearbySuggestion(suggestion: NearbyTaskSuggestion?): Boolean {
+		if (suggestion != null && isNearbySuggestionSnoozed(suggestion.taskId)) {
+			if (nearbySuggestion?.taskId == suggestion.taskId) {
+				nearbySuggestion = null
+			}
+			return false
+		}
+
+		val changedTask = nearbySuggestion?.taskId != suggestion?.taskId
+		nearbySuggestion = suggestion
+		return changedTask
+	}
+
+	fun dismissNearbySuggestion(taskId: String) {
+		nearbySuggestionSnoozeTaskId = taskId
+		nearbySuggestionSnoozeUntilElapsedRealtime =
+			SystemClock.elapsedRealtime() + NEARBY_SNOOZE_MILLIS
+		if (nearbySuggestion?.taskId == taskId) {
+			nearbySuggestion = null
+		}
+	}
+
+	fun clearNearbySuggestion() {
+		nearbySuggestion = null
+	}
+
+	fun isNearbySuggestionSnoozed(taskId: String): Boolean {
+		if (nearbySuggestionSnoozeTaskId != taskId) {
+			return false
+		}
+		if (SystemClock.elapsedRealtime() >= nearbySuggestionSnoozeUntilElapsedRealtime) {
+			nearbySuggestionSnoozeTaskId = null
+			nearbySuggestionSnoozeUntilElapsedRealtime = 0L
+			return false
+		}
+		return true
 	}
 
 	fun confirmEvent(taskId: String) {
@@ -289,18 +427,35 @@ object CookingSessionController {
 		val currentAction = if (start == null) {
 			null
 		} else {
-			schedule
-				.asSequence()
-				.filter {
-					it.task.kind == TaskKind.ACTIVE &&
-						it.task.id !in durationOverrides &&
-						it.task.id !in blockedIds &&
-						it.startSeconds <= elapsedSeconds
+			activeTaskOverrideId
+				?.let { taskId ->
+					val startedAtSeconds = activeTaskOverrideStartedAtSeconds
+					val planned = schedule.firstOrNull {
+						it.task.id == taskId &&
+							it.task.kind == TaskKind.ACTIVE &&
+							it.task.id !in durationOverrides
+					}
+					if (planned != null && startedAtSeconds != null) {
+						planned.copy(
+							startSeconds = startedAtSeconds,
+							endSeconds = startedAtSeconds + planned.task.durationSeconds,
+						)
+					} else {
+						null
+					}
 				}
-				.minWithOrNull(
-					compareBy<ScheduledTask> { it.startSeconds }
-						.thenBy { it.task.id }
-				)
+				?: schedule
+					.asSequence()
+					.filter {
+						it.task.kind == TaskKind.ACTIVE &&
+							it.task.id !in durationOverrides &&
+							it.task.id !in blockedIds &&
+							it.startSeconds <= elapsedSeconds
+					}
+					.minWithOrNull(
+						compareBy<ScheduledTask> { it.startSeconds }
+							.thenBy { it.task.id }
+					)
 		}
 
 		val background = if (start == null) {
@@ -344,6 +499,19 @@ object CookingSessionController {
 				it.startSeconds > elapsedSeconds
 		}
 
+		val activeIds = buildSet {
+			currentAction?.task?.id?.let(::add)
+			pendingEvents.mapTo(this) { it.task.id }
+		}
+		val taskProgress = recipe.tasks.associate { task ->
+			task.id to when {
+				task.id in skippedTaskIds -> TaskProgress.SKIPPED
+				task.id in durationOverrides -> TaskProgress.COMPLETED
+				task.id in activeIds -> TaskProgress.ACTIVE
+				else -> TaskProgress.PENDING
+			}
+		}
+
 		val completed =
 			start != null &&
 				unconfirmedManualTaskIds.isEmpty() &&
@@ -363,7 +531,18 @@ object CookingSessionController {
 			previousAction = previousAction,
 			nextAction = nextAction,
 			nextScheduled = nextScheduled,
+			taskProgress = taskProgress,
 		)
+	}
+
+	private fun currentElapsedSeconds(): Long {
+		val start = startedAt ?: return 0
+		return if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
+			val epochStart = requireNotNull(recipe.scheduleStartEpochSeconds)
+			(System.currentTimeMillis() / 1000 - epochStart).coerceAtLeast(0)
+		} else {
+			((SystemClock.elapsedRealtime() - start) / 1000).coerceAtLeast(0)
+		}
 	}
 
 	private fun baseSchedule(elapsedSeconds: Long): List<ScheduledTask> {
@@ -463,6 +642,30 @@ object CookingSessionController {
 			earliestUnscheduledStartSeconds = itinerarySessionStartOffset(),
 		)
 
+		// A manual jump temporarily occupies its real wall-clock slot so the rest of the
+		// itinerary still adapts around fixed events. It is not persisted as a start override
+		// until the user actually completes or skips the task.
+		val manualTaskId = activeTaskOverrideId
+		val manualStartedAt = activeTaskOverrideStartedAtSeconds
+		if (manualTaskId != null && manualStartedAt != null) {
+			val manualTask = recipe.tasks.firstOrNull { it.id == manualTaskId }
+			if (manualTask != null && manualTaskId !in durationOverrides) {
+				val elapsedForTask =
+					(elapsedSeconds - manualStartedAt + 1).coerceAtLeast(1)
+				val liveDuration = maxOf(
+					manualTask.durationSeconds,
+					elapsedForTask,
+				)
+				return itineraryScheduler.schedule(
+					recipe = recipe,
+					durationOverrides = durationOverrides + (manualTaskId to liveDuration),
+					startOverrides = taskStartOverrides + (manualTaskId to manualStartedAt),
+					elapsedSeconds = elapsedSeconds,
+					earliestUnscheduledStartSeconds = itinerarySessionStartOffset(),
+				)
+			}
+		}
+
 		repeat(8) {
 			val unconfirmedManualTaskIds = recipe.tasks
 				.asSequence()
@@ -477,16 +680,16 @@ object CookingSessionController {
 
 			val currentAction = schedule
 				.asSequence()
-				.filter {
-					it.task.kind == TaskKind.ACTIVE &&
-						it.task.id !in durationOverrides &&
-						it.task.id !in blockedIds &&
-						it.startSeconds <= elapsedSeconds
-				}
-				.minWithOrNull(
-					compareBy<ScheduledTask> { it.startSeconds }
-						.thenBy { it.task.id }
-				)
+					.filter {
+						it.task.kind == TaskKind.ACTIVE &&
+							it.task.id !in durationOverrides &&
+							it.task.id !in blockedIds &&
+							it.startSeconds <= elapsedSeconds
+					}
+					.minWithOrNull(
+						compareBy<ScheduledTask> { it.startSeconds }
+							.thenBy { it.task.id }
+					)
 				?: return schedule
 
 			val elapsedForTask =
@@ -538,6 +741,8 @@ object CookingSessionController {
 		val now = SystemClock.elapsedRealtime()
 		startedAt = now - target.startSeconds * 1000
 	}
+
+	private const val NEARBY_SNOOZE_MILLIS = 5 * 60 * 1000L
 
 	private fun blockedTaskIds(
 		recipe: Recipe,

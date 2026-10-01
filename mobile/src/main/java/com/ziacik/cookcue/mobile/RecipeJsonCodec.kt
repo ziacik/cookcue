@@ -3,12 +3,15 @@ package com.ziacik.cookcue.mobile
 import com.ziacik.cookcue.core.model.CookingTask
 import com.ziacik.cookcue.core.model.Ingredient
 import com.ziacik.cookcue.core.model.ItineraryTiming
+import com.ziacik.cookcue.core.model.LocationProximitySensor
 import com.ziacik.cookcue.core.model.Recipe
 import com.ziacik.cookcue.core.model.ResourceRequirement
 import com.ziacik.cookcue.core.model.ScheduleMode
+import com.ziacik.cookcue.core.model.SensorActivationMode
 import com.ziacik.cookcue.core.model.Skill
 import com.ziacik.cookcue.core.model.TaskKind
 import com.ziacik.cookcue.core.model.TaskLink
+import com.ziacik.cookcue.core.model.TaskSensor
 import com.ziacik.cookcue.core.model.TimeWindow
 import com.ziacik.cookcue.core.model.TroubleshootingTip
 import org.json.JSONArray
@@ -83,8 +86,28 @@ internal object RecipeJsonCodec {
 					)
 				}
 				.orEmpty(),
+			sensors = task.optJSONArray("sensors")
+				?.mapObjects(::decodeSensor)
+				.orEmpty(),
 			itineraryTiming = task.optJSONObject("timing")?.let(::decodeTiming),
 		)
+	}
+
+	private fun decodeSensor(sensor: JSONObject): TaskSensor {
+		return when (sensor.getString("type")) {
+			"LOCATION_PROXIMITY" -> LocationProximitySensor(
+				latitude = sensor.getDouble("latitude"),
+				longitude = sensor.getDouble("longitude"),
+				radiusMeters = sensor.optDouble("radiusMeters", 80.0).toFloat(),
+				activationMode = SensorActivationMode.valueOf(
+					sensor.optString(
+						"activationMode",
+						SensorActivationMode.SUGGEST.name,
+					),
+				),
+			)
+			else -> error("Unsupported task sensor type '${sensor.getString("type")}'.")
+		}
 	}
 
 	private fun decodeTiming(timing: JSONObject): ItineraryTiming {

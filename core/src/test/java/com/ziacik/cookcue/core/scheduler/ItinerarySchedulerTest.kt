@@ -50,6 +50,42 @@ class ItinerarySchedulerTest {
 	}
 
 	@Test
+	fun manuallyPinnedStopDoesNotMoveFixedEvent() {
+		val recipe = recipe(
+			CookingTask(
+				id = "before",
+				title = "Before",
+				durationSeconds = 80,
+				itineraryTiming = windows(0, 400),
+			),
+			CookingTask(
+				id = "manual",
+				title = "Manual",
+				durationSeconds = 100,
+				dependsOn = setOf("before"),
+				itineraryTiming = windows(0, 400),
+			),
+			CookingTask(
+				id = "fixed",
+				title = "Fixed",
+				durationSeconds = 20,
+				itineraryTiming = ItineraryTiming(
+					fixedStartOptionsEpochSeconds = listOf(epoch + 150),
+				),
+			),
+		)
+
+		val schedule = scheduler.schedule(
+			recipe = recipe,
+			startOverrides = mapOf("manual" to 0),
+		)
+
+		assertEquals(0L, schedule.single { it.task.id == "manual" }.startSeconds)
+		assertEquals(150L, schedule.single { it.task.id == "fixed" }.startSeconds)
+		assertEquals(170L, schedule.single { it.task.id == "before" }.startSeconds)
+	}
+
+	@Test
 	fun flexibleTaskMovesToLaterWindowWhenItNoLongerFits() {
 		val recipe = recipe(
 			CookingTask(

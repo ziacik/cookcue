@@ -47,7 +47,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1402,
+					"longitude": 17.123,
+					"radiusMeters": 35,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "rotoskop",
@@ -82,7 +91,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1402,
+					"longitude": 17.123,
+					"radiusMeters": 50,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "krdel",
@@ -148,7 +166,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1402,
+					"longitude": 17.123,
+					"radiusMeters": 50,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "everything-connects",
@@ -183,7 +210,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1407,
+					"longitude": 17.1203,
+					"radiusMeters": 35,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "huso-huso",
@@ -218,7 +254,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1407,
+					"longitude": 17.1203,
+					"radiusMeters": 60,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "see-you",
@@ -253,7 +298,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.141,
+					"longitude": 17.1174,
+					"radiusMeters": 50,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "magicky-les",
@@ -288,7 +342,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1403,
+					"longitude": 17.114,
+					"radiusMeters": 50,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "seed-sprout",
@@ -323,7 +386,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1406,
+					"longitude": 17.0994,
+					"radiusMeters": 60,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "ray",
@@ -360,7 +432,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1403,
+					"longitude": 17.1009,
+					"radiusMeters": 50,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "geofonia",
@@ -397,7 +478,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1432,
+					"longitude": 17.105,
+					"radiusMeters": 45,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "satellites",
@@ -432,7 +522,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1446,
+					"longitude": 17.1112,
+					"radiusMeters": 45,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "catch-them-all",
@@ -467,7 +566,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1446,
+					"longitude": 17.1112,
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "sfera-spojenia",
@@ -502,7 +610,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1455,
+					"longitude": 17.1159,
+					"radiusMeters": 60,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "pure-rain",
@@ -537,7 +654,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1438,
+					"longitude": 17.1104,
+					"radiusMeters": 40,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "sol-machina",
@@ -572,7 +698,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.144,
+					"longitude": 17.1095,
+					"radiusMeters": 60,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "aftereal",
@@ -607,7 +742,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1435,
+					"longitude": 17.1083,
+					"radiusMeters": 60,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "wellness",
@@ -646,7 +790,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1448,
+					"longitude": 17.1076,
+					"radiusMeters": 40,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "the-lights",
@@ -685,7 +838,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1448,
+					"longitude": 17.1059,
+					"radiusMeters": 50,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "zakouti-evoluce",
@@ -720,7 +882,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1441,
+					"longitude": 17.1075,
+					"radiusMeters": 35,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "presvit",
@@ -755,7 +926,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1424,
+					"longitude": 17.1122,
+					"radiusMeters": 60,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "totem",
@@ -790,7 +970,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1423,
+					"longitude": 17.1145,
+					"radiusMeters": 45,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "skryte-sceny",
@@ -825,7 +1014,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1431,
+					"longitude": 17.1204,
+					"radiusMeters": 50,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "power-tree",
@@ -860,7 +1058,16 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1455,
+					"longitude": 17.1253,
+					"radiusMeters": 60,
+					"activationMode": "SUGGEST"
+				}
+			]
 		}
 	]
 }
