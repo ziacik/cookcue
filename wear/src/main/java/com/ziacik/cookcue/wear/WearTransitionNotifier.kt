@@ -99,7 +99,6 @@ object WearTransitionNotifier {
 			.setContentIntent(contentIntent)
 			.setAutoCancel(true)
 			.setCategory(Notification.CATEGORY_REMINDER)
-			.setPriority(Notification.PRIORITY_HIGH)
 			.build()
 
 		context
