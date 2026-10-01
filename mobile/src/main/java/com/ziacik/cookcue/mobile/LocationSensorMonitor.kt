@@ -2,17 +2,14 @@ package com.ziacik.cookcue.mobile
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import android.os.Handler
 import android.os.Looper
 import com.ziacik.cookcue.core.model.CookingTask
 import com.ziacik.cookcue.core.model.LocationProximitySensor
 import com.ziacik.cookcue.core.model.SensorActivationMode
-import java.util.Locale
 
 data class NearbyTaskSuggestion(
 	val taskId: String,
@@ -27,9 +24,6 @@ class LocationSensorMonitor(
 	private val appContext = context.applicationContext
 	private val locationManager =
 		appContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-	private val geocoder = Geocoder(appContext, Locale.getDefault())
-	private val mainHandler = Handler(Looper.getMainLooper())
-	private val resolvedLocations = mutableMapOf<String, Location?>()
 
 	private var tasks: List<CookingTask> = emptyList()
 	private var onSuggestion: (NearbyTaskSuggestion?) -> Unit = {}
@@ -42,8 +36,6 @@ class LocationSensorMonitor(
 		stop()
 		this.tasks = tasks
 		this.onSuggestion = onSuggestion
-		resolveQueries(tasks)
-
 		listOf(
 			LocationManager.NETWORK_PROVIDER,
 			LocationManager.GPS_PROVIDER,
@@ -86,46 +78,6 @@ class LocationSensorMonitor(
 		extras: Bundle?,
 	) = Unit
 
-	private fun resolveQueries(tasks: List<CookingTask>) {
-		val queries = tasks
-			.flatMap { task -> task.sensors.filterIsInstance<LocationProximitySensor>() }
-			.map { it.locationQuery }
-			.distinct()
-			.filterNot(resolvedLocations::containsKey)
-
-		if (queries.isEmpty()) {
-			return
-		}
-
-		Thread(
-			{
-				queries.forEach { query ->
-					val target = resolveQuery(query)
-					mainHandler.post {
-						resolvedLocations[query] = target
-					}
-				}
-			},
-			"CookCue-geocode",
-		).start()
-	}
-
-	@Suppress("DEPRECATION")
-	private fun resolveQuery(query: String): Location? {
-		if (!Geocoder.isPresent()) {
-			return null
-		}
-
-		val address = runCatching {
-			geocoder.getFromLocationName(query, 1)?.firstOrNull()
-		}.getOrNull() ?: return null
-
-		return Location("cookcue-recipe").apply {
-			latitude = address.latitude
-			longitude = address.longitude
-		}
-	}
-
 	private fun evaluate(current: Location) {
 		val suggestion = tasks
 			.asSequence()
@@ -134,7 +86,10 @@ class LocationSensorMonitor(
 					.filterIsInstance<LocationProximitySensor>()
 					.asSequence()
 					.mapNotNull { sensor ->
-						val target = resolvedLocations[sensor.locationQuery] ?: return@mapNotNull null
+						val target = Location("cookcue-recipe").apply {
+							latitude = sensor.latitude
+							longitude = sensor.longitude
+						}
 						val distance = current.distanceTo(target)
 						if (distance > sensor.radiusMeters) {
 							return@mapNotNull null
