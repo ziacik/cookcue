@@ -93,9 +93,18 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun CookCueScreen() {
 	val context = LocalContext.current
+	var notificationPermissionResolved by remember {
+		mutableStateOf(
+			Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+				context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) ==
+					PackageManager.PERMISSION_GRANTED
+		)
+	}
 	val notificationPermissionLauncher = rememberLauncherForActivityResult(
 		ActivityResultContracts.RequestPermission(),
-	) {}
+	) {
+		notificationPermissionResolved = true
+	}
 	var fineLocationPermissionGranted by remember {
 		mutableStateOf(
 			context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
@@ -211,11 +220,13 @@ private fun CookCueScreen() {
 		recipe.scheduleMode,
 		sensorEligibleTasks.isNotEmpty(),
 		fineLocationPermissionGranted,
+		notificationPermissionResolved,
 	) {
 		if (
 			snapshot.started &&
 			recipe.scheduleMode == ScheduleMode.ITINERARY &&
 			sensorEligibleTasks.isNotEmpty() &&
+			notificationPermissionResolved &&
 			!fineLocationPermissionGranted
 		) {
 			locationPermissionLauncher.launch(
