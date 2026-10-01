@@ -55,15 +55,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ziacik.cookcue.core.model.Recipe
+import com.ziacik.cookcue.core.model.ScheduleMode
 import com.ziacik.cookcue.core.model.ScheduledTask
 import com.ziacik.cookcue.core.model.TaskKind
+import com.ziacik.cookcue.core.model.TaskLink
 import kotlinx.coroutines.delay
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -157,10 +165,22 @@ private fun CookCueScreen() {
 		AlertDialog(
 			onDismissRequest = { showStopCookingDialog = false },
 			title = {
-				Text("Ukončiť aktuálne varenie?")
+				Text(
+					if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
+						"Ukončiť aktuálny itinerár?"
+					} else {
+						"Ukončiť aktuálne varenie?"
+					}
+				)
 			},
 			text = {
-				Text("Rozrobený postup sa ukončí a vrátiš sa na výber receptu.")
+				Text(
+					if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
+						"Rozrobený itinerár sa ukončí a vrátiš sa na výber."
+					} else {
+						"Rozrobený postup sa ukončí a vrátiš sa na výber receptu."
+					}
+				)
 			},
 			confirmButton = {
 				TextButton(
@@ -248,6 +268,7 @@ private fun CookCueScreen() {
 						Spacer(Modifier.height(18.dp))
 						PreCookingPanel(
 							note = recipe.preCookingNote,
+							isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY,
 							onStart = {
 								if (
 									Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
@@ -260,12 +281,14 @@ private fun CookCueScreen() {
 								persistAndSync()
 							},
 						)
-						Spacer(Modifier.height(22.dp))
-						SectionTitle("Ingrediencie")
-						Spacer(Modifier.height(8.dp))
-						IngredientList(
-							ingredients = recipe.ingredients.map { it.amount to it.name },
-						)
+						if (recipe.ingredients.isNotEmpty()) {
+							Spacer(Modifier.height(22.dp))
+							SectionTitle("Ingrediencie")
+							Spacer(Modifier.height(8.dp))
+							IngredientList(
+								ingredients = recipe.ingredients.map { it.amount to it.name },
+							)
+						}
 					}
 				}
 			} else {
@@ -282,6 +305,7 @@ private fun CookCueScreen() {
 									title = current.task.title,
 									instruction = current.task.instruction,
 									tips = current.task.tips,
+									links = current.task.links,
 									estimateSeconds = current.task.durationSeconds,
 									elapsedSeconds = elapsed,
 									stepNumber = activeStepIndex.takeIf { it >= 0 }?.plus(1),
@@ -304,6 +328,7 @@ private fun CookCueScreen() {
 									title = displayedWait.task.title,
 									instruction = displayedWait.task.instruction,
 									tips = displayedWait.task.tips,
+									links = displayedWait.task.links,
 									estimateSeconds = duration,
 									elapsedSeconds = elapsed,
 									stepNumber = activeStepIndex.takeIf { it >= 0 }?.plus(1),
@@ -315,6 +340,7 @@ private fun CookCueScreen() {
 
 							snapshot.completed -> {
 								CompletionCard(
+									isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY,
 									onFinish = {
 										CookingSessionController.stop()
 										persistAndSync()
@@ -323,7 +349,7 @@ private fun CookCueScreen() {
 							}
 
 							else -> {
-								IdleCard()
+								IdleCard(isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY)
 							}
 						}
 					}
@@ -338,6 +364,7 @@ private fun CookCueScreen() {
 							title = event.task.title,
 							instruction = event.task.instruction,
 							tips = event.task.tips,
+							links = event.task.links,
 							actionLabel = event.task.actionLabel ?: "HOTOVO",
 							retryActionLabel = event.task.retryActionLabel,
 							retryAfterSeconds = event.task.retryAfterSeconds,
@@ -378,42 +405,48 @@ private fun CookCueScreen() {
 							Spacer(Modifier.height(16.dp))
 							NextStepRow(
 								title = next.task.title,
-								time = "o " + formatRemaining(
-									next.startSeconds - snapshot.elapsedSeconds,
-								),
+								time = if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
+									formatScheduledStart(recipe, next)
+								} else {
+									"o " + formatRemaining(
+										next.startSeconds - snapshot.elapsedSeconds,
+									)
+								},
 							)
 						}
 					}
 				}
 
-				item {
-					Row(
-						modifier = Modifier
-							.fillMaxWidth()
-							.padding(horizontal = 20.dp, vertical = 14.dp),
-						horizontalArrangement = Arrangement.spacedBy(10.dp),
-					) {
-						OutlinedButton(
-							onClick = {
-								CookingSessionController.previous()
-								persistAndSync()
-							},
-							enabled = snapshot.previousAction != null,
-							modifier = Modifier.weight(1f),
-							shape = RoundedCornerShape(12.dp),
+				if (recipe.scheduleMode != ScheduleMode.ITINERARY) {
+					item {
+						Row(
+							modifier = Modifier
+								.fillMaxWidth()
+								.padding(horizontal = 20.dp, vertical = 14.dp),
+							horizontalArrangement = Arrangement.spacedBy(10.dp),
 						) {
-							Text("← PREDOŠLÝ")
-						}
-						OutlinedButton(
-							onClick = {
-								CookingSessionController.next()
-								persistAndSync()
-							},
-							enabled = snapshot.nextAction != null,
-							modifier = Modifier.weight(1f),
-							shape = RoundedCornerShape(12.dp),
-						) {
-							Text("ĎALŠÍ →")
+							OutlinedButton(
+								onClick = {
+									CookingSessionController.previous()
+									persistAndSync()
+								},
+								enabled = snapshot.previousAction != null,
+								modifier = Modifier.weight(1f),
+								shape = RoundedCornerShape(12.dp),
+							) {
+								Text("← PREDOŠLÝ")
+							}
+							OutlinedButton(
+								onClick = {
+									CookingSessionController.next()
+									persistAndSync()
+								},
+								enabled = snapshot.nextAction != null,
+								modifier = Modifier.weight(1f),
+								shape = RoundedCornerShape(12.dp),
+							) {
+								Text("ĎALŠÍ →")
+							}
 						}
 					}
 				}
@@ -426,7 +459,11 @@ private fun CookCueScreen() {
 					Spacer(Modifier.height(8.dp))
 					SectionTitle("Plán")
 					Text(
-						text = "Všetko krok za krokom. CookCue stráži čas.",
+						text = if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
+							"Plán sa priebežne prepočítava okolo pevných časov."
+						} else {
+							"Všetko krok za krokom. CookCue stráži čas."
+						},
 						style = MaterialTheme.typography.bodyMedium,
 						color = MaterialTheme.colorScheme.onSurfaceVariant,
 					)
@@ -441,35 +478,38 @@ private fun CookCueScreen() {
 				PlanRow(
 					index = index,
 					item = item,
+					recipe = recipe,
 					active = item.task.id == activeTaskId,
 					isLast = index == snapshot.schedule.lastIndex,
 				)
 			}
 
-			item {
-				Column(
-					modifier = Modifier.padding(horizontal = 20.dp),
-				) {
-					Spacer(Modifier.height(24.dp))
-					SectionTitle("Krízová pomoc")
-					Text(
-						text = "Keď varenie nejde podľa plánu, tu nájdeš rýchlu záchranu.",
-						style = MaterialTheme.typography.bodyMedium,
-						color = MaterialTheme.colorScheme.onSurfaceVariant,
-					)
-					Spacer(Modifier.height(8.dp))
+			if (recipe.troubleshooting.isNotEmpty()) {
+				item {
+					Column(
+						modifier = Modifier.padding(horizontal = 20.dp),
+					) {
+						Spacer(Modifier.height(24.dp))
+						SectionTitle("Krízová pomoc")
+						Text(
+							text = "Keď varenie nejde podľa plánu, tu nájdeš rýchlu záchranu.",
+							style = MaterialTheme.typography.bodyMedium,
+							color = MaterialTheme.colorScheme.onSurfaceVariant,
+						)
+						Spacer(Modifier.height(8.dp))
+					}
 				}
-			}
 
-			itemsIndexed(
-				items = recipe.troubleshooting,
-				key = { _, tip -> tip.problem },
-			) { index, tip ->
-				TroubleRow(
-					title = tip.problem,
-					advice = tip.advice,
-					showDivider = index != recipe.troubleshooting.lastIndex,
-				)
+				itemsIndexed(
+					items = recipe.troubleshooting,
+					key = { _, tip -> tip.problem },
+				) { index, tip ->
+					TroubleRow(
+						title = tip.problem,
+						advice = tip.advice,
+						showDivider = index != recipe.troubleshooting.lastIndex,
+					)
+				}
 			}
 		}
 	}
@@ -580,6 +620,7 @@ private fun CueMark(markSize: Dp) {
 @Composable
 private fun PreCookingPanel(
 	note: String?,
+	isItinerary: Boolean,
 	onStart: () -> Unit,
 ) {
 	Surface(
@@ -589,7 +630,7 @@ private fun PreCookingPanel(
 	) {
 		Column(modifier = Modifier.padding(18.dp)) {
 		if (note != null) {
-				SmallLabel("PRED VARENÍM")
+				SmallLabel(if (isItinerary) "PRED ŠTARTOM" else "PRED VARENÍM")
 				Spacer(Modifier.height(7.dp))
 				Text(
 					text = note,
@@ -607,7 +648,7 @@ private fun PreCookingPanel(
 				),
 			) {
 				Text(
-					text = "▶  SPUSTIŤ VARENIE",
+					text = if (isItinerary) "▶  SPUSTIŤ ITINERÁR" else "▶  SPUSTIŤ VARENIE",
 					fontWeight = FontWeight.Bold,
 					modifier = Modifier.padding(vertical = 3.dp),
 				)
@@ -680,6 +721,7 @@ private fun CurrentStepCard(
 	title: String,
 	instruction: String,
 	tips: List<String>,
+	links: List<TaskLink>,
 	estimateSeconds: Long,
 	elapsedSeconds: Long,
 	stepNumber: Int?,
@@ -740,6 +782,11 @@ private fun CurrentStepCard(
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
 			)
 
+			if (links.isNotEmpty()) {
+				Spacer(Modifier.height(12.dp))
+				TaskLinks(links)
+			}
+
 			Spacer(Modifier.height(16.dp))
 			Box(
 				modifier = Modifier.fillMaxWidth(),
@@ -787,6 +834,44 @@ private fun CurrentStepCard(
 						text = "✓  $actionLabel",
 						fontWeight = FontWeight.Bold,
 						modifier = Modifier.padding(vertical = 4.dp),
+					)
+				}
+			}
+		}
+	}
+}
+
+@Composable
+private fun TaskLinks(
+	links: List<TaskLink>,
+	compact: Boolean = false,
+) {
+	val uriHandler = LocalUriHandler.current
+	Row(
+		modifier = Modifier.fillMaxWidth(),
+		horizontalArrangement = Arrangement.spacedBy(8.dp),
+	) {
+		links.take(2).forEach { link ->
+			if (compact) {
+				TextButton(
+					onClick = { uriHandler.openUri(link.url) },
+					contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
+				) {
+					Text(
+						text = link.label,
+						style = MaterialTheme.typography.labelSmall,
+						fontWeight = FontWeight.Bold,
+					)
+				}
+			} else {
+				OutlinedButton(
+					onClick = { uriHandler.openUri(link.url) },
+					modifier = Modifier.weight(1f),
+					shape = RoundedCornerShape(12.dp),
+				) {
+					Text(
+						text = link.label,
+						fontWeight = FontWeight.Bold,
 					)
 				}
 			}
@@ -857,6 +942,7 @@ private fun TimerDial(
 
 @Composable
 private fun CompletionCard(
+	isItinerary: Boolean,
 	onFinish: () -> Unit,
 ) {
 	Surface(
@@ -875,7 +961,7 @@ private fun CompletionCard(
 			)
 			Spacer(Modifier.height(8.dp))
 			Text(
-				text = "Varenie je hotové",
+				text = if (isItinerary) "Itinerár je hotový" else "Varenie je hotové",
 				style = MaterialTheme.typography.headlineMedium.copy(
 					fontFamily = FontFamily.Serif,
 					fontWeight = FontWeight.SemiBold,
@@ -894,7 +980,7 @@ private fun CompletionCard(
 				shape = RoundedCornerShape(12.dp),
 			) {
 				Text(
-					text = "UKONČIŤ VARENIE",
+					text = if (isItinerary) "UKONČIŤ ITINERÁR" else "UKONČIŤ VARENIE",
 					fontWeight = FontWeight.Bold,
 					modifier = Modifier.padding(vertical = 4.dp),
 				)
@@ -904,7 +990,7 @@ private fun CompletionCard(
 }
 
 @Composable
-private fun IdleCard() {
+private fun IdleCard(isItinerary: Boolean) {
 	Surface(
 		modifier = Modifier.fillMaxWidth(),
 		color = MaterialTheme.colorScheme.surfaceVariant,
@@ -914,7 +1000,7 @@ private fun IdleCard() {
 			SmallLabel("TERAZ")
 			Spacer(Modifier.height(7.dp))
 			Text(
-				text = "Momentálne od teba nič netreba",
+				text = if (isItinerary) "Momentálne nie je na rade žiadna zastávka" else "Momentálne od teba nič netreba",
 				style = MaterialTheme.typography.titleLarge.copy(
 					fontFamily = FontFamily.Serif,
 					fontWeight = FontWeight.SemiBold,
@@ -935,6 +1021,7 @@ private fun PendingEventCard(
 	title: String,
 	instruction: String,
 	tips: List<String>,
+	links: List<TaskLink>,
 	actionLabel: String,
 	retryActionLabel: String?,
 	retryAfterSeconds: Long?,
@@ -971,6 +1058,10 @@ private fun PendingEventCard(
 					style = MaterialTheme.typography.bodySmall,
 					color = MaterialTheme.colorScheme.onTertiaryContainer,
 				)
+			}
+			if (links.isNotEmpty()) {
+				Spacer(Modifier.height(10.dp))
+				TaskLinks(links)
 			}
 			Spacer(Modifier.height(12.dp))
 			if (retryAfterSeconds != null && retryActionLabel != null) {
@@ -1121,6 +1212,7 @@ private fun SmallLabel(
 private fun PlanRow(
 	index: Int,
 	item: ScheduledTask,
+	recipe: Recipe,
 	active: Boolean,
 	isLast: Boolean,
 ) {
@@ -1177,7 +1269,7 @@ private fun PlanRow(
 					MaterialTheme.colorScheme.outline.copy(alpha = 0.8f),
 				),
 			) {
-				PlanRowContent(item, active = true)
+				PlanRowContent(item, recipe, active = true)
 			}
 		} else {
 			Box(
@@ -1185,7 +1277,7 @@ private fun PlanRow(
 					.weight(1f)
 					.padding(bottom = 8.dp),
 			) {
-				PlanRowContent(item, active = false)
+				PlanRowContent(item, recipe, active = false)
 			}
 		}
 	}
@@ -1194,6 +1286,7 @@ private fun PlanRow(
 @Composable
 private fun PlanRowContent(
 	item: ScheduledTask,
+	recipe: Recipe,
 	active: Boolean,
 ) {
 	Row(
@@ -1214,7 +1307,10 @@ private fun PlanRowContent(
 			)
 			Spacer(Modifier.height(2.dp))
 			Text(
-				text = if (item.task.kind == TaskKind.EVENT) {
+				text = if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
+					formatScheduledStart(recipe, item) + " · ~" +
+						formatRemaining(item.endSeconds - item.startSeconds)
+				} else if (item.task.kind == TaskKind.EVENT) {
 					"odhad ~" + formatRemaining(item.endSeconds - item.startSeconds)
 				} else {
 					formatRemaining(item.endSeconds - item.startSeconds)
@@ -1222,6 +1318,10 @@ private fun PlanRowContent(
 				style = MaterialTheme.typography.bodySmall,
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
 			)
+			if (item.task.links.isNotEmpty()) {
+				Spacer(Modifier.height(3.dp))
+				TaskLinks(item.task.links, compact = true)
+			}
 		}
 		if (active) {
 			Text(
@@ -1288,6 +1388,19 @@ private fun formatOffset(seconds: Long): String {
 	val hours = seconds / 3600
 	val minutes = (seconds % 3600) / 60
 	return if (hours > 0) "T+" + hours + "h " + minutes + "m" else "T+" + minutes + "m"
+}
+
+private fun formatScheduledStart(
+	recipe: Recipe,
+	item: ScheduledTask,
+): String {
+	val epochStart = recipe.scheduleStartEpochSeconds ?: return formatOffset(item.startSeconds)
+	val zone = ZoneId.of(recipe.scheduleTimeZoneId ?: ZoneId.systemDefault().id)
+	val formatter = DateTimeFormatter.ofPattern("EEE HH:mm", Locale("sk", "SK"))
+	return Instant
+		.ofEpochSecond(epochStart + item.startSeconds)
+		.atZone(zone)
+		.format(formatter)
 }
 
 private fun formatRemaining(seconds: Long): String {
