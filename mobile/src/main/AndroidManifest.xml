@@ -31,7 +31,8 @@
 			android:name=".MobileDataLayerService"
 			android:exported="true">
 			<intent-filter>
-				<action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
+				<action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+				<data android:scheme="wear" android:host="*" android:path="/cookcue/action" />
 			</intent-filter>
 		</service>
 	</application>
