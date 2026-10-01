@@ -557,18 +557,26 @@ object CookingSessionController {
 				roots = unconfirmedManualTaskIds,
 			)
 
-			val currentAction = schedule
-				.asSequence()
-				.filter {
-					it.task.kind == TaskKind.ACTIVE &&
-						it.task.id !in durationOverrides &&
-						it.task.id !in blockedIds &&
-						it.startSeconds <= elapsedSeconds
+			val currentAction = activeTaskOverrideId
+				?.let { taskId ->
+					schedule.firstOrNull {
+						it.task.id == taskId &&
+							it.task.kind == TaskKind.ACTIVE &&
+							it.task.id !in durationOverrides
+					}
 				}
-				.minWithOrNull(
-					compareBy<ScheduledTask> { it.startSeconds }
-						.thenBy { it.task.id }
-				)
+				?: schedule
+					.asSequence()
+					.filter {
+						it.task.kind == TaskKind.ACTIVE &&
+							it.task.id !in durationOverrides &&
+							it.task.id !in blockedIds &&
+							it.startSeconds <= elapsedSeconds
+					}
+					.minWithOrNull(
+						compareBy<ScheduledTask> { it.startSeconds }
+							.thenBy { it.task.id }
+					)
 				?: return schedule
 
 			val elapsedForTask =
