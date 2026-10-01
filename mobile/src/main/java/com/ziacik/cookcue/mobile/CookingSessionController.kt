@@ -571,6 +571,12 @@ object CookingSessionController {
 			earliestUnscheduledStartSeconds = itinerarySessionStartOffset(),
 		)
 
+		// A manual jump pauses the previously scheduled active step. Do not keep extending
+		// that old step while the user is intentionally visiting a different one.
+		if (activeTaskOverrideId != null) {
+			return schedule
+		}
+
 		repeat(8) {
 			val unconfirmedManualTaskIds = recipe.tasks
 				.asSequence()
