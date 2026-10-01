@@ -93,17 +93,21 @@ class LocationSensorMonitor(
 			.distinct()
 			.filterNot(resolvedLocations::containsKey)
 
-		queries.forEach { query ->
-			Thread(
-				{
+		if (queries.isEmpty()) {
+			return
+		}
+
+		Thread(
+			{
+				queries.forEach { query ->
 					val target = resolveQuery(query)
 					mainHandler.post {
 						resolvedLocations[query] = target
 					}
-				},
-				"CookCue-geocode",
-			).start()
-		}
+				}
+			},
+			"CookCue-geocode",
+		).start()
 	}
 
 	@Suppress("DEPRECATION")
