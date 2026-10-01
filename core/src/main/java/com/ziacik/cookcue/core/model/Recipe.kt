@@ -16,6 +16,44 @@ enum class TaskKind {
 	EVENT,
 }
 
+enum class ScheduleMode {
+	COOKING,
+	ITINERARY,
+}
+
+data class TimeWindow(
+	val startEpochSeconds: Long,
+	val endEpochSeconds: Long,
+) {
+	init {
+		require(endEpochSeconds > startEpochSeconds)
+	}
+}
+
+data class ItineraryTiming(
+	val fixedStartOptionsEpochSeconds: List<Long> = emptyList(),
+	val availabilityWindows: List<TimeWindow> = emptyList(),
+) {
+	init {
+		require(fixedStartOptionsEpochSeconds == fixedStartOptionsEpochSeconds.sorted()) {
+			"Fixed start options must be sorted."
+		}
+		require(fixedStartOptionsEpochSeconds.distinct().size == fixedStartOptionsEpochSeconds.size) {
+			"Fixed start options must be unique."
+		}
+	}
+}
+
+data class TaskLink(
+	val label: String,
+	val url: String,
+) {
+	init {
+		require(label.isNotBlank())
+		require(url.isNotBlank())
+	}
+}
+
 enum class Skill {
 	GENERAL,
 	KNIFE,
@@ -35,6 +73,8 @@ data class CookingTask(
 	val actionLabel: String? = null,
 	val retryActionLabel: String? = null,
 	val retryAfterSeconds: Long? = null,
+	val links: List<TaskLink> = emptyList(),
+	val itineraryTiming: ItineraryTiming? = null,
 ) {
 	init {
 		require(id.isNotBlank())
@@ -80,7 +120,18 @@ data class Recipe(
 	val tasks: List<CookingTask>,
 	val preCookingNote: String? = null,
 	val troubleshooting: List<TroubleshootingTip> = emptyList(),
-)
+	val scheduleMode: ScheduleMode = ScheduleMode.COOKING,
+	val scheduleStartEpochSeconds: Long? = null,
+	val scheduleTimeZoneId: String? = null,
+) {
+	init {
+		if (scheduleMode == ScheduleMode.ITINERARY) {
+			require(scheduleStartEpochSeconds != null) {
+				"Itinerary recipe '$id' must define scheduleStartEpochSeconds."
+			}
+		}
+	}
+}
 
 data class CookProfile(
 	val speedBySkill: Map<Skill, Double> = emptyMap(),
