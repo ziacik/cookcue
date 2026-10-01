@@ -96,7 +96,8 @@ internal object RecipeJsonCodec {
 	private fun decodeSensor(sensor: JSONObject): TaskSensor {
 		return when (sensor.getString("type")) {
 			"LOCATION_PROXIMITY" -> LocationProximitySensor(
-				locationQuery = sensor.getString("query"),
+				latitude = sensor.getDouble("latitude"),
+				longitude = sensor.getDouble("longitude"),
 				radiusMeters = sensor.optDouble("radiusMeters", 80.0).toFloat(),
 				activationMode = SensorActivationMode.valueOf(
 					sensor.optString(
