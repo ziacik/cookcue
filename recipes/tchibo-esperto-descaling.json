@@ -1,0 +1,226 @@
+{
+	"schemaVersion": 1,
+	"id": "tchibo-esperto-descaling",
+	"title": "Odvápnenie Tchibo Esperto Caffè",
+	"description": "Tchibo Esperto Caffè 640 169 · postup podľa originálneho návodu · odvápnenie cca 15 min + preplach",
+	"servings": 1,
+	"ingredients": [
+		{
+			"name": "tekutý odvápňovač pre kávovary a espresso prístroje",
+			"amount": "1 dávka podľa pokynov výrobcu; nie na báze kyseliny mravčej"
+		},
+		{
+			"name": "studená voda z vodovodu",
+			"amount": "na doplnenie nádržky po MAX pri odvápnení + po MAX na preplach"
+		},
+		{
+			"name": "prostriedok na umývanie riadu",
+			"amount": "trochu na vyčistenie nádržky pred preplachom"
+		},
+		{
+			"name": "prázdna nádoba",
+			"amount": "min. 500 ml, pod výpust kávy"
+		}
+	],
+	"resourceCapacities": {
+		"cook": 1,
+		"coffee-machine": 1,
+		"sink": 1
+	},
+	"preCookingNote": "Kávovar musí byť zapnutý a pripravený na používanie. Spusť odvápnenie len vtedy, keď pri ňom môžeš zostať. Proces sa nedá prerušiť; po prerušení musí pri ďalšom zapnutí pokračovať až do konca a dovtedy sa kávovar nedá používať.",
+	"tasks": [
+		{
+			"id": "prepare",
+			"title": "Priprav odvápňovač a nádobu",
+			"durationSeconds": 120,
+			"resources": [
+				"cook"
+			],
+			"instruction": "Priprav tekutý odvápňovač určený pre kávovary a espresso prístroje, studenú vodu a prázdnu nádobu s objemom aspoň 500 ml. Nepoužívaj odvápňovač na báze kyseliny mravčej."
+		},
+		{
+			"id": "remove-tank",
+			"title": "Vyber nádržku na vodu",
+			"durationSeconds": 30,
+			"dependsOn": [
+				"prepare"
+			],
+			"resources": [
+				"cook",
+				"coffee-machine"
+			],
+			"instruction": "Vytiahni nádržku na vodu z kávovaru rovno smerom nahor. Nádržka má byť pred nalievaním odvápňovača prázdna."
+		},
+		{
+			"id": "fill-descaler",
+			"title": "Nalej odvápňovač a doplň vodu po MAX",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"remove-tank"
+			],
+			"resources": [
+				"cook",
+				"sink"
+			],
+			"instruction": "Do prázdnej nádržky nalej dávku tekutého odvápňovača podľa pokynov jeho výrobcu. Potom doplň studenú vodu až po značku MAX."
+		},
+		{
+			"id": "insert-tank",
+			"title": "Vlož nádržku späť",
+			"durationSeconds": 30,
+			"dependsOn": [
+				"fill-descaler"
+			],
+			"resources": [
+				"cook",
+				"coffee-machine"
+			],
+			"instruction": "Nasaď nádržku späť do kávovaru a zatlač ju nadol až na doraz."
+		},
+		{
+			"id": "place-container",
+			"title": "Daj pod výpust nádobu aspoň 500 ml",
+			"durationSeconds": 60,
+			"dependsOn": [
+				"insert-tank"
+			],
+			"resources": [
+				"cook",
+				"coffee-machine"
+			],
+			"instruction": "Postav prázdnu nádobu s objemom minimálne 500 ml pod výpustný otvor na kávu. Ak treba, odober odkvapkávaciu misku."
+		},
+		{
+			"id": "enter-descaling",
+			"title": "Aktivuj režim odvápnenia",
+			"durationSeconds": 5,
+			"dependsOn": [
+				"place-container"
+			],
+			"resources": [
+				"cook",
+				"coffee-machine"
+			],
+			"kind": "EVENT",
+			"instruction": "Podrž súčasne tlačidlo zap./vyp. a tlačidlo espresso približne 5 sekúnd, kým nezaznejú 2 signálne tóny. Potom obe tlačidlá uvoľni.",
+			"actionLabel": "2 TÓNY ZAZNELI"
+		},
+		{
+			"id": "start-descaling",
+			"title": "Spusť odvápnenie",
+			"durationSeconds": 30,
+			"dependsOn": [
+				"enter-descaling"
+			],
+			"resources": [
+				"cook",
+				"coffee-machine"
+			],
+			"kind": "EVENT",
+			"instruction": "Keď bliká symbol odvápnenia aj tlačidlo espresso, stlač tlačidlo espresso. Tým sa spustí samotné odvápňovanie.",
+			"actionLabel": "SPUSTENÉ"
+		},
+		{
+			"id": "descaling-loop",
+			"title": "Sleduj odvápnenie a vyprázdňuj nádobu",
+			"durationSeconds": 40,
+			"dependsOn": [
+				"start-descaling"
+			],
+			"resources": [
+				"cook",
+				"coffee-machine"
+			],
+			"kind": "EVENT",
+			"instruction": "Kávovar čerpá odvápňovací roztok približne v 40-sekundových intervaloch; pri každom čerpaní vytečie asi 50 ml. Po každom čerpaní vylej obsah podloženej nádoby. Prvá fáza je hotová až vtedy, keď svieti symbol odvápnenia aj symbol doplnenia vody a tlačidlo espresso bliká.",
+			"tips": [
+				"Celá odvápňovacia fáza trvá približne 15 minút.",
+				"Nenechávaj kávovar počas procesu bez dozoru."
+			],
+			"actionLabel": "1. FÁZA HOTOVÁ",
+			"retryActionLabel": "EŠTE BEŽÍ",
+			"retryAfterSeconds": 40
+		},
+		{
+			"id": "clean-tank",
+			"title": "Dôkladne vyčisti nádržku",
+			"durationSeconds": 180,
+			"dependsOn": [
+				"descaling-loop"
+			],
+			"resources": [
+				"cook",
+				"sink"
+			],
+			"instruction": "Vyber nádržku na vodu. Umy ju vodou s trochou prostriedku na umývanie riadu, dôkladne opláchni pod tečúcou vodou a osušte ju. Tým odstrániš zvyšky odvápňovača pred preplachom."
+		},
+		{
+			"id": "prepare-rinse-container",
+			"title": "Vyprázdni a vráť nádobu pod výpust",
+			"durationSeconds": 45,
+			"dependsOn": [
+				"clean-tank"
+			],
+			"resources": [
+				"cook",
+				"coffee-machine"
+			],
+			"instruction": "Vyprázdni podloženú nádobu a znovu ju postav pod výpustný otvor na kávu. Musí mať objem aspoň 500 ml."
+		},
+		{
+			"id": "fill-rinse-water",
+			"title": "Naplň nádržku čistou vodou po MAX",
+			"durationSeconds": 60,
+			"dependsOn": [
+				"prepare-rinse-container"
+			],
+			"resources": [
+				"cook",
+				"sink"
+			],
+			"instruction": "Naplň nádržku studenou vodou z vodovodu až po značku MAX."
+		},
+		{
+			"id": "start-rinse",
+			"title": "Vlož nádržku a nechaj spustiť preplach",
+			"durationSeconds": 30,
+			"dependsOn": [
+				"fill-rinse-water"
+			],
+			"resources": [
+				"cook",
+				"coffee-machine"
+			],
+			"kind": "EVENT",
+			"instruction": "Vlož nádržku späť do kávovaru a zatlač ju nadol až na doraz. Symbol doplnenia vody zhasne a preplachovanie sa po niekoľkých sekundách spustí automaticky.",
+			"actionLabel": "PREPLACH BEŽÍ"
+		},
+		{
+			"id": "rinse-loop",
+			"title": "Sleduj preplachovanie",
+			"durationSeconds": 60,
+			"dependsOn": [
+				"start-rinse"
+			],
+			"resources": [
+				"cook",
+				"coffee-machine"
+			],
+			"kind": "EVENT",
+			"instruction": "Kávovar preplachuje systém veľkým množstvom čistej vody. Podľa potreby vyprázdni 500 ml nádobu. Počas preplachu sa kávovar približne na 1 minútu zastaví a potom pokračuje — táto pauza ešte neznamená koniec. Hotovo je až vtedy, keď sa kávovar automaticky prepne do pohotovostného režimu.",
+			"actionLabel": "HOTOVO — STANDBY",
+			"retryActionLabel": "EŠTE BEŽÍ",
+			"retryAfterSeconds": 60
+		}
+	],
+	"troubleshooting": [
+		{
+			"problem": "Proces sa prerušil",
+			"advice": "Pri najbližšom zapnutí musí odvápnenie pokračovať až do konca. Dovtedy je bežné používanie kávovaru zablokované."
+		},
+		{
+			"problem": "Odvápnenie sa nechce ukončiť / počas odvápnenia svieti tlačidlo horúcej vody",
+			"advice": "Vyber a dôkladne vyčisti nádržku, naplň ju studenou vodou po MAX a vlož späť. Daj pod výpust prázdnu nádobu min. 500 ml a stlač tlačidlo horúcej vody. Kávovar prepláchne systém a po ukončení sa automaticky prepne do pohotovostného režimu."
+		}
+	]
+}
