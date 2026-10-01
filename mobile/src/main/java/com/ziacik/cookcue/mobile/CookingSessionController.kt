@@ -166,6 +166,9 @@ object CookingSessionController {
 		skippedTaskIds = emptySet()
 		activeTaskOverrideId = null
 		activeTaskOverrideStartedAtSeconds = null
+		nearbySuggestion = null
+		nearbySuggestionSnoozeTaskId = null
+		nearbySuggestionSnoozeUntilElapsedRealtime = 0L
 		eventDeferredUntil = emptyMap()
 		sessionStartedWallClockMillis = System.currentTimeMillis()
 		startedAt = SystemClock.elapsedRealtime()
@@ -180,6 +183,9 @@ object CookingSessionController {
 		skippedTaskIds = emptySet()
 		activeTaskOverrideId = null
 		activeTaskOverrideStartedAtSeconds = null
+		nearbySuggestion = null
+		nearbySuggestionSnoozeTaskId = null
+		nearbySuggestionSnoozeUntilElapsedRealtime = 0L
 		eventDeferredUntil = emptyMap()
 		markUserAction()
 
