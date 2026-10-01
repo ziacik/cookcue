@@ -241,7 +241,10 @@ object CookingSessionController {
 		markUserAction()
 	}
 
-	fun activateTask(taskId: String) {
+	fun activateTask(
+		taskId: String,
+		silentTransition: Boolean = true,
+	) {
 		if (recipe.scheduleMode != ScheduleMode.ITINERARY || startedAt == null) {
 			return
 		}
@@ -256,7 +259,11 @@ object CookingSessionController {
 		val elapsedSeconds = currentElapsedSeconds()
 		activeTaskOverrideId = task.id
 		activeTaskOverrideStartedAtSeconds = elapsedSeconds
-		markUserAction()
+		if (silentTransition) {
+			markSilentTransition()
+		} else {
+			markUserAction()
+		}
 	}
 
 	fun confirmEvent(taskId: String) {
