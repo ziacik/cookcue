@@ -9,6 +9,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.Intent
+import android.location.LocationManager
 import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
@@ -180,7 +181,8 @@ class CookingSessionService : Service() {
 						task.sensors.any { it is LocationProximitySensor }
 					} &&
 					checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
-						PackageManager.PERMISSION_GRANTED
+						PackageManager.PERMISSION_GRANTED &&
+					locationServicesEnabled()
 			val foregroundType = if (locationMode) {
 				ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
 			} else {
@@ -254,6 +256,20 @@ class CookingSessionService : Service() {
 
 	private fun isItinerary(): Boolean {
 		return CookingSessionController.recipe.scheduleMode == ScheduleMode.ITINERARY
+	}
+
+	private fun locationServicesEnabled(): Boolean {
+		val manager = getSystemService(LocationManager::class.java)
+		return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+			manager.isLocationEnabled
+		} else {
+			listOf(
+				LocationManager.GPS_PROVIDER,
+				LocationManager.NETWORK_PROVIDER,
+			).any { provider ->
+				runCatching { manager.isProviderEnabled(provider) }.getOrDefault(false)
+			}
+		}
 	}
 
 	private fun ensureSessionChannel() {
