@@ -102,6 +102,9 @@ object CookingSessionController {
 		skippedTaskIds = emptySet()
 		activeTaskOverrideId = null
 		activeTaskOverrideStartedAtSeconds = null
+		nearbySuggestion = null
+		nearbySuggestionSnoozeTaskId = null
+		nearbySuggestionSnoozeUntilElapsedRealtime = 0L
 		eventDeferredUntil = emptyMap()
 		markSilentTransition()
 	}
@@ -128,6 +131,18 @@ object CookingSessionController {
 		private set
 
 	var activeTaskOverrideStartedAtSeconds by mutableStateOf<Long?>(null)
+		private set
+
+	var nearbySuggestion by mutableStateOf<NearbyTaskSuggestion?>(null)
+		private set
+
+	var nearbySuggestionSnoozeTaskId by mutableStateOf<String?>(null)
+		private set
+
+	var nearbySuggestionSnoozeUntilElapsedRealtime by mutableStateOf(0L)
+		private set
+
+	var appVisible by mutableStateOf(false)
 		private set
 
 	var userActionVersion by mutableStateOf(0L)
@@ -183,6 +198,8 @@ object CookingSessionController {
 		skippedTaskIds: Set<String> = emptySet(),
 		activeTaskOverrideId: String? = null,
 		activeTaskOverrideStartedAtSeconds: Long? = null,
+		nearbySuggestionSnoozeTaskId: String? = null,
+		nearbySuggestionSnoozeUntilElapsedRealtime: Long = 0L,
 		eventDeferredUntil: Map<String, Long> = emptyMap(),
 	) {
 		selectedRecipeId = availableRecipes
@@ -204,6 +221,9 @@ object CookingSessionController {
 		this.skippedTaskIds = skippedTaskIds
 		this.activeTaskOverrideId = activeTaskOverrideId
 		this.activeTaskOverrideStartedAtSeconds = activeTaskOverrideStartedAtSeconds
+		this.nearbySuggestion = null
+		this.nearbySuggestionSnoozeTaskId = nearbySuggestionSnoozeTaskId
+		this.nearbySuggestionSnoozeUntilElapsedRealtime = nearbySuggestionSnoozeUntilElapsedRealtime
 		this.eventDeferredUntil = eventDeferredUntil
 		markUserAction()
 	}
@@ -259,11 +279,56 @@ object CookingSessionController {
 		val elapsedSeconds = currentElapsedSeconds()
 		activeTaskOverrideId = task.id
 		activeTaskOverrideStartedAtSeconds = elapsedSeconds
+		if (nearbySuggestion?.taskId == task.id) {
+			nearbySuggestion = null
+		}
 		if (silentTransition) {
 			markSilentTransition()
 		} else {
 			markUserAction()
 		}
+	}
+
+	fun setAppVisible(visible: Boolean) {
+		appVisible = visible
+	}
+
+	fun updateNearbySuggestion(suggestion: NearbyTaskSuggestion?): Boolean {
+		if (suggestion != null && isNearbySuggestionSnoozed(suggestion.taskId)) {
+			if (nearbySuggestion?.taskId == suggestion.taskId) {
+				nearbySuggestion = null
+			}
+			return false
+		}
+
+		val changedTask = nearbySuggestion?.taskId != suggestion?.taskId
+		nearbySuggestion = suggestion
+		return changedTask
+	}
+
+	fun dismissNearbySuggestion(taskId: String) {
+		nearbySuggestionSnoozeTaskId = taskId
+		nearbySuggestionSnoozeUntilElapsedRealtime =
+			SystemClock.elapsedRealtime() + NEARBY_SNOOZE_MILLIS
+		if (nearbySuggestion?.taskId == taskId) {
+			nearbySuggestion = null
+		}
+	}
+
+	fun clearNearbySuggestion() {
+		nearbySuggestion = null
+	}
+
+	fun isNearbySuggestionSnoozed(taskId: String): Boolean {
+		if (nearbySuggestionSnoozeTaskId != taskId) {
+			return false
+		}
+		if (SystemClock.elapsedRealtime() >= nearbySuggestionSnoozeUntilElapsedRealtime) {
+			nearbySuggestionSnoozeTaskId = null
+			nearbySuggestionSnoozeUntilElapsedRealtime = 0L
+			return false
+		}
+		return true
 	}
 
 	fun confirmEvent(taskId: String) {
@@ -670,6 +735,8 @@ object CookingSessionController {
 		val now = SystemClock.elapsedRealtime()
 		startedAt = now - target.startSeconds * 1000
 	}
+
+	private const val NEARBY_SNOOZE_MILLIS = 5 * 60 * 1000L
 
 	private fun blockedTaskIds(
 		recipe: Recipe,
