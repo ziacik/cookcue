@@ -1535,10 +1535,14 @@ private fun PlanRowContent(
 	) {
 		Column(modifier = Modifier.weight(1f)) {
 			Text(
-				text = when (progress) {
-					TaskProgress.COMPLETED -> "✓ " + item.task.title
-					TaskProgress.SKIPPED -> "↷ " + item.task.title
-					else -> item.task.title
+				text = if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
+					when (progress) {
+						TaskProgress.COMPLETED -> "✓ " + item.task.title
+						TaskProgress.SKIPPED -> "↷ " + item.task.title
+						else -> item.task.title
+					}
+				} else {
+					item.task.title
 				},
 				style = MaterialTheme.typography.bodyMedium,
 				fontWeight = if (active) FontWeight.Bold else FontWeight.Medium,
@@ -1558,16 +1562,18 @@ private fun PlanRowContent(
 				style = MaterialTheme.typography.bodySmall,
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
 			)
-			Text(
-				text = when (progress) {
-					TaskProgress.COMPLETED -> "absolvované"
-					TaskProgress.SKIPPED -> "preskočené"
-					TaskProgress.ACTIVE -> "aktívne"
-					TaskProgress.PENDING -> "čaká"
-				},
-				style = MaterialTheme.typography.labelSmall,
-				color = MaterialTheme.colorScheme.onSurfaceVariant,
-			)
+			if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
+				Text(
+					text = when (progress) {
+						TaskProgress.COMPLETED -> "absolvované"
+						TaskProgress.SKIPPED -> "preskočené"
+						TaskProgress.ACTIVE -> "aktívne"
+						TaskProgress.PENDING -> "čaká"
+					},
+					style = MaterialTheme.typography.labelSmall,
+					color = MaterialTheme.colorScheme.onSurfaceVariant,
+				)
+			}
 			if (item.task.links.isNotEmpty()) {
 				Spacer(Modifier.height(3.dp))
 				TaskLinks(item.task.links, compact = true)
@@ -1589,7 +1595,7 @@ private fun PlanRowContent(
 				}
 			}
 		}
-		if (active || progress == TaskProgress.ACTIVE) {
+		if (active || (recipe.scheduleMode == ScheduleMode.ITINERARY && progress == TaskProgress.ACTIVE)) {
 			Text(
 				text = "▶",
 				style = MaterialTheme.typography.labelLarge,
