@@ -5,7 +5,9 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
@@ -19,6 +21,8 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import com.ziacik.cookcue.core.model.LocationProximitySensor
+import com.ziacik.cookcue.core.model.ScheduleMode
 
 class CookingSessionService : Service() {
 	private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -165,10 +169,23 @@ class CookingSessionService : Service() {
 		val notification = buildSessionNotification(snapshot)
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+			val recipe = CookingSessionController.recipe
+			val locationMode =
+				recipe.scheduleMode == ScheduleMode.ITINERARY &&
+					recipe.tasks.any { task ->
+						task.sensors.any { it is LocationProximitySensor }
+					} &&
+					checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
+						PackageManager.PERMISSION_GRANTED
+			val foregroundType = if (locationMode) {
+				ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+			} else {
+				ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+			}
 			startForeground(
 				SESSION_NOTIFICATION_ID,
 				notification,
-				ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC,
+				foregroundType,
 			)
 		} else {
 			startForeground(SESSION_NOTIFICATION_ID, notification)
