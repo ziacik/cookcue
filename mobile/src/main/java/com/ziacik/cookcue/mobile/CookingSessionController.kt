@@ -101,6 +101,7 @@ object CookingSessionController {
 		taskStartOverrides = emptyMap()
 		skippedTaskIds = emptySet()
 		activeTaskOverrideId = null
+		activeTaskOverrideStartedAtSeconds = null
 		eventDeferredUntil = emptyMap()
 		markSilentTransition()
 	}
@@ -126,6 +127,9 @@ object CookingSessionController {
 	var activeTaskOverrideId by mutableStateOf<String?>(null)
 		private set
 
+	var activeTaskOverrideStartedAtSeconds by mutableStateOf<Long?>(null)
+		private set
+
 	var userActionVersion by mutableStateOf(0L)
 		private set
 
@@ -146,6 +150,7 @@ object CookingSessionController {
 		taskStartOverrides = emptyMap()
 		skippedTaskIds = emptySet()
 		activeTaskOverrideId = null
+		activeTaskOverrideStartedAtSeconds = null
 		eventDeferredUntil = emptyMap()
 		sessionStartedWallClockMillis = System.currentTimeMillis()
 		startedAt = SystemClock.elapsedRealtime()
@@ -159,6 +164,7 @@ object CookingSessionController {
 		taskStartOverrides = emptyMap()
 		skippedTaskIds = emptySet()
 		activeTaskOverrideId = null
+		activeTaskOverrideStartedAtSeconds = null
 		eventDeferredUntil = emptyMap()
 		markUserAction()
 
@@ -176,6 +182,7 @@ object CookingSessionController {
 		taskStartOverrides: Map<String, Long> = emptyMap(),
 		skippedTaskIds: Set<String> = emptySet(),
 		activeTaskOverrideId: String? = null,
+		activeTaskOverrideStartedAtSeconds: Long? = null,
 		eventDeferredUntil: Map<String, Long> = emptyMap(),
 	) {
 		selectedRecipeId = availableRecipes
@@ -196,6 +203,7 @@ object CookingSessionController {
 		this.taskStartOverrides = taskStartOverrides
 		this.skippedTaskIds = skippedTaskIds
 		this.activeTaskOverrideId = activeTaskOverrideId
+		this.activeTaskOverrideStartedAtSeconds = activeTaskOverrideStartedAtSeconds
 		this.eventDeferredUntil = eventDeferredUntil
 		markUserAction()
 	}
@@ -212,6 +220,7 @@ object CookingSessionController {
 		skippedTaskIds = skippedTaskIds - taskId
 		if (activeTaskOverrideId == taskId) {
 			activeTaskOverrideId = null
+			activeTaskOverrideStartedAtSeconds = null
 		}
 		markUserAction()
 	}
@@ -227,6 +236,7 @@ object CookingSessionController {
 		skippedTaskIds = skippedTaskIds + taskId
 		if (activeTaskOverrideId == taskId) {
 			activeTaskOverrideId = null
+			activeTaskOverrideStartedAtSeconds = null
 		}
 		markUserAction()
 	}
@@ -245,7 +255,7 @@ object CookingSessionController {
 
 		val elapsedSeconds = currentElapsedSeconds()
 		activeTaskOverrideId = task.id
-		taskStartOverrides = taskStartOverrides + (task.id to elapsedSeconds)
+		activeTaskOverrideStartedAtSeconds = elapsedSeconds
 		markUserAction()
 	}
 
@@ -341,10 +351,19 @@ object CookingSessionController {
 		} else {
 			activeTaskOverrideId
 				?.let { taskId ->
-					schedule.firstOrNull {
+					val startedAtSeconds = activeTaskOverrideStartedAtSeconds
+					val planned = schedule.firstOrNull {
 						it.task.id == taskId &&
 							it.task.kind == TaskKind.ACTIVE &&
 							it.task.id !in durationOverrides
+					}
+					if (planned != null && startedAtSeconds != null) {
+						planned.copy(
+							startSeconds = startedAtSeconds,
+							endSeconds = startedAtSeconds + planned.task.durationSeconds,
+						)
+					} else {
+						null
 					}
 				}
 				?: schedule
@@ -557,16 +576,8 @@ object CookingSessionController {
 				roots = unconfirmedManualTaskIds,
 			)
 
-			val currentAction = activeTaskOverrideId
-				?.let { taskId ->
-					schedule.firstOrNull {
-						it.task.id == taskId &&
-							it.task.kind == TaskKind.ACTIVE &&
-							it.task.id !in durationOverrides
-					}
-				}
-				?: schedule
-					.asSequence()
+			val currentAction = schedule
+				.asSequence()
 					.filter {
 						it.task.kind == TaskKind.ACTIVE &&
 							it.task.id !in durationOverrides &&
