@@ -95,30 +95,30 @@ private fun CookCueScreen() {
 	val notificationPermissionLauncher = rememberLauncherForActivityResult(
 		ActivityResultContracts.RequestPermission(),
 	) {}
-	var locationPermissionGranted by remember {
+	var fineLocationPermissionGranted by remember {
 		mutableStateOf(
 			context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
-				PackageManager.PERMISSION_GRANTED ||
-				context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) ==
-					PackageManager.PERMISSION_GRANTED
+				PackageManager.PERMISSION_GRANTED
 		)
 	}
 	val locationPermissionLauncher = rememberLauncherForActivityResult(
 		ActivityResultContracts.RequestMultiplePermissions(),
 	) { grants ->
-		locationPermissionGranted =
-			grants[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
-				grants[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+		fineLocationPermissionGranted =
+			grants[Manifest.permission.ACCESS_FINE_LOCATION] == true
 	}
 	val locationSensorMonitor = remember(context) { LocationSensorMonitor(context) }
 	var nearbySuggestion by remember { mutableStateOf<NearbyTaskSuggestion?>(null) }
 	var dismissedNearbyTaskId by remember { mutableStateOf<String?>(null) }
+	var dismissedNearbyUntilElapsedRealtime by remember { mutableLongStateOf(0L) }
 	val recipe = CookingSessionController.recipe
 	val selectedRecipeId = CookingSessionController.selectedRecipeId
 	val startedAt = CookingSessionController.startedAt
 	val durationOverrides = CookingSessionController.durationOverrides
 	val skippedTaskIds = CookingSessionController.skippedTaskIds
 	val activeTaskOverrideId = CookingSessionController.activeTaskOverrideId
+	val activeTaskOverrideStartedAtSeconds =
+		CookingSessionController.activeTaskOverrideStartedAtSeconds
 	val eventDeferredUntil = CookingSessionController.eventDeferredUntil
 
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
@@ -143,6 +143,7 @@ private fun CookCueScreen() {
 		durationOverrides,
 		skippedTaskIds,
 		activeTaskOverrideId,
+		activeTaskOverrideStartedAtSeconds,
 		eventDeferredUntil,
 		selectedRecipeId,
 	) {
@@ -186,28 +187,32 @@ private fun CookCueScreen() {
 		CookingSessionService.syncRunningState(context)
 	}
 
-	val sensorEligibleTasks = remember(
-		snapshot.taskProgress,
-		recipe.id,
-	) {
-		recipe.tasks.filter { task ->
-			task.kind == TaskKind.ACTIVE &&
-				snapshot.taskProgress[task.id] == TaskProgress.PENDING &&
-				task.sensors.any { it is LocationProximitySensor }
-		}
+	val wallClockEpochSeconds = System.currentTimeMillis() / 1000
+	val sensorEligibleTasks = recipe.tasks.filter { task ->
+		val timing = task.itineraryTiming
+		val withinAvailability =
+			timing == null ||
+				timing.availabilityWindows.isEmpty() ||
+				timing.availabilityWindows.any { window ->
+					wallClockEpochSeconds in window.startEpochSeconds until window.endEpochSeconds
+				}
+		task.kind == TaskKind.ACTIVE &&
+			snapshot.taskProgress[task.id] == TaskProgress.PENDING &&
+			withinAvailability &&
+			task.sensors.any { it is LocationProximitySensor }
 	}
 
 	LaunchedEffect(
 		snapshot.started,
 		recipe.scheduleMode,
 		sensorEligibleTasks.isNotEmpty(),
-		locationPermissionGranted,
+		fineLocationPermissionGranted,
 	) {
 		if (
 			snapshot.started &&
 			recipe.scheduleMode == ScheduleMode.ITINERARY &&
 			sensorEligibleTasks.isNotEmpty() &&
-			!locationPermissionGranted
+			!fineLocationPermissionGranted
 		) {
 			locationPermissionLauncher.launch(
 				arrayOf(
@@ -220,18 +225,22 @@ private fun CookCueScreen() {
 
 	DisposableEffect(
 		snapshot.started,
-		locationPermissionGranted,
+		fineLocationPermissionGranted,
 		sensorEligibleTasks.map { it.id },
 		dismissedNearbyTaskId,
+		dismissedNearbyUntilElapsedRealtime,
 	) {
 		if (
 			snapshot.started &&
 			recipe.scheduleMode == ScheduleMode.ITINERARY &&
-			locationPermissionGranted &&
+			fineLocationPermissionGranted &&
 			sensorEligibleTasks.isNotEmpty()
 		) {
 			locationSensorMonitor.start(sensorEligibleTasks) { match ->
-				if (match == null || match.taskId == dismissedNearbyTaskId) {
+				val dismissed =
+					match?.taskId == dismissedNearbyTaskId &&
+						SystemClock.elapsedRealtime() < dismissedNearbyUntilElapsedRealtime
+				if (match == null || dismissed) {
 					nearbySuggestion = null
 					return@start
 				}
@@ -394,6 +403,8 @@ private fun CookCueScreen() {
 								suggestion = suggestion,
 								onDismiss = {
 									dismissedNearbyTaskId = suggestion.taskId
+									dismissedNearbyUntilElapsedRealtime =
+										SystemClock.elapsedRealtime() + NEARBY_SNOOZE_MILLIS
 									nearbySuggestion = null
 								},
 								onActivate = {
@@ -1641,6 +1652,8 @@ private fun formatScheduledStart(
 		.atZone(zone)
 		.format(formatter)
 }
+
+private const val NEARBY_SNOOZE_MILLIS = 5 * 60 * 1000L
 
 private fun formatRemaining(seconds: Long): String {
 	val safe = seconds.coerceAtLeast(0)
