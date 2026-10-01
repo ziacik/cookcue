@@ -635,7 +635,7 @@ private fun IngredientList(
 					modifier = Modifier
 						.fillMaxWidth()
 						.padding(vertical = 10.dp),
-					verticalAlignment = Alignment.CenterVertically,
+					verticalAlignment = Alignment.Top,
 				) {
 					Box(
 						modifier = Modifier
@@ -650,20 +650,23 @@ private fun IngredientList(
 						)
 					}
 					Spacer(Modifier.width(10.dp))
-					Text(
-						text = ingredient.second,
-						style = MaterialTheme.typography.bodyMedium,
-						modifier = Modifier.weight(1f),
-					)
-					Text(
-						text = ingredient.first,
-						style = MaterialTheme.typography.bodyMedium,
-						fontWeight = FontWeight.Medium,
-						color = MaterialTheme.colorScheme.onSurfaceVariant,
-					)
+					Column(modifier = Modifier.weight(1f)) {
+						Text(
+							text = ingredient.second,
+							style = MaterialTheme.typography.bodyMedium,
+							fontWeight = FontWeight.Medium,
+						)
+						Spacer(Modifier.height(2.dp))
+						Text(
+							text = ingredient.first,
+							style = MaterialTheme.typography.bodySmall,
+							color = MaterialTheme.colorScheme.onSurfaceVariant,
+						)
+					}
 				}
 				if (index != ingredients.lastIndex) {
 					HorizontalDivider(
+						modifier = Modifier.padding(start = 34.dp),
 						color = MaterialTheme.colorScheme.outline.copy(alpha = 0.55f),
 					)
 				}
