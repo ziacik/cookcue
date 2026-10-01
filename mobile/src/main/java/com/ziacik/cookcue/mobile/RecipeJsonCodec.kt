@@ -2,13 +2,18 @@ package com.ziacik.cookcue.mobile
 
 import com.ziacik.cookcue.core.model.CookingTask
 import com.ziacik.cookcue.core.model.Ingredient
+import com.ziacik.cookcue.core.model.ItineraryTiming
 import com.ziacik.cookcue.core.model.Recipe
 import com.ziacik.cookcue.core.model.ResourceRequirement
+import com.ziacik.cookcue.core.model.ScheduleMode
 import com.ziacik.cookcue.core.model.Skill
 import com.ziacik.cookcue.core.model.TaskKind
+import com.ziacik.cookcue.core.model.TaskLink
+import com.ziacik.cookcue.core.model.TimeWindow
 import com.ziacik.cookcue.core.model.TroubleshootingTip
 import org.json.JSONArray
 import org.json.JSONObject
+import java.time.OffsetDateTime
 
 internal object RecipeJsonCodec {
 	private const val SCHEMA_VERSION = 1
@@ -41,6 +46,12 @@ internal object RecipeJsonCodec {
 					)
 				}
 				.orEmpty(),
+			scheduleMode = ScheduleMode.valueOf(
+				root.optString("scheduleMode", ScheduleMode.COOKING.name),
+			),
+			scheduleStartEpochSeconds = root.optionalString("scheduleStart")
+				?.let(::parseEpochSeconds),
+			scheduleTimeZoneId = root.optionalString("scheduleTimeZoneId"),
 		)
 
 		validate(recipe)
@@ -63,7 +74,46 @@ internal object RecipeJsonCodec {
 			actionLabel = task.optionalString("actionLabel"),
 			retryActionLabel = task.optionalString("retryActionLabel"),
 			retryAfterSeconds = task.optionalLong("retryAfterSeconds"),
+			links = task.optJSONArray("links")
+				?.mapObjects { link ->
+					TaskLink(
+						label = link.getString("label"),
+						url = link.getString("url"),
+					)
+				}
+				.orEmpty(),
+			itineraryTiming = task.optJSONObject("timing")?.let(::decodeTiming),
 		)
+	}
+
+	private fun decodeTiming(timing: JSONObject): ItineraryTiming {
+		val fixedStarts = timing.optJSONArray("fixedStarts")
+			?.toStringList()
+			?.map(::parseEpochSeconds)
+			.orEmpty()
+			.ifEmpty {
+				timing.optionalString("fixedAt")
+					?.let { listOf(parseEpochSeconds(it)) }
+					.orEmpty()
+			}
+
+		val windows = timing.optJSONArray("windows")
+			?.mapObjects { window ->
+				TimeWindow(
+					startEpochSeconds = parseEpochSeconds(window.getString("start")),
+					endEpochSeconds = parseEpochSeconds(window.getString("end")),
+				)
+			}
+			.orEmpty()
+
+		return ItineraryTiming(
+			fixedStartOptionsEpochSeconds = fixedStarts,
+			availabilityWindows = windows,
+		)
+	}
+
+	private fun parseEpochSeconds(value: String): Long {
+		return OffsetDateTime.parse(value).toEpochSecond()
 	}
 
 	private fun decodeResources(array: JSONArray): Set<ResourceRequirement> {

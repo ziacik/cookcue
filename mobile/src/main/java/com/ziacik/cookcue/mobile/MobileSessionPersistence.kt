@@ -7,7 +7,9 @@ object MobileSessionPersistence {
 	private const val PREFS = "cookcue-session"
 	private const val KEY_RECIPE_ID = "recipe-id"
 	private const val KEY_STARTED_AT = "started-at"
+	private const val KEY_STARTED_WALL_CLOCK = "started-wall-clock"
 	private const val KEY_DURATION_OVERRIDES = "duration-overrides"
+	private const val KEY_TASK_START_OVERRIDES = "task-start-overrides"
 	private const val KEY_EVENT_DEFERRED_UNTIL = "event-deferred-until"
 
 	@Volatile
@@ -28,8 +30,13 @@ object MobileSessionPersistence {
 			val storedStartedAt = prefs.getLong(KEY_STARTED_AT, -1L)
 			val startedAt = storedStartedAt
 				.takeIf { it >= 0L && it <= SystemClock.elapsedRealtime() }
+			val storedWallClock = prefs.getLong(KEY_STARTED_WALL_CLOCK, -1L)
+			val startedWallClock = storedWallClock.takeIf { it > 0L }
 			val overrides = decodeOverrides(
 				prefs.getString(KEY_DURATION_OVERRIDES, null).orEmpty()
+			)
+			val taskStartOverrides = decodeOverrides(
+				prefs.getString(KEY_TASK_START_OVERRIDES, null).orEmpty()
 			)
 			val eventDeferredUntil = decodeOverrides(
 				prefs.getString(KEY_EVENT_DEFERRED_UNTIL, null).orEmpty()
@@ -38,7 +45,9 @@ object MobileSessionPersistence {
 			CookingSessionController.restore(
 				recipeId = recipeId,
 				startedAt = startedAt,
+				sessionStartedWallClockMillis = startedWallClock,
 				durationOverrides = overrides,
+				taskStartOverrides = taskStartOverrides,
 				eventDeferredUntil = eventDeferredUntil,
 			)
 			loaded = true
@@ -48,6 +57,7 @@ object MobileSessionPersistence {
 	fun save(context: Context) {
 		loaded = true
 		val overrides = encodeMap(CookingSessionController.durationOverrides)
+		val taskStartOverrides = encodeMap(CookingSessionController.taskStartOverrides)
 		val eventDeferredUntil = encodeMap(CookingSessionController.eventDeferredUntil)
 
 		context
@@ -58,7 +68,12 @@ object MobileSessionPersistence {
 				KEY_STARTED_AT,
 				CookingSessionController.startedAt ?: -1L,
 			)
+			.putLong(
+				KEY_STARTED_WALL_CLOCK,
+				CookingSessionController.sessionStartedWallClockMillis ?: -1L,
+			)
 			.putString(KEY_DURATION_OVERRIDES, overrides)
+			.putString(KEY_TASK_START_OVERRIDES, taskStartOverrides)
 			.putString(KEY_EVENT_DEFERRED_UNTIL, eventDeferredUntil)
 			.apply()
 	}

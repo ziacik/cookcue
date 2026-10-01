@@ -1,0 +1,751 @@
+{
+	"schemaVersion": 1,
+	"id": "biela-noc-bratislava-2026",
+	"title": "Biela noc Bratislava 2026",
+	"description": "Rodinný itinerár · piatok a sobota do 23:00 · nedeľa ako záloha. CookCue prepočítava flexibilné zastávky okolo pevných časov.",
+	"servings": 1,
+	"ingredients": [],
+	"resourceCapacities": {
+		"visitor": 1
+	},
+	"scheduleMode": "ITINERARY",
+	"scheduleStart": "2026-10-02T19:00:00+02:00",
+	"scheduleTimeZoneId": "Europe/Bratislava",
+	"preCookingNote": "V piatok spusti itinerár približne o 19:00 v Eurovei. Pri Drawn Together nechaj Oli animovať tak dlho, ako ju to bude baviť — odhad nie je deadline. Kŕdeľ je pevný bod; ak prvé predstavenie ujde, CookCue po krátkej rezerve prejde na druhé o 21:00. Čo sa už do večera nezmestí, presunie sa do nedeľnej rezervy.",
+	"tasks": [
+		{
+			"id": "drawn-together",
+			"title": "Drawn Together",
+			"durationSeconds": 2100,
+			"dependsOn": [],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Začnite v Magenta Experience Center. Oli si môže kresliť a animovať vlastný výtvor; HOTOVO stlačte až vtedy, keď bude sama chcieť ísť ďalej. Ak sa zdržíte, plán sa prepočíta.",
+			"tips": [
+				"Workshop je otvorený pre všetkých bez ohľadu na vek.",
+				"Jej animácia sa v reálnom čase dostane do spoločnej projekcie."
+			],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Eurovea%2C%20Pribinova%208%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/436"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-02T19:00:00+02:00",
+						"end": "2026-10-02T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "rotoskop",
+			"title": "Rotoskop",
+			"durationSeconds": 900,
+			"dependsOn": [
+				"drawn-together"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Prejdite na promenádu E2 pri Eurovei a pozrite si interaktívny Rotoskop. Ak ho pred dronmi nestíhate, CookCue ho automaticky posunie za pevný bod.",
+			"tips": [],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Eurovea%20Promenada%20E2%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/456"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-02T19:00:00+02:00",
+						"end": "2026-10-02T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "krdel",
+			"title": "Kŕdeľ · 300 dronov",
+			"durationSeconds": 1500,
+			"resources": [
+				"visitor"
+			],
+			"kind": "EVENT",
+			"instruction": "Choďte na nábrežie približne 10 minút pred začiatkom. Samotná dronová performance je 20:00–20:15; ak prvú nestihnete, ďalší pevný slot je 21:00–21:15.",
+			"tips": [
+				"Toto je pevný bod piatka.",
+				"Pri nepriaznivom počasí môže organizátor termín zmeniť."
+			],
+			"actionLabel": "VIDELI SME",
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Eurovea%20Promenada%20pri%20Dunaji%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/459"
+				}
+			],
+			"timing": {
+				"fixedStarts": [
+					"2026-10-02T19:50:00+02:00",
+					"2026-10-02T20:50:00+02:00"
+				]
+			}
+		},
+		{
+			"id": "strata",
+			"title": "STRATA",
+			"durationSeconds": 900,
+			"dependsOn": [
+				"rotoskop"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Pozrite si 360° objekt z transparentných LED obrazoviek na námestí pri Eurovei.",
+			"tips": [],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Eurovea%2C%20Pribinova%208%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/437"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-02T19:00:00+02:00",
+						"end": "2026-10-02T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "everything-connects",
+			"title": "Everything That Connects Us",
+			"durationSeconds": 900,
+			"dependsOn": [
+				"strata"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Presuňte sa k Vajíčku na Pribinovej 6 a pozrite si laserový mapping na sklenenej fasáde.",
+			"tips": [],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Pribinova%206%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/465"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-02T19:00:00+02:00",
+						"end": "2026-10-02T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "huso-huso",
+			"title": "Huso huso",
+			"durationSeconds": 900,
+			"dependsOn": [
+				"everything-connects"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Na promenáde pri Starom moste si pozrite monumentálny svetelný objekt vyzy. Tanečnú performance k nemu riešiť nemusíte.",
+			"tips": [],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Eurovea%20Promenada%20pri%20Starom%20moste%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/443"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-02T19:00:00+02:00",
+						"end": "2026-10-02T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "see-you",
+			"title": "SEE YOU",
+			"durationSeconds": 1500,
+			"dependsOn": [
+				"huso-huso"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Prejdite k Umelke. Digitálne oči reagujú na ľudí pred nimi, takže sa s nimi chvíľu pohrajte a skúste, čo spravia pri jednom, dvoch či viacerých ľuďoch.",
+			"tips": [],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Dostojevskeho%20rad%202%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/432"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-02T19:00:00+02:00",
+						"end": "2026-10-02T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "magicky-les",
+			"title": "Magický les",
+			"durationSeconds": 1200,
+			"dependsOn": [
+				"see-you"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "V SNM vstúpte medzi veľké ružové nafukovacie stromy. Toto je jedna z vyslovene decko-friendly zastávok.",
+			"tips": [],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Muzejna%206%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/455"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-02T19:00:00+02:00",
+						"end": "2026-10-02T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "seed-sprout",
+			"title": "Seed Sprout",
+			"durationSeconds": 1500,
+			"dependsOn": [
+				"magicky-les"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Pokračujte do Vydrice k obrovským zeleným klíčkom vyrastajúcim z architektúry.",
+			"tips": [],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Florianska%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/446"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-02T19:00:00+02:00",
+						"end": "2026-10-02T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "geofonia",
+			"title": "GEOFÓNIA",
+			"durationSeconds": 1800,
+			"dependsOn": [
+				"seed-sprout"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Záver piatka v Charitnej záhrade: zvukové, kinetické a svetelné objekty pracujúce s kameňom, minerálmi a geologickými procesmi.",
+			"tips": [
+				"Vstup je zo schodov Prepoštskej ulice."
+			],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Kapitulsk%C3%A1%2018%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/447"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-02T19:00:00+02:00",
+						"end": "2026-10-02T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "satellites",
+			"title": "SATELLITES",
+			"durationSeconds": 1800,
+			"dependsOn": [],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Sobotu začnite v Starej tržnici. Kinetické svetelné objekty a synchronizovaný zvuk patria medzi hlavné zastávky večera.",
+			"tips": [
+				"Organizátor upozorňuje na hlasný zvuk a intenzívne blikanie."
+			],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Stara%20trznica%2C%20Namestie%20SNP%2025%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/434"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-03T19:00:00+02:00",
+						"end": "2026-10-03T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "catch-them-all",
+			"title": "Catch them all!",
+			"durationSeconds": 600,
+			"dependsOn": [
+				"satellites"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Po vyjdení zo Starej tržnice pozrite inštaláciu na Námestí SNP. Je to krátka zastávka priamo po ceste.",
+			"tips": [],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Namestie%20SNP%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/451"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-03T19:00:00+02:00",
+						"end": "2026-10-03T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "sfera-spojenia",
+			"title": "Sféra spojenia",
+			"durationSeconds": 600,
+			"dependsOn": [
+				"catch-them-all"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Pokračujte k Hotelu Kyjev a pozrite svetelnú Sféra spojenia.",
+			"tips": [],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Hotel%20Kyjev%2C%20Rajska%202%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/466"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-03T19:00:00+02:00",
+						"end": "2026-10-03T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "pure-rain",
+			"title": "PURE RAIN II",
+			"durationSeconds": 1200,
+			"dependsOn": [
+				"sfera-spojenia"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Na Uršulínskej si nechajte čas na interaktívny digitálny dážď, ktorý reaguje na pohyb návštevníkov.",
+			"tips": [],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Ursulinska%206%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/467"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-03T19:00:00+02:00",
+						"end": "2026-10-03T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "sol-machina",
+			"title": "SOL MACHINA",
+			"durationSeconds": 900,
+			"dependsOn": [
+				"pure-rain"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Prejdite na Primaciálne námestie a pozrite si svetelný objekt SOL MACHINA.",
+			"tips": [],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Primacialne%20namestie%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/433"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-03T19:00:00+02:00",
+						"end": "2026-10-03T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "aftereal",
+			"title": "AFTEREAL",
+			"durationSeconds": 1200,
+			"dependsOn": [
+				"sol-machina"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Na Hlavnom námestí si pozrite pohyblivú svetelnú inštaláciu z fluorescenčných vlákien.",
+			"tips": [],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Hlavne%20namestie%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/435"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-03T19:00:00+02:00",
+						"end": "2026-10-03T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "zakouti-evoluce",
+			"title": "Zákoutí evoluce",
+			"durationSeconds": 1200,
+			"dependsOn": [
+				"aftereal"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Na Bielej 6 prejdite multimediálnym technologicko-prírodným zákutím. Dajte tomu chvíľu, nie je to len jeden objekt na pozretie.",
+			"tips": [],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Biela%206%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/445"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-03T19:00:00+02:00",
+						"end": "2026-10-03T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "presvit",
+			"title": "preSVIT",
+			"durationSeconds": 900,
+			"dependsOn": [
+				"zakouti-evoluce"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Krátka zastávka na Palackého 54 cestou smerom na Štúrovu.",
+			"tips": [],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Palackeho%2054%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/438"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-03T19:00:00+02:00",
+						"end": "2026-10-03T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "totem",
+			"title": "TOTEM",
+			"durationSeconds": 900,
+			"dependsOn": [
+				"presvit"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Na Štúrovej si pozrite priestorový TOTEM pracujúci s motívom Kriváňa.",
+			"tips": [],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Sturova%2012%2F4%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/448"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-03T19:00:00+02:00",
+						"end": "2026-10-03T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "skryte-sceny",
+			"title": "Skryté scény",
+			"durationSeconds": 1500,
+			"dependsOn": [
+				"totem"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Na Jakubovom námestí sú projekcie, kostýmy, rekvizity a priestory, ktoré bežne nie sú prístupné. Tu by som sa neponáhľala.",
+			"tips": [],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Jakubovo%20namestie%2012%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/476"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-03T19:00:00+02:00",
+						"end": "2026-10-03T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		},
+		{
+			"id": "power-tree",
+			"title": "Power Tree",
+			"durationSeconds": 1500,
+			"dependsOn": [
+				"skryte-sceny"
+			],
+			"resources": [
+				"visitor"
+			],
+			"instruction": "Záver soboty v Twin City B pri veľkom svetelnom strome zo stoviek plexisklových prvkov.",
+			"tips": [],
+			"links": [
+				{
+					"label": "NAVIGÁCIA",
+					"url": "https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=Mlynske%20nivy%2012%2C%20Bratislava"
+				},
+				{
+					"label": "DETAIL",
+					"url": "https://www.bielanoc.sk/y2026/ba/artists/439"
+				}
+			],
+			"timing": {
+				"windows": [
+					{
+						"start": "2026-10-03T19:00:00+02:00",
+						"end": "2026-10-03T23:00:00+02:00"
+					},
+					{
+						"start": "2026-10-04T19:00:00+02:00",
+						"end": "2026-10-04T22:30:00+02:00"
+					}
+				]
+			}
+		}
+	]
+}

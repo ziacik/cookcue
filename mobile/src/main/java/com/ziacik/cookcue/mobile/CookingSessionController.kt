@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.ziacik.cookcue.core.model.Recipe
+import com.ziacik.cookcue.core.model.ScheduleMode
 import com.ziacik.cookcue.core.model.ScheduledTask
 import com.ziacik.cookcue.core.model.TaskKind
 import com.ziacik.cookcue.core.recipes.BeanSoupRecipe
@@ -14,6 +15,7 @@ import com.ziacik.cookcue.core.recipes.FrankfurterSoupRecipe
 import com.ziacik.cookcue.core.recipes.ParboiledFriesRecipe
 import com.ziacik.cookcue.core.recipes.ScrambledEggsWithOnionAndToastRecipe
 import com.ziacik.cookcue.core.recipes.ScrambledEggsWithOnionRecipe
+import com.ziacik.cookcue.core.scheduler.ItineraryScheduler
 import com.ziacik.cookcue.core.scheduler.Scheduler
 
 data class MobileSessionSnapshot(
@@ -79,6 +81,7 @@ object CookingSessionController {
 		get() = availableRecipes.first { it.id == selectedRecipeId }
 
 	private val scheduler = Scheduler()
+	private val itineraryScheduler = ItineraryScheduler()
 
 	fun selectRecipe(recipeId: String) {
 		if (startedAt != null || availableRecipes.none { it.id == recipeId }) {
@@ -87,11 +90,18 @@ object CookingSessionController {
 
 		selectedRecipeId = recipeId
 		durationOverrides = emptyMap()
+		taskStartOverrides = emptyMap()
 		eventDeferredUntil = emptyMap()
 		markSilentTransition()
 	}
 
 	var durationOverrides by mutableStateOf<Map<String, Long>>(emptyMap())
+		private set
+
+	var taskStartOverrides by mutableStateOf<Map<String, Long>>(emptyMap())
+		private set
+
+	var sessionStartedWallClockMillis by mutableStateOf<Long?>(null)
 		private set
 
 	var startedAt by mutableStateOf<Long?>(null)
@@ -117,14 +127,18 @@ object CookingSessionController {
 
 	fun start() {
 		durationOverrides = emptyMap()
+		taskStartOverrides = emptyMap()
 		eventDeferredUntil = emptyMap()
+		sessionStartedWallClockMillis = System.currentTimeMillis()
 		startedAt = SystemClock.elapsedRealtime()
 		markUserAction()
 	}
 
 	fun stop() {
 		startedAt = null
+		sessionStartedWallClockMillis = null
 		durationOverrides = emptyMap()
+		taskStartOverrides = emptyMap()
 		eventDeferredUntil = emptyMap()
 		markUserAction()
 
@@ -137,15 +151,27 @@ object CookingSessionController {
 	fun restore(
 		recipeId: String?,
 		startedAt: Long?,
+		sessionStartedWallClockMillis: Long? = null,
 		durationOverrides: Map<String, Long>,
+		taskStartOverrides: Map<String, Long> = emptyMap(),
 		eventDeferredUntil: Map<String, Long> = emptyMap(),
 	) {
 		selectedRecipeId = availableRecipes
 			.firstOrNull { it.id == recipeId }
 			?.id
 			?: BeanSoupRecipe.recipe.id
-		this.startedAt = startedAt
+
+		val itineraryCanResume =
+			recipe.scheduleMode == ScheduleMode.ITINERARY &&
+				sessionStartedWallClockMillis != null
+		this.startedAt = startedAt ?: if (itineraryCanResume) {
+			SystemClock.elapsedRealtime()
+		} else {
+			null
+		}
+		this.sessionStartedWallClockMillis = sessionStartedWallClockMillis
 		this.durationOverrides = durationOverrides
+		this.taskStartOverrides = taskStartOverrides
 		this.eventDeferredUntil = eventDeferredUntil
 		markUserAction()
 	}
@@ -158,14 +184,20 @@ object CookingSessionController {
 
 		val actualDuration = (snapshot.elapsedSeconds - action.startSeconds).coerceAtLeast(1)
 		durationOverrides = durationOverrides + (taskId to actualDuration)
+		taskStartOverrides = taskStartOverrides + (taskId to action.startSeconds)
 		markUserAction()
 	}
 
 	fun confirmEvent(taskId: String) {
 		val snapshot = snapshot()
 		val event = snapshot.pendingEvents.firstOrNull { it.task.id == taskId } ?: return
-		val actualDuration = (snapshot.elapsedSeconds - event.startSeconds).coerceAtLeast(1)
+		val actualDuration = if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
+			event.task.durationSeconds
+		} else {
+			(snapshot.elapsedSeconds - event.startSeconds).coerceAtLeast(1)
+		}
 		durationOverrides = durationOverrides + (taskId to actualDuration)
+		taskStartOverrides = taskStartOverrides + (taskId to event.startSeconds)
 		eventDeferredUntil = eventDeferredUntil - taskId
 		markUserAction()
 	}
@@ -205,12 +237,16 @@ object CookingSessionController {
 
 	fun snapshot(now: Long = SystemClock.elapsedRealtime()): MobileSessionSnapshot {
 		val start = startedAt
-		val elapsedSeconds = start?.let { ((now - it) / 1000).coerceAtLeast(0) } ?: 0
+		val elapsedSeconds = when {
+			start == null -> 0
+			recipe.scheduleMode == ScheduleMode.ITINERARY -> {
+				val epochStart = requireNotNull(recipe.scheduleStartEpochSeconds)
+				(System.currentTimeMillis() / 1000 - epochStart).coerceAtLeast(0)
+			}
+			else -> ((now - start) / 1000).coerceAtLeast(0)
+		}
 		val schedule = if (start == null) {
-			scheduler.schedule(
-				recipe = recipe,
-				durationOverrides = durationOverrides,
-			)
+			baseSchedule(elapsedSeconds)
 		} else {
 			liveSchedule(elapsedSeconds)
 		}
@@ -277,7 +313,10 @@ object CookingSessionController {
 			actionSteps.indexOfLast { it.startSeconds <= elapsedSeconds }.coerceAtLeast(0)
 		}
 
-		val navigationAllowed = currentAction == null && pendingEvents.isEmpty()
+		val navigationAllowed =
+			recipe.scheduleMode != ScheduleMode.ITINERARY &&
+				currentAction == null &&
+				pendingEvents.isEmpty()
 		val previousAction = if (navigationAllowed) {
 			actionSteps.getOrNull(navigationIndex - 1)
 		} else {
@@ -316,7 +355,28 @@ object CookingSessionController {
 		)
 	}
 
+	private fun baseSchedule(elapsedSeconds: Long): List<ScheduledTask> {
+		return if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
+			itineraryScheduler.schedule(
+				recipe = recipe,
+				durationOverrides = durationOverrides,
+				startOverrides = taskStartOverrides,
+				elapsedSeconds = elapsedSeconds,
+				earliestUnscheduledStartSeconds = itinerarySessionStartOffset(),
+			)
+		} else {
+			scheduler.schedule(
+				recipe = recipe,
+				durationOverrides = durationOverrides,
+			)
+		}
+	}
+
 	private fun liveSchedule(elapsedSeconds: Long): List<ScheduledTask> {
+		if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
+			return liveItinerarySchedule(elapsedSeconds)
+		}
+
 		var schedule = scheduler.schedule(
 			recipe = recipe,
 			durationOverrides = durationOverrides,
@@ -381,6 +441,79 @@ object CookingSessionController {
 		}
 
 		return schedule
+	}
+
+	private fun liveItinerarySchedule(elapsedSeconds: Long): List<ScheduledTask> {
+		var schedule = itineraryScheduler.schedule(
+			recipe = recipe,
+			durationOverrides = durationOverrides,
+			startOverrides = taskStartOverrides,
+			elapsedSeconds = elapsedSeconds,
+			earliestUnscheduledStartSeconds = itinerarySessionStartOffset(),
+		)
+
+		repeat(8) {
+			val unconfirmedManualTaskIds = recipe.tasks
+				.asSequence()
+				.filter { it.kind == TaskKind.ACTIVE || it.kind == TaskKind.EVENT }
+				.map { it.id }
+				.filterNot(durationOverrides::containsKey)
+				.toSet()
+			val blockedIds = blockedTaskIds(
+				recipe = recipe,
+				roots = unconfirmedManualTaskIds,
+			)
+
+			val currentAction = schedule
+				.asSequence()
+				.filter {
+					it.task.kind == TaskKind.ACTIVE &&
+						it.task.id !in durationOverrides &&
+						it.task.id !in blockedIds &&
+						it.startSeconds <= elapsedSeconds
+				}
+				.minWithOrNull(
+					compareBy<ScheduledTask> { it.startSeconds }
+						.thenBy { it.task.id }
+				)
+				?: return schedule
+
+			val elapsedForTask =
+				(elapsedSeconds - currentAction.startSeconds + 1).coerceAtLeast(1)
+			val liveOverrides = durationOverrides + (
+				currentAction.task.id to maxOf(
+					currentAction.task.durationSeconds,
+					elapsedForTask,
+				)
+			)
+			val liveStarts = taskStartOverrides + (
+				currentAction.task.id to currentAction.startSeconds
+			)
+
+			val nextSchedule = itineraryScheduler.schedule(
+				recipe = recipe,
+				durationOverrides = liveOverrides,
+				startOverrides = liveStarts,
+				elapsedSeconds = elapsedSeconds,
+				earliestUnscheduledStartSeconds = itinerarySessionStartOffset(),
+			)
+
+			if (
+				nextSchedule.map { Triple(it.task.id, it.startSeconds, it.endSeconds) } ==
+				schedule.map { Triple(it.task.id, it.startSeconds, it.endSeconds) }
+			) {
+				return nextSchedule
+			}
+			schedule = nextSchedule
+		}
+
+		return schedule
+	}
+
+	private fun itinerarySessionStartOffset(): Long {
+		val epochStart = recipe.scheduleStartEpochSeconds ?: return 0
+		val sessionEpochSeconds = (sessionStartedWallClockMillis ?: return 0) / 1000
+		return (sessionEpochSeconds - epochStart).coerceAtLeast(0)
 	}
 
 	private fun eventIsDue(

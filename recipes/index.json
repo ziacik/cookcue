@@ -18,6 +18,12 @@
 			"version": 1,
 			"file": "tchibo-esperto-descaling.json",
 			"minAppVersion": 1
+		},
+		{
+			"id": "biela-noc-bratislava-2026",
+			"version": 1,
+			"file": "biela-noc-bratislava-2026.json",
+			"minAppVersion": 2
 		}
 	]
 }
