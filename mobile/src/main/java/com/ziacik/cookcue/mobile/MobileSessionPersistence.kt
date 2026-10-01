@@ -2,6 +2,7 @@ package com.ziacik.cookcue.mobile
 
 import android.content.Context
 import android.os.SystemClock
+import androidx.core.content.edit
 
 object MobileSessionPersistence {
 	private const val PREFS = "cookcue-session"
@@ -86,34 +87,19 @@ object MobileSessionPersistence {
 
 		context
 			.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-			.edit()
-			.putString(KEY_RECIPE_ID, CookingSessionController.selectedRecipeId)
-			.putLong(
-				KEY_STARTED_AT,
-				CookingSessionController.startedAt ?: -1L,
-			)
-			.putLong(
-				KEY_STARTED_WALL_CLOCK,
-				CookingSessionController.sessionStartedWallClockMillis ?: -1L,
-			)
-			.putString(KEY_DURATION_OVERRIDES, overrides)
-			.putString(KEY_TASK_START_OVERRIDES, taskStartOverrides)
-			.putString(KEY_EVENT_DEFERRED_UNTIL, eventDeferredUntil)
-			.putString(KEY_SKIPPED_TASK_IDS, skippedTaskIds)
-			.putString(KEY_ACTIVE_TASK_OVERRIDE_ID, CookingSessionController.activeTaskOverrideId)
-			.putLong(
-				KEY_ACTIVE_TASK_OVERRIDE_STARTED_AT,
-				CookingSessionController.activeTaskOverrideStartedAtSeconds ?: -1L,
-			)
-			.putString(
-				KEY_NEARBY_SNOOZE_TASK_ID,
-				CookingSessionController.nearbySuggestionSnoozeTaskId,
-			)
-			.putLong(
-				KEY_NEARBY_SNOOZE_UNTIL,
-				CookingSessionController.nearbySuggestionSnoozeUntilElapsedRealtime,
-			)
-			.apply()
+			.edit {
+				putString(KEY_RECIPE_ID, CookingSessionController.selectedRecipeId)
+				putLong(KEY_STARTED_AT, CookingSessionController.startedAt ?: -1L)
+				putLong(KEY_STARTED_WALL_CLOCK, CookingSessionController.sessionStartedWallClockMillis ?: -1L)
+				putString(KEY_DURATION_OVERRIDES, overrides)
+				putString(KEY_TASK_START_OVERRIDES, taskStartOverrides)
+				putString(KEY_EVENT_DEFERRED_UNTIL, eventDeferredUntil)
+				putString(KEY_SKIPPED_TASK_IDS, skippedTaskIds)
+				putString(KEY_ACTIVE_TASK_OVERRIDE_ID, CookingSessionController.activeTaskOverrideId)
+				putLong(KEY_ACTIVE_TASK_OVERRIDE_STARTED_AT, CookingSessionController.activeTaskOverrideStartedAtSeconds ?: -1L)
+				putString(KEY_NEARBY_SNOOZE_TASK_ID, CookingSessionController.nearbySuggestionSnoozeTaskId)
+				putLong(KEY_NEARBY_SNOOZE_UNTIL, CookingSessionController.nearbySuggestionSnoozeUntilElapsedRealtime)
+			}
 	}
 
 	private fun encodeMap(value: Map<String, Long>): String {
