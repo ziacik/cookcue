@@ -1639,7 +1639,7 @@ private fun formatScheduledStart(
 ): String {
 	val epochStart = recipe.scheduleStartEpochSeconds ?: return formatOffset(item.startSeconds)
 	val zone = ZoneId.of(recipe.scheduleTimeZoneId ?: ZoneId.systemDefault().id)
-	val formatter = DateTimeFormatter.ofPattern("EEE HH:mm", Locale("sk", "SK"))
+	val formatter = DateTimeFormatter.ofPattern("EEE HH:mm", Locale.forLanguageTag("sk-SK"))
 	return Instant
 		.ofEpochSecond(epochStart + item.startSeconds)
 		.atZone(zone)
