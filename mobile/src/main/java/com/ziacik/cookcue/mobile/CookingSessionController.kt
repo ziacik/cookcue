@@ -571,10 +571,28 @@ object CookingSessionController {
 			earliestUnscheduledStartSeconds = itinerarySessionStartOffset(),
 		)
 
-		// A manual jump pauses the previously scheduled active step. Do not keep extending
-		// that old step while the user is intentionally visiting a different one.
-		if (activeTaskOverrideId != null) {
-			return schedule
+		// A manual jump temporarily occupies its real wall-clock slot so the rest of the
+		// itinerary still adapts around fixed events. It is not persisted as a start override
+		// until the user actually completes or skips the task.
+		val manualTaskId = activeTaskOverrideId
+		val manualStartedAt = activeTaskOverrideStartedAtSeconds
+		if (manualTaskId != null && manualStartedAt != null) {
+			val manualTask = recipe.tasks.firstOrNull { it.id == manualTaskId }
+			if (manualTask != null && manualTaskId !in durationOverrides) {
+				val elapsedForTask =
+					(elapsedSeconds - manualStartedAt + 1).coerceAtLeast(1)
+				val liveDuration = maxOf(
+					manualTask.durationSeconds,
+					elapsedForTask,
+				)
+				return itineraryScheduler.schedule(
+					recipe = recipe,
+					durationOverrides = durationOverrides + (manualTaskId to liveDuration),
+					startOverrides = taskStartOverrides + (manualTaskId to manualStartedAt),
+					elapsedSeconds = elapsedSeconds,
+					earliestUnscheduledStartSeconds = itinerarySessionStartOffset(),
+				)
+			}
 		}
 
 		repeat(8) {
