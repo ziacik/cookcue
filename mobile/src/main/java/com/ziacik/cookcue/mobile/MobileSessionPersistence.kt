@@ -11,6 +11,8 @@ object MobileSessionPersistence {
 	private const val KEY_DURATION_OVERRIDES = "duration-overrides"
 	private const val KEY_TASK_START_OVERRIDES = "task-start-overrides"
 	private const val KEY_EVENT_DEFERRED_UNTIL = "event-deferred-until"
+	private const val KEY_SKIPPED_TASK_IDS = "skipped-task-ids"
+	private const val KEY_ACTIVE_TASK_OVERRIDE_ID = "active-task-override-id"
 
 	@Volatile
 	private var loaded = false
@@ -41,6 +43,10 @@ object MobileSessionPersistence {
 			val eventDeferredUntil = decodeOverrides(
 				prefs.getString(KEY_EVENT_DEFERRED_UNTIL, null).orEmpty()
 			)
+			val skippedTaskIds = decodeSet(
+				prefs.getString(KEY_SKIPPED_TASK_IDS, null).orEmpty()
+			)
+			val activeTaskOverrideId = prefs.getString(KEY_ACTIVE_TASK_OVERRIDE_ID, null)
 
 			CookingSessionController.restore(
 				recipeId = recipeId,
@@ -48,6 +54,8 @@ object MobileSessionPersistence {
 				sessionStartedWallClockMillis = startedWallClock,
 				durationOverrides = overrides,
 				taskStartOverrides = taskStartOverrides,
+				skippedTaskIds = skippedTaskIds,
+				activeTaskOverrideId = activeTaskOverrideId,
 				eventDeferredUntil = eventDeferredUntil,
 			)
 			loaded = true
@@ -59,6 +67,7 @@ object MobileSessionPersistence {
 		val overrides = encodeMap(CookingSessionController.durationOverrides)
 		val taskStartOverrides = encodeMap(CookingSessionController.taskStartOverrides)
 		val eventDeferredUntil = encodeMap(CookingSessionController.eventDeferredUntil)
+		val skippedTaskIds = encodeSet(CookingSessionController.skippedTaskIds)
 
 		context
 			.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
@@ -75,6 +84,8 @@ object MobileSessionPersistence {
 			.putString(KEY_DURATION_OVERRIDES, overrides)
 			.putString(KEY_TASK_START_OVERRIDES, taskStartOverrides)
 			.putString(KEY_EVENT_DEFERRED_UNTIL, eventDeferredUntil)
+			.putString(KEY_SKIPPED_TASK_IDS, skippedTaskIds)
+			.putString(KEY_ACTIVE_TASK_OVERRIDE_ID, CookingSessionController.activeTaskOverrideId)
 			.apply()
 	}
 
@@ -82,6 +93,17 @@ object MobileSessionPersistence {
 		return value.entries.joinToString(";") { (taskId, number) ->
 			taskId + "=" + number
 		}
+	}
+
+	private fun encodeSet(value: Set<String>): String {
+		return value.joinToString(";")
+	}
+
+	private fun decodeSet(value: String): Set<String> {
+		return value
+			.split(';')
+			.filter(String::isNotBlank)
+			.toSet()
 	}
 
 	private fun decodeOverrides(value: String): Map<String, Long> {
