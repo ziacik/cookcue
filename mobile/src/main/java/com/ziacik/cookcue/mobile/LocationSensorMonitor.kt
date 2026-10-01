@@ -7,6 +7,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
+import android.os.SystemClock
 import com.ziacik.cookcue.core.model.CookingTask
 import com.ziacik.cookcue.core.model.LocationProximitySensor
 import com.ziacik.cookcue.core.model.SensorActivationMode
@@ -79,6 +80,15 @@ class LocationSensorMonitor(
 	) = Unit
 
 	private fun evaluate(current: Location) {
+		val ageMillis =
+			(SystemClock.elapsedRealtimeNanos() - current.elapsedRealtimeNanos) / 1_000_000
+		if (ageMillis > MAX_LOCATION_AGE_MILLIS) {
+			return
+		}
+		if (current.hasAccuracy() && current.accuracy > MAX_LOCATION_ACCURACY_METERS) {
+			return
+		}
+
 		val suggestion = tasks
 			.asSequence()
 			.flatMap { task ->
@@ -110,5 +120,7 @@ class LocationSensorMonitor(
 	private companion object {
 		const val LOCATION_UPDATE_INTERVAL_MS = 10_000L
 		const val LOCATION_UPDATE_DISTANCE_METERS = 10f
+		const val MAX_LOCATION_AGE_MILLIS = 2 * 60 * 1000L
+		const val MAX_LOCATION_ACCURACY_METERS = 100f
 	}
 }
