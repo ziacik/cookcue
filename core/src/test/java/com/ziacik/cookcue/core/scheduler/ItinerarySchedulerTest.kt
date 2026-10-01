@@ -92,7 +92,7 @@ class ItinerarySchedulerTest {
 
 		val schedule = scheduler.schedule(
 			recipe = recipe,
-			elapsedSeconds = 121,
+			elapsedSeconds = 721,
 		)
 
 		assertEquals(200L, schedule.single().startSeconds)
