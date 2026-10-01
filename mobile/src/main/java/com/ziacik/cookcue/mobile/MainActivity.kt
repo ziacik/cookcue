@@ -106,6 +106,9 @@ private fun CookCueScreen() {
 	) { grants ->
 		fineLocationPermissionGranted =
 			grants[Manifest.permission.ACCESS_FINE_LOCATION] == true
+		if (fineLocationPermissionGranted) {
+			CookingSessionService.syncRunningState(context)
+		}
 	}
 	val locationSensorMonitor = remember(context) { LocationSensorMonitor(context) }
 	var nearbySuggestion by remember { mutableStateOf<NearbyTaskSuggestion?>(null) }
@@ -246,10 +249,23 @@ private fun CookCueScreen() {
 				}
 
 				if (match.activationMode == SensorActivationMode.AUTO_ACTIVATE) {
-					CookingSessionController.activateTask(match.taskId)
+					CookingSessionController.activateTask(
+						taskId = match.taskId,
+						silentTransition = false,
+					)
 					nearbySuggestion = null
 					persistAndSync()
 				} else {
+					if (nearbySuggestion?.taskId != match.taskId) {
+						MobileTransitionNotifier.notify(
+							context,
+							TransitionCue(
+								key = "nearby:" + match.taskId,
+								title = "Si blízko: " + match.taskTitle,
+								text = "Otvor CookCue a aktivuj túto zastávku.",
+							),
+						)
+					}
 					nearbySuggestion = match
 				}
 			}
