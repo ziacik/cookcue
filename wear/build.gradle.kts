@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.compile.JavaCompile
+
 plugins {
 	id("com.android.application")
 	id("org.jetbrains.kotlin.plugin.compose")
@@ -19,12 +21,27 @@ android {
 		compose = true
 	}
 
+	lint {
+		warningsAsErrors = true
+		abortOnError = true
+	}
+
 	compileOptions {
 		sourceCompatibility = JavaVersion.VERSION_17
 		targetCompatibility = JavaVersion.VERSION_17
 	}
 }
 
+
+kotlin {
+	compilerOptions {
+		allWarningsAsErrors.set(true)
+	}
+}
+
+tasks.withType<JavaCompile>().configureEach {
+	options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
+}
 dependencies {
 	implementation(project(":core"))
 
