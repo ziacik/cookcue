@@ -183,16 +183,27 @@ class CookingSessionService : Service() {
 					checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
 						PackageManager.PERMISSION_GRANTED &&
 					locationServicesEnabled()
-			val foregroundType = if (locationMode) {
-				ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+			if (locationMode) {
+				try {
+					startForeground(
+						SESSION_NOTIFICATION_ID,
+						notification,
+						ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION,
+					)
+				} catch (_: SecurityException) {
+					startForeground(
+						SESSION_NOTIFICATION_ID,
+						notification,
+						ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC,
+					)
+				}
 			} else {
-				ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+				startForeground(
+					SESSION_NOTIFICATION_ID,
+					notification,
+					ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC,
+				)
 			}
-			startForeground(
-				SESSION_NOTIFICATION_ID,
-				notification,
-				foregroundType,
-			)
 		} else {
 			startForeground(SESSION_NOTIFICATION_ID, notification)
 		}
