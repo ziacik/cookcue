@@ -249,7 +249,10 @@ private fun CookCueScreen() {
 					return@start
 				}
 
-				if (match.activationMode == SensorActivationMode.AUTO_ACTIVATE) {
+				if (
+					match.activationMode == SensorActivationMode.AUTO_ACTIVATE &&
+					snapshot.currentAction == null
+				) {
 					CookingSessionController.activateTask(
 						taskId = match.taskId,
 						silentTransition = false,
