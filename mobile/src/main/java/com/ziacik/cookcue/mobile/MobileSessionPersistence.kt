@@ -13,6 +13,7 @@ object MobileSessionPersistence {
 	private const val KEY_EVENT_DEFERRED_UNTIL = "event-deferred-until"
 	private const val KEY_SKIPPED_TASK_IDS = "skipped-task-ids"
 	private const val KEY_ACTIVE_TASK_OVERRIDE_ID = "active-task-override-id"
+	private const val KEY_ACTIVE_TASK_OVERRIDE_STARTED_AT = "active-task-override-started-at"
 
 	@Volatile
 	private var loaded = false
@@ -47,6 +48,10 @@ object MobileSessionPersistence {
 				prefs.getString(KEY_SKIPPED_TASK_IDS, null).orEmpty()
 			)
 			val activeTaskOverrideId = prefs.getString(KEY_ACTIVE_TASK_OVERRIDE_ID, null)
+			val storedActiveTaskOverrideStartedAt =
+				prefs.getLong(KEY_ACTIVE_TASK_OVERRIDE_STARTED_AT, -1L)
+			val activeTaskOverrideStartedAtSeconds =
+				storedActiveTaskOverrideStartedAt.takeIf { it >= 0L }
 
 			CookingSessionController.restore(
 				recipeId = recipeId,
@@ -56,6 +61,7 @@ object MobileSessionPersistence {
 				taskStartOverrides = taskStartOverrides,
 				skippedTaskIds = skippedTaskIds,
 				activeTaskOverrideId = activeTaskOverrideId,
+				activeTaskOverrideStartedAtSeconds = activeTaskOverrideStartedAtSeconds,
 				eventDeferredUntil = eventDeferredUntil,
 			)
 			loaded = true
@@ -86,6 +92,10 @@ object MobileSessionPersistence {
 			.putString(KEY_EVENT_DEFERRED_UNTIL, eventDeferredUntil)
 			.putString(KEY_SKIPPED_TASK_IDS, skippedTaskIds)
 			.putString(KEY_ACTIVE_TASK_OVERRIDE_ID, CookingSessionController.activeTaskOverrideId)
+			.putLong(
+				KEY_ACTIVE_TASK_OVERRIDE_STARTED_AT,
+				CookingSessionController.activeTaskOverrideStartedAtSeconds ?: -1L,
+			)
 			.apply()
 	}
 
