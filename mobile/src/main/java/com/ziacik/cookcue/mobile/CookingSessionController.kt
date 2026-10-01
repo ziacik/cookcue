@@ -18,6 +18,13 @@ import com.ziacik.cookcue.core.recipes.ScrambledEggsWithOnionRecipe
 import com.ziacik.cookcue.core.scheduler.ItineraryScheduler
 import com.ziacik.cookcue.core.scheduler.Scheduler
 
+enum class TaskProgress {
+	PENDING,
+	ACTIVE,
+	COMPLETED,
+	SKIPPED,
+}
+
 data class MobileSessionSnapshot(
 	val started: Boolean,
 	val completed: Boolean,
@@ -29,6 +36,7 @@ data class MobileSessionSnapshot(
 	val previousAction: ScheduledTask?,
 	val nextAction: ScheduledTask?,
 	val nextScheduled: ScheduledTask?,
+	val taskProgress: Map<String, TaskProgress>,
 )
 
 object CookingSessionController {
@@ -91,6 +99,8 @@ object CookingSessionController {
 		selectedRecipeId = recipeId
 		durationOverrides = emptyMap()
 		taskStartOverrides = emptyMap()
+		skippedTaskIds = emptySet()
+		activeTaskOverrideId = null
 		eventDeferredUntil = emptyMap()
 		markSilentTransition()
 	}
@@ -108,6 +118,12 @@ object CookingSessionController {
 		private set
 
 	var eventDeferredUntil by mutableStateOf<Map<String, Long>>(emptyMap())
+		private set
+
+	var skippedTaskIds by mutableStateOf<Set<String>>(emptySet())
+		private set
+
+	var activeTaskOverrideId by mutableStateOf<String?>(null)
 		private set
 
 	var userActionVersion by mutableStateOf(0L)
@@ -128,6 +144,8 @@ object CookingSessionController {
 	fun start() {
 		durationOverrides = emptyMap()
 		taskStartOverrides = emptyMap()
+		skippedTaskIds = emptySet()
+		activeTaskOverrideId = null
 		eventDeferredUntil = emptyMap()
 		sessionStartedWallClockMillis = System.currentTimeMillis()
 		startedAt = SystemClock.elapsedRealtime()
@@ -139,6 +157,8 @@ object CookingSessionController {
 		sessionStartedWallClockMillis = null
 		durationOverrides = emptyMap()
 		taskStartOverrides = emptyMap()
+		skippedTaskIds = emptySet()
+		activeTaskOverrideId = null
 		eventDeferredUntil = emptyMap()
 		markUserAction()
 
@@ -154,6 +174,8 @@ object CookingSessionController {
 		sessionStartedWallClockMillis: Long? = null,
 		durationOverrides: Map<String, Long>,
 		taskStartOverrides: Map<String, Long> = emptyMap(),
+		skippedTaskIds: Set<String> = emptySet(),
+		activeTaskOverrideId: String? = null,
 		eventDeferredUntil: Map<String, Long> = emptyMap(),
 	) {
 		selectedRecipeId = availableRecipes
@@ -172,6 +194,8 @@ object CookingSessionController {
 		this.sessionStartedWallClockMillis = sessionStartedWallClockMillis
 		this.durationOverrides = durationOverrides
 		this.taskStartOverrides = taskStartOverrides
+		this.skippedTaskIds = skippedTaskIds
+		this.activeTaskOverrideId = activeTaskOverrideId
 		this.eventDeferredUntil = eventDeferredUntil
 		markUserAction()
 	}
@@ -185,6 +209,10 @@ object CookingSessionController {
 		val actualDuration = (snapshot.elapsedSeconds - action.startSeconds).coerceAtLeast(1)
 		durationOverrides = durationOverrides + (taskId to actualDuration)
 		taskStartOverrides = taskStartOverrides + (taskId to action.startSeconds)
+		skippedTaskIds = skippedTaskIds - taskId
+		if (activeTaskOverrideId == taskId) {
+			activeTaskOverrideId = null
+		}
 		markUserAction()
 	}
 
@@ -196,6 +224,28 @@ object CookingSessionController {
 
 		durationOverrides = durationOverrides + (taskId to 1L)
 		taskStartOverrides = taskStartOverrides + (taskId to action.startSeconds)
+		skippedTaskIds = skippedTaskIds + taskId
+		if (activeTaskOverrideId == taskId) {
+			activeTaskOverrideId = null
+		}
+		markUserAction()
+	}
+
+	fun activateTask(taskId: String) {
+		if (recipe.scheduleMode != ScheduleMode.ITINERARY || startedAt == null) {
+			return
+		}
+
+		val task = recipe.tasks.firstOrNull {
+			it.id == taskId && it.kind == TaskKind.ACTIVE
+		} ?: return
+		if (task.id in durationOverrides) {
+			return
+		}
+
+		val elapsedSeconds = currentElapsedSeconds()
+		activeTaskOverrideId = task.id
+		taskStartOverrides = taskStartOverrides + (task.id to elapsedSeconds)
 		markUserAction()
 	}
 
@@ -289,18 +339,26 @@ object CookingSessionController {
 		val currentAction = if (start == null) {
 			null
 		} else {
-			schedule
-				.asSequence()
-				.filter {
-					it.task.kind == TaskKind.ACTIVE &&
-						it.task.id !in durationOverrides &&
-						it.task.id !in blockedIds &&
-						it.startSeconds <= elapsedSeconds
+			activeTaskOverrideId
+				?.let { taskId ->
+					schedule.firstOrNull {
+						it.task.id == taskId &&
+							it.task.kind == TaskKind.ACTIVE &&
+							it.task.id !in durationOverrides
+					}
 				}
-				.minWithOrNull(
-					compareBy<ScheduledTask> { it.startSeconds }
-						.thenBy { it.task.id }
-				)
+				?: schedule
+					.asSequence()
+					.filter {
+						it.task.kind == TaskKind.ACTIVE &&
+							it.task.id !in durationOverrides &&
+							it.task.id !in blockedIds &&
+							it.startSeconds <= elapsedSeconds
+					}
+					.minWithOrNull(
+						compareBy<ScheduledTask> { it.startSeconds }
+							.thenBy { it.task.id }
+					)
 		}
 
 		val background = if (start == null) {
@@ -344,6 +402,19 @@ object CookingSessionController {
 				it.startSeconds > elapsedSeconds
 		}
 
+		val activeIds = buildSet {
+			currentAction?.task?.id?.let(::add)
+			pendingEvents.mapTo(this) { it.task.id }
+		}
+		val taskProgress = recipe.tasks.associate { task ->
+			task.id to when {
+				task.id in skippedTaskIds -> TaskProgress.SKIPPED
+				task.id in durationOverrides -> TaskProgress.COMPLETED
+				task.id in activeIds -> TaskProgress.ACTIVE
+				else -> TaskProgress.PENDING
+			}
+		}
+
 		val completed =
 			start != null &&
 				unconfirmedManualTaskIds.isEmpty() &&
@@ -363,7 +434,18 @@ object CookingSessionController {
 			previousAction = previousAction,
 			nextAction = nextAction,
 			nextScheduled = nextScheduled,
+			taskProgress = taskProgress,
 		)
+	}
+
+	private fun currentElapsedSeconds(): Long {
+		val start = startedAt ?: return 0
+		return if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
+			val epochStart = requireNotNull(recipe.scheduleStartEpochSeconds)
+			(System.currentTimeMillis() / 1000 - epochStart).coerceAtLeast(0)
+		} else {
+			((SystemClock.elapsedRealtime() - start) / 1000).coerceAtLeast(0)
+		}
 	}
 
 	private fun baseSchedule(elapsedSeconds: Long): List<ScheduledTask> {
