@@ -68,7 +68,6 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.ziacik.cookcue.core.model.LocationProximitySensor
 import com.ziacik.cookcue.core.model.Recipe
 import com.ziacik.cookcue.core.model.ScheduleMode
-import com.ziacik.cookcue.core.model.SensorActivationMode
 import com.ziacik.cookcue.core.model.ScheduledTask
 import com.ziacik.cookcue.core.model.TaskKind
 import com.ziacik.cookcue.core.model.TaskLink
@@ -121,10 +120,6 @@ private fun CookCueScreen() {
 			CookingSessionService.syncRunningState(context)
 		}
 	}
-	val locationSensorMonitor = remember(context) { LocationSensorMonitor(context) }
-	var nearbySuggestion by remember { mutableStateOf<NearbyTaskSuggestion?>(null) }
-	var dismissedNearbyTaskId by remember { mutableStateOf<String?>(null) }
-	var dismissedNearbyUntilElapsedRealtime by remember { mutableLongStateOf(0L) }
 	val recipe = CookingSessionController.recipe
 	val selectedRecipeId = CookingSessionController.selectedRecipeId
 	val startedAt = CookingSessionController.startedAt
@@ -134,24 +129,34 @@ private fun CookCueScreen() {
 	val activeTaskOverrideStartedAtSeconds =
 		CookingSessionController.activeTaskOverrideStartedAtSeconds
 	val eventDeferredUntil = CookingSessionController.eventDeferredUntil
+	val nearbySuggestion = CookingSessionController.nearbySuggestion
 
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
 	var showStopCookingDialog by remember { mutableStateOf(false) }
 
 	DisposableEffect(context) {
 		val activity = context as? ComponentActivity
+		CookingSessionController.setAppVisible(
+			activity?.lifecycle?.currentState?.isAtLeast(Lifecycle.State.RESUMED) == true,
+		)
 		val observer = LifecycleEventObserver { _, event ->
-			if (event == Lifecycle.Event.ON_RESUME) {
-				fineLocationPermissionGranted =
-					context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
-						PackageManager.PERMISSION_GRANTED
-				if (CookingSessionController.startedAt != null) {
-					CookingSessionService.syncRunningState(context)
+			when (event) {
+				Lifecycle.Event.ON_RESUME -> {
+					CookingSessionController.setAppVisible(true)
+					fineLocationPermissionGranted =
+						context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
+							PackageManager.PERMISSION_GRANTED
+					if (CookingSessionController.startedAt != null) {
+						CookingSessionService.syncRunningState(context)
+					}
 				}
+				Lifecycle.Event.ON_PAUSE -> CookingSessionController.setAppVisible(false)
+				else -> Unit
 			}
 		}
 		activity?.lifecycle?.addObserver(observer)
 		onDispose {
+			CookingSessionController.setAppVisible(false)
 			activity?.lifecycle?.removeObserver(observer)
 		}
 	}
@@ -219,32 +224,22 @@ private fun CookCueScreen() {
 		CookingSessionService.syncRunningState(context)
 	}
 
-	val wallClockEpochSeconds = System.currentTimeMillis() / 1000
-	val sensorEligibleTasks = recipe.tasks.filter { task ->
-		val timing = task.itineraryTiming
-		val withinAvailability =
-			timing == null ||
-				timing.availabilityWindows.isEmpty() ||
-				timing.availabilityWindows.any { window ->
-					wallClockEpochSeconds in window.startEpochSeconds until window.endEpochSeconds
-				}
-		task.kind == TaskKind.ACTIVE &&
-			snapshot.taskProgress[task.id] == TaskProgress.PENDING &&
-			withinAvailability &&
-			task.sensors.any { it is LocationProximitySensor }
-	}
+	val hasLocationSensors =
+		recipe.scheduleMode == ScheduleMode.ITINERARY &&
+			recipe.tasks.any { task ->
+				task.sensors.any { it is LocationProximitySensor }
+			}
 
 	LaunchedEffect(
 		snapshot.started,
-		recipe.scheduleMode,
-		sensorEligibleTasks.isNotEmpty(),
+		recipe.id,
+		hasLocationSensors,
 		fineLocationPermissionGranted,
 		notificationPermissionResolved,
 	) {
 		if (
 			snapshot.started &&
-			recipe.scheduleMode == ScheduleMode.ITINERARY &&
-			sensorEligibleTasks.isNotEmpty() &&
+			hasLocationSensors &&
 			notificationPermissionResolved &&
 			!fineLocationPermissionGranted
 		) {
@@ -254,66 +249,6 @@ private fun CookCueScreen() {
 					Manifest.permission.ACCESS_COARSE_LOCATION,
 				)
 			)
-		}
-	}
-
-	DisposableEffect(
-		snapshot.started,
-		fineLocationPermissionGranted,
-		sensorEligibleTasks.map { it.id },
-		dismissedNearbyTaskId,
-		dismissedNearbyUntilElapsedRealtime,
-	) {
-		if (
-			snapshot.started &&
-			recipe.scheduleMode == ScheduleMode.ITINERARY &&
-			fineLocationPermissionGranted &&
-			sensorEligibleTasks.isNotEmpty()
-		) {
-			locationSensorMonitor.start(sensorEligibleTasks) { match ->
-				val dismissed =
-					match?.taskId == dismissedNearbyTaskId &&
-						SystemClock.elapsedRealtime() < dismissedNearbyUntilElapsedRealtime
-				if (match == null || dismissed) {
-					nearbySuggestion = null
-					return@start
-				}
-
-				if (
-					match.activationMode == SensorActivationMode.AUTO_ACTIVATE &&
-					snapshot.currentAction == null
-				) {
-					CookingSessionController.activateTask(
-						taskId = match.taskId,
-						silentTransition = false,
-					)
-					nearbySuggestion = null
-					persistAndSync()
-				} else {
-					val activityVisible =
-						(context as? ComponentActivity)
-							?.lifecycle
-							?.currentState
-							?.isAtLeast(Lifecycle.State.RESUMED) == true
-					if (!activityVisible && nearbySuggestion?.taskId != match.taskId) {
-						MobileTransitionNotifier.notify(
-							context,
-							TransitionCue(
-								key = "nearby:" + match.taskId,
-								title = "Si blízko: " + match.taskTitle,
-								text = "Otvor CookCue a aktivuj túto zastávku.",
-							),
-						)
-					}
-					nearbySuggestion = match
-				}
-			}
-		} else {
-			nearbySuggestion = null
-		}
-
-		onDispose {
-			locationSensorMonitor.stop()
 		}
 	}
 
@@ -457,14 +392,11 @@ private fun CookCueScreen() {
 							NearbySuggestionCard(
 								suggestion = suggestion,
 								onDismiss = {
-									dismissedNearbyTaskId = suggestion.taskId
-									dismissedNearbyUntilElapsedRealtime =
-										SystemClock.elapsedRealtime() + NEARBY_SNOOZE_MILLIS
-									nearbySuggestion = null
+									CookingSessionController.dismissNearbySuggestion(suggestion.taskId)
+									persistAndSync()
 								},
 								onActivate = {
 									CookingSessionController.activateTask(suggestion.taskId)
-									nearbySuggestion = null
 									persistAndSync()
 								},
 							)
@@ -1714,7 +1646,6 @@ private fun formatScheduledStart(
 		.format(formatter)
 }
 
-private const val NEARBY_SNOOZE_MILLIS = 5 * 60 * 1000L
 
 private fun formatRemaining(seconds: Long): String {
 	val safe = seconds.coerceAtLeast(0)
