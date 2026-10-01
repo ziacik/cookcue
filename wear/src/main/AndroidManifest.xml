@@ -17,7 +17,8 @@
 
 		<activity
 			android:name=".MainActivity"
-			android:exported="true">
+			android:exported="true"
+			android:taskAffinity="">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
@@ -28,7 +29,8 @@
 			android:name=".WearDataLayerService"
 			android:exported="true">
 			<intent-filter>
-				<action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
+				<action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
+				<data android:scheme="wear" android:host="*" android:path="/cookcue/session" />
 			</intent-filter>
 		</service>
 	</application>
