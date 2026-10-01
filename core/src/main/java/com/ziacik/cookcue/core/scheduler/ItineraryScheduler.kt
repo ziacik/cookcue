@@ -61,7 +61,7 @@ class ItineraryScheduler {
 				val relativeOptions = options.map { it - epochStart }
 				val duration = durationFor(task)
 				val selected = relativeOptions.firstOrNull {
-					it + duration > elapsedSeconds
+					it + duration + FIXED_OPTION_GRACE_SECONDS > elapsedSeconds
 				} ?: relativeOptions.last()
 				pin(task, selected)
 			}
@@ -116,6 +116,10 @@ class ItineraryScheduler {
 				.thenBy { it.endSeconds }
 				.thenBy { it.task.id }
 		)
+	}
+
+	private companion object {
+		const val FIXED_OPTION_GRACE_SECONDS = 10 * 60L
 	}
 
 	private fun findSlot(
