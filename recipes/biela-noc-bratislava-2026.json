@@ -47,7 +47,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Eurovea, Pribinova 8, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "rotoskop",
@@ -82,7 +90,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Eurovea Promenada E2, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "krdel",
@@ -148,7 +164,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Eurovea, Pribinova 8, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "everything-connects",
@@ -183,7 +207,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Pribinova 6, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "huso-huso",
@@ -218,7 +250,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Eurovea Promenada pri Starom moste, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "see-you",
@@ -253,7 +293,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Dostojevskeho rad 2, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "magicky-les",
@@ -288,7 +336,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Muzejna 6, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "seed-sprout",
@@ -323,7 +379,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Florianska, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "ray",
@@ -360,7 +424,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Vodná veža, Vydrica, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "geofonia",
@@ -397,7 +469,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Kapitulská 18, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "satellites",
@@ -432,7 +512,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Stara trznica, Namestie SNP 25, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "catch-them-all",
@@ -467,7 +555,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Namestie SNP, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "sfera-spojenia",
@@ -502,7 +598,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Hotel Kyjev, Rajska 2, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "pure-rain",
@@ -537,7 +641,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Ursulinska 6, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "sol-machina",
@@ -572,7 +684,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Primacialne namestie, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "aftereal",
@@ -607,7 +727,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Hlavne namestie, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "wellness",
@@ -646,7 +774,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Františkánske námestie 11, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "the-lights",
@@ -685,7 +821,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Baštová 6, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "zakouti-evoluce",
@@ -720,7 +864,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Biela 6, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "presvit",
@@ -755,7 +907,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Palackeho 54, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "totem",
@@ -790,7 +950,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Sturova 12/4, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "skryte-sceny",
@@ -825,7 +993,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Jakubovo namestie 12, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "power-tree",
@@ -860,7 +1036,15 @@
 						"end": "2026-10-04T22:30:00+02:00"
 					}
 				]
-			}
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"query": "Mlynske nivy 12, Bratislava",
+					"radiusMeters": 80,
+					"activationMode": "SUGGEST"
+				}
+			]
 		}
 	]
 }
