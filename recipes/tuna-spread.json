@@ -2,12 +2,12 @@
 	"schemaVersion": 1,
 	"id": "tuna-spread",
 	"title": "Tuniaková nátierka",
-	"description": "Bez vajca · tuniak, syrokrém, maslo, cibuľa, horčica a korenie",
+	"description": "Bez vajca · tuniak v olivovom oleji, syrokrém, maslo, cibuľa, horčica a korenie",
 	"servings": 2,
 	"ingredients": [
 		{
-			"name": "tuniak v konzerve",
-			"amount": "1 konzerva (cca 120–150 g po scedení)"
+			"name": "tuniak v olivovom oleji",
+			"amount": "1 konzerva, celý obsah vrátane oleja"
 		},
 		{
 			"name": "syrokrém",
@@ -15,7 +15,7 @@
 		},
 		{
 			"name": "maslo",
-			"amount": "30 g, zmäknuté"
+			"amount": "20 g, zmäknuté"
 		},
 		{
 			"name": "cibuľa",
@@ -41,24 +41,12 @@
 	"resourceCapacities": {
 		"cook": 1
 	},
-	"preCookingNote": "Maslo sa mieša oveľa ľahšie, keď nie je úplne studené. Ak si ho práve vytiahol z chladničky, nakrájaj ho na malé kúsky.",
+	"preCookingNote": "Tuniaka v olivovom oleji nesceď — olej patrí do nátierky. Maslo sa mieša ľahšie zmäknuté; keď je studené, nakrájaj ho na malé kúsky.",
 	"tasks": [
-		{
-			"id": "drain-tuna",
-			"title": "Sceď tuniaka",
-			"durationSeconds": 120,
-			"resources": [
-				"cook"
-			],
-			"instruction": "Otvor konzervu a tuniaka dobre sceď. Nemusíš ho vytlačiť úplne dosucha, ale v nátierke nechceme prebytočnú tekutinu."
-		},
 		{
 			"id": "chop-onion",
 			"title": "Nakrájaj cibuľu nadrobno",
 			"durationSeconds": 240,
-			"dependsOn": [
-				"drain-tuna"
-			],
 			"resources": [
 				"cook"
 			],
@@ -75,11 +63,11 @@
 			"resources": [
 				"cook"
 			],
-			"instruction": "Do misky daj 100 g syrokrému, 30 g zmäknutého masla a 1 ČL horčice. Vidličkou alebo lyžicou ich vymiešaj na čo najhladší základ."
+			"instruction": "Do misky daj 100 g syrokrému, 20 g zmäknutého masla a 1 ČL horčice. Vidličkou alebo lyžicou ich vymiešaj na čo najhladší základ."
 		},
 		{
 			"id": "add-tuna-onion",
-			"title": "Primiešaj tuniaka a cibuľu",
+			"title": "Pridaj tuniaka aj s olejom a cibuľu",
 			"durationSeconds": 180,
 			"dependsOn": [
 				"mix-base"
@@ -87,7 +75,7 @@
 			"resources": [
 				"cook"
 			],
-			"instruction": "Pridaj scedeného tuniaka a nadrobno nakrájanú cibuľu. Tuniaka vidličkou rozober na menšie kúsky a všetko dôkladne premiešaj."
+			"instruction": "Pridaj celý obsah konzervy tuniaka v olivovom oleji — tuniaka aj olej — a nadrobno nakrájanú cibuľu. Tuniaka vidličkou rozober na menšie kúsky a všetko dôkladne premiešaj."
 		},
 		{
 			"id": "season",
@@ -111,13 +99,13 @@
 			"resources": [
 				"cook"
 			],
-			"instruction": "Ak je nátierka príliš hustá alebo suchá, pridaj ešte trochu syrokrému. Ak je príliš jemná, pridaj trochu viac horčice alebo čierneho korenia. Podávaj hneď alebo ju odlož do chladničky."
+			"instruction": "Ak je nátierka príliš riedka, pridaj trochu syrokrému. Ak je príliš hustá, pridaj ešte trochu syrokrému alebo pár kvapiek olivového oleja. Podávaj hneď alebo ju odlož do chladničky."
 		}
 	],
 	"troubleshooting": [
 		{
-			"problem": "Nátierka je príliš suchá",
-			"advice": "Primiešaj po lyžici syrokrému, kým nebude krémovejšia."
+			"problem": "Nátierka je príliš riedka",
+			"advice": "Primiešaj po lyžici syrokrému. Množstvo oleja sa medzi konzervami líši."
 		},
 		{
 			"problem": "Je príliš výrazná cibuľa",
