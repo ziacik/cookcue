@@ -14,6 +14,8 @@ object MobileSessionPersistence {
 	private const val KEY_SKIPPED_TASK_IDS = "skipped-task-ids"
 	private const val KEY_ACTIVE_TASK_OVERRIDE_ID = "active-task-override-id"
 	private const val KEY_ACTIVE_TASK_OVERRIDE_STARTED_AT = "active-task-override-started-at"
+	private const val KEY_NEARBY_SNOOZE_TASK_ID = "nearby-snooze-task-id"
+	private const val KEY_NEARBY_SNOOZE_UNTIL = "nearby-snooze-until"
 
 	@Volatile
 	private var loaded = false
@@ -52,6 +54,11 @@ object MobileSessionPersistence {
 				prefs.getLong(KEY_ACTIVE_TASK_OVERRIDE_STARTED_AT, -1L)
 			val activeTaskOverrideStartedAtSeconds =
 				storedActiveTaskOverrideStartedAt.takeIf { it >= 0L }
+			val nearbySuggestionSnoozeTaskId =
+				prefs.getString(KEY_NEARBY_SNOOZE_TASK_ID, null)
+			val storedNearbySnoozeUntil = prefs.getLong(KEY_NEARBY_SNOOZE_UNTIL, 0L)
+			val nearbySuggestionSnoozeUntil =
+				storedNearbySnoozeUntil.takeIf { it > SystemClock.elapsedRealtime() } ?: 0L
 
 			CookingSessionController.restore(
 				recipeId = recipeId,
@@ -62,6 +69,8 @@ object MobileSessionPersistence {
 				skippedTaskIds = skippedTaskIds,
 				activeTaskOverrideId = activeTaskOverrideId,
 				activeTaskOverrideStartedAtSeconds = activeTaskOverrideStartedAtSeconds,
+				nearbySuggestionSnoozeTaskId = nearbySuggestionSnoozeTaskId,
+				nearbySuggestionSnoozeUntilElapsedRealtime = nearbySuggestionSnoozeUntil,
 				eventDeferredUntil = eventDeferredUntil,
 			)
 			loaded = true
@@ -95,6 +104,14 @@ object MobileSessionPersistence {
 			.putLong(
 				KEY_ACTIVE_TASK_OVERRIDE_STARTED_AT,
 				CookingSessionController.activeTaskOverrideStartedAtSeconds ?: -1L,
+			)
+			.putString(
+				KEY_NEARBY_SNOOZE_TASK_ID,
+				CookingSessionController.nearbySuggestionSnoozeTaskId,
+			)
+			.putLong(
+				KEY_NEARBY_SNOOZE_UNTIL,
+				CookingSessionController.nearbySuggestionSnoozeUntilElapsedRealtime,
 			)
 			.apply()
 	}
