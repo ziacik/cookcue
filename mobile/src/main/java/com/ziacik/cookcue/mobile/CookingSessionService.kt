@@ -50,7 +50,10 @@ class CookingSessionService : Service() {
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 		MobileSessionPersistence.ensureLoaded(applicationContext)
 
-		if (CookingSessionController.startedAt == null) {
+		if (
+			CookingSessionController.startedAt == null ||
+			CookingSessionController.paused
+		) {
 			stopSelf()
 			return START_NOT_STICKY
 		}
@@ -79,7 +82,7 @@ class CookingSessionService : Service() {
 	private suspend fun monitorSession() {
 		while (currentCoroutineContext().isActive) {
 			val snapshot = CookingSessionController.snapshot()
-			if (!snapshot.started) {
+			if (!snapshot.started || snapshot.paused) {
 				stopSelf()
 				return
 			}
@@ -106,18 +109,10 @@ class CookingSessionService : Service() {
 			return
 		}
 
-		val nowEpochSeconds = System.currentTimeMillis() / 1000
 		val eligibleTasks = CookingSessionController.recipe.tasks.filter { task ->
-			val timing = task.itineraryTiming
-			val withinAvailability =
-				timing == null ||
-					timing.availabilityWindows.isEmpty() ||
-					timing.availabilityWindows.any { window ->
-						nowEpochSeconds in window.startEpochSeconds until window.endEpochSeconds
-					}
+			val progress = snapshot.taskProgress[task.id]
 			task.kind == TaskKind.ACTIVE &&
-				snapshot.taskProgress[task.id] == TaskProgress.PENDING &&
-				withinAvailability &&
+				(progress == TaskProgress.PENDING || progress == TaskProgress.DEFERRED) &&
 				task.sensors.any { it is LocationProximitySensor }
 		}
 		val ids = eligibleTasks.mapTo(linkedSetOf()) { it.id }
@@ -227,6 +222,11 @@ class CookingSessionService : Service() {
 	}
 
 	private fun handleOverdueReminder(snapshot: MobileSessionSnapshot) {
+		if (isItinerary() || snapshot.paused) {
+			previousOverdueReminderKey = null
+			return
+		}
+
 		val current = snapshot.currentAction
 		if (current == null) {
 			previousOverdueReminderKey = null
@@ -404,7 +404,10 @@ class CookingSessionService : Service() {
 			val appContext = context.applicationContext
 			val intent = Intent(appContext, CookingSessionService::class.java)
 
-			if (CookingSessionController.startedAt != null) {
+			if (
+				CookingSessionController.startedAt != null &&
+				!CookingSessionController.paused
+			) {
 				try {
 					appContext.startForegroundService(intent)
 				} catch (_: RuntimeException) {
