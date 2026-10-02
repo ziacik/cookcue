@@ -204,6 +204,7 @@ private fun CookCueScreen() {
 	LaunchedEffect(snapshot.started) {
 		if (
 			snapshot.started &&
+			!snapshot.paused &&
 			Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
 			context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
 			PackageManager.PERMISSION_GRANTED
@@ -404,7 +405,7 @@ private fun CookCueScreen() {
 										persistAndSync()
 									},
 								)
-							} else {
+							} else if (!snapshot.completed) {
 								OutlinedButton(
 									onClick = {
 										CookingSessionController.pauseItinerary()
@@ -653,6 +654,7 @@ private fun CookCueScreen() {
 					progress = snapshot.taskProgress[item.task.id] ?: TaskProgress.PENDING,
 					active = item.task.id == activeTaskId,
 					isLast = index == snapshot.schedule.lastIndex,
+					canActivate = !snapshot.paused,
 					onActivate = {
 						CookingSessionController.activateTask(item.task.id)
 						persistAndSync()
@@ -1603,6 +1605,7 @@ private fun PlanRow(
 	progress: TaskProgress,
 	active: Boolean,
 	isLast: Boolean,
+	canActivate: Boolean,
 	onActivate: () -> Unit,
 ) {
 	Row(
@@ -1658,7 +1661,14 @@ private fun PlanRow(
 					MaterialTheme.colorScheme.outline.copy(alpha = 0.8f),
 				),
 			) {
-				PlanRowContent(item, recipe, progress, active = true, onActivate = onActivate)
+				PlanRowContent(
+					item,
+					recipe,
+					progress,
+					active = true,
+					canActivate = canActivate,
+					onActivate = onActivate,
+				)
 			}
 		} else {
 			Box(
@@ -1666,7 +1676,14 @@ private fun PlanRow(
 					.weight(1f)
 					.padding(bottom = 8.dp),
 			) {
-				PlanRowContent(item, recipe, progress, active = false, onActivate = onActivate)
+				PlanRowContent(
+					item,
+					recipe,
+					progress,
+					active = false,
+					canActivate = canActivate,
+					onActivate = onActivate,
+				)
 			}
 		}
 	}
@@ -1678,6 +1695,7 @@ private fun PlanRowContent(
 	recipe: Recipe,
 	progress: TaskProgress,
 	active: Boolean,
+	canActivate: Boolean,
 	onActivate: () -> Unit,
 ) {
 	Row(
@@ -1742,6 +1760,7 @@ private fun PlanRowContent(
 			}
 			if (
 				recipe.scheduleMode == ScheduleMode.ITINERARY &&
+					canActivate &&
 					item.task.kind == TaskKind.ACTIVE &&
 					(progress == TaskProgress.PENDING || progress == TaskProgress.DEFERRED)
 			) {
