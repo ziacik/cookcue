@@ -2060,15 +2060,17 @@ private fun TaskCompassPanel(
 					fontWeight = FontWeight.Bold,
 					modifier = Modifier.align(Alignment.TopCenter).padding(top = 8.dp),
 				)
-				Text(
-					text = "↑",
-					fontSize = 54.sp,
-					fontWeight = FontWeight.Bold,
-					color = MaterialTheme.colorScheme.primary,
-					modifier = Modifier.graphicsLayer(
-						rotationZ = reading.relativeBearingDegrees ?: 0f,
-					),
-				)
+				reading.relativeBearingDegrees?.let { relativeBearing ->
+					Text(
+						text = "↑",
+						fontSize = 54.sp,
+						fontWeight = FontWeight.Bold,
+						color = MaterialTheme.colorScheme.primary,
+						modifier = Modifier.graphicsLayer(
+							rotationZ = relativeBearing,
+						),
+					)
+				}
 			}
 
 			Spacer(Modifier.height(10.dp))
