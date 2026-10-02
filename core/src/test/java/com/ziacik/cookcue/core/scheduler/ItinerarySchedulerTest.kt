@@ -50,6 +50,26 @@ class ItinerarySchedulerTest {
 	}
 
 	@Test
+	fun manualStartCanOverridePreferredPlanningWindow() {
+		val recipe = recipe(
+			CookingTask(
+				id = "planned-later",
+				title = "Planned later",
+				durationSeconds = 60,
+				itineraryTiming = windows(1_000, 2_000),
+			),
+		)
+
+		val schedule = scheduler.schedule(
+			recipe = recipe,
+			startOverrides = mapOf("planned-later" to 100L),
+		)
+
+		assertEquals(100L, schedule.single().startSeconds)
+		assertEquals(160L, schedule.single().endSeconds)
+	}
+
+	@Test
 	fun manuallyPinnedStopDoesNotMoveFixedEvent() {
 		val recipe = recipe(
 			CookingTask(

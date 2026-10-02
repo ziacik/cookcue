@@ -20,6 +20,7 @@ import com.ziacik.cookcue.core.scheduler.Scheduler
 
 enum class TaskProgress {
 	PENDING,
+	DEFERRED,
 	ACTIVE,
 	COMPLETED,
 	SKIPPED,
@@ -27,6 +28,7 @@ enum class TaskProgress {
 
 data class MobileSessionSnapshot(
 	val started: Boolean,
+	val paused: Boolean,
 	val completed: Boolean,
 	val elapsedSeconds: Long,
 	val schedule: List<ScheduledTask>,
@@ -100,6 +102,8 @@ object CookingSessionController {
 		durationOverrides = emptyMap()
 		taskStartOverrides = emptyMap()
 		skippedTaskIds = emptySet()
+		deferredTaskIds = emptySet()
+		paused = false
 		activeTaskOverrideId = null
 		activeTaskOverrideStartedAtSeconds = null
 		nearbySuggestion = null
@@ -125,6 +129,12 @@ object CookingSessionController {
 		private set
 
 	var skippedTaskIds by mutableStateOf<Set<String>>(emptySet())
+		private set
+
+	var deferredTaskIds by mutableStateOf<Set<String>>(emptySet())
+		private set
+
+	var paused by mutableStateOf(false)
 		private set
 
 	var activeTaskOverrideId by mutableStateOf<String?>(null)
@@ -164,6 +174,8 @@ object CookingSessionController {
 		durationOverrides = emptyMap()
 		taskStartOverrides = emptyMap()
 		skippedTaskIds = emptySet()
+		deferredTaskIds = emptySet()
+		paused = false
 		activeTaskOverrideId = null
 		activeTaskOverrideStartedAtSeconds = null
 		nearbySuggestion = null
@@ -181,6 +193,8 @@ object CookingSessionController {
 		durationOverrides = emptyMap()
 		taskStartOverrides = emptyMap()
 		skippedTaskIds = emptySet()
+		deferredTaskIds = emptySet()
+		paused = false
 		activeTaskOverrideId = null
 		activeTaskOverrideStartedAtSeconds = null
 		nearbySuggestion = null
@@ -202,6 +216,8 @@ object CookingSessionController {
 		durationOverrides: Map<String, Long>,
 		taskStartOverrides: Map<String, Long> = emptyMap(),
 		skippedTaskIds: Set<String> = emptySet(),
+		deferredTaskIds: Set<String> = emptySet(),
+		paused: Boolean = false,
 		activeTaskOverrideId: String? = null,
 		activeTaskOverrideStartedAtSeconds: Long? = null,
 		nearbySuggestionSnoozeTaskId: String? = null,
@@ -225,8 +241,11 @@ object CookingSessionController {
 		this.durationOverrides = durationOverrides
 		this.taskStartOverrides = taskStartOverrides
 		this.skippedTaskIds = skippedTaskIds
-		this.activeTaskOverrideId = activeTaskOverrideId
-		this.activeTaskOverrideStartedAtSeconds = activeTaskOverrideStartedAtSeconds
+		this.deferredTaskIds = deferredTaskIds
+		this.paused = paused
+		this.activeTaskOverrideId = if (paused) null else activeTaskOverrideId
+		this.activeTaskOverrideStartedAtSeconds =
+			if (paused) null else activeTaskOverrideStartedAtSeconds
 		this.nearbySuggestion = null
 		this.nearbySuggestionSnoozeTaskId = nearbySuggestionSnoozeTaskId
 		this.nearbySuggestionSnoozeUntilElapsedRealtime = nearbySuggestionSnoozeUntilElapsedRealtime
@@ -244,6 +263,7 @@ object CookingSessionController {
 		durationOverrides = durationOverrides + (taskId to actualDuration)
 		taskStartOverrides = taskStartOverrides + (taskId to action.startSeconds)
 		skippedTaskIds = skippedTaskIds - taskId
+		deferredTaskIds = deferredTaskIds - taskId
 		if (activeTaskOverrideId == taskId) {
 			activeTaskOverrideId = null
 			activeTaskOverrideStartedAtSeconds = null
@@ -260,6 +280,7 @@ object CookingSessionController {
 		durationOverrides = durationOverrides + (taskId to 1L)
 		taskStartOverrides = taskStartOverrides + (taskId to action.startSeconds)
 		skippedTaskIds = skippedTaskIds + taskId
+		deferredTaskIds = deferredTaskIds - taskId
 		if (activeTaskOverrideId == taskId) {
 			activeTaskOverrideId = null
 			activeTaskOverrideStartedAtSeconds = null
@@ -271,7 +292,11 @@ object CookingSessionController {
 		taskId: String,
 		silentTransition: Boolean = true,
 	) {
-		if (recipe.scheduleMode != ScheduleMode.ITINERARY || startedAt == null) {
+		if (
+			recipe.scheduleMode != ScheduleMode.ITINERARY ||
+			startedAt == null ||
+			paused
+		) {
 			return
 		}
 
@@ -282,7 +307,16 @@ object CookingSessionController {
 			return
 		}
 
+		snapshot().currentAction
+			?.task
+			?.id
+			?.takeIf { it != task.id }
+			?.let { currentTaskId ->
+				deferredTaskIds = deferredTaskIds + currentTaskId
+			}
+
 		val elapsedSeconds = currentElapsedSeconds()
+		deferredTaskIds = deferredTaskIds - task.id
 		activeTaskOverrideId = task.id
 		activeTaskOverrideStartedAtSeconds = elapsedSeconds
 		if (nearbySuggestion?.taskId == task.id) {
@@ -293,6 +327,60 @@ object CookingSessionController {
 		} else {
 			markUserAction()
 		}
+	}
+
+	fun deferCurrentAction(taskId: String) {
+		if (
+			recipe.scheduleMode != ScheduleMode.ITINERARY ||
+			startedAt == null ||
+			paused
+		) {
+			return
+		}
+
+		val current = snapshot().currentAction
+			?.takeIf { it.task.id == taskId }
+			?: return
+
+		deferredTaskIds = deferredTaskIds + current.task.id
+		if (activeTaskOverrideId == current.task.id) {
+			activeTaskOverrideId = null
+			activeTaskOverrideStartedAtSeconds = null
+		}
+		clearNearbySuggestion()
+		markSilentTransition()
+	}
+
+	fun pauseItinerary() {
+		if (
+			recipe.scheduleMode != ScheduleMode.ITINERARY ||
+			startedAt == null ||
+			paused
+		) {
+			return
+		}
+
+		snapshot().currentAction?.task?.id?.let { taskId ->
+			deferredTaskIds = deferredTaskIds + taskId
+		}
+		activeTaskOverrideId = null
+		activeTaskOverrideStartedAtSeconds = null
+		clearNearbySuggestion()
+		paused = true
+		markSilentTransition()
+	}
+
+	fun resumeItinerary() {
+		if (
+			recipe.scheduleMode != ScheduleMode.ITINERARY ||
+			startedAt == null ||
+			!paused
+		) {
+			return
+		}
+
+		paused = false
+		markSilentTransition()
 	}
 
 	fun updateAppVisible(visible: Boolean) {
@@ -412,7 +500,7 @@ object CookingSessionController {
 			roots = unconfirmedManualTaskIds,
 		)
 
-		val pendingEvents = if (start == null) {
+		val pendingEvents = if (start == null || paused) {
 			emptyList()
 		} else {
 			schedule.filter {
@@ -424,7 +512,7 @@ object CookingSessionController {
 			}
 		}
 
-		val currentAction = if (start == null) {
+		val currentAction = if (start == null || paused) {
 			null
 		} else {
 			activeTaskOverrideId
@@ -449,6 +537,7 @@ object CookingSessionController {
 					.filter {
 						it.task.kind == TaskKind.ACTIVE &&
 							it.task.id !in durationOverrides &&
+							it.task.id !in deferredTaskIds &&
 							it.task.id !in blockedIds &&
 							it.startSeconds <= elapsedSeconds
 					}
@@ -458,7 +547,7 @@ object CookingSessionController {
 					)
 		}
 
-		val background = if (start == null) {
+		val background = if (start == null || paused) {
 			emptyList()
 		} else {
 			schedule.filter {
@@ -496,6 +585,7 @@ object CookingSessionController {
 
 		val nextScheduled = schedule.firstOrNull {
 			it.task.id !in blockedIds &&
+				it.task.id !in deferredTaskIds &&
 				it.startSeconds > elapsedSeconds
 		}
 
@@ -508,12 +598,14 @@ object CookingSessionController {
 				task.id in skippedTaskIds -> TaskProgress.SKIPPED
 				task.id in durationOverrides -> TaskProgress.COMPLETED
 				task.id in activeIds -> TaskProgress.ACTIVE
+				task.id in deferredTaskIds -> TaskProgress.DEFERRED
 				else -> TaskProgress.PENDING
 			}
 		}
 
 		val completed =
 			start != null &&
+				!paused &&
 				unconfirmedManualTaskIds.isEmpty() &&
 				currentAction == null &&
 				pendingEvents.isEmpty() &&
@@ -522,6 +614,7 @@ object CookingSessionController {
 
 		return MobileSessionSnapshot(
 			started = start != null,
+			paused = paused,
 			completed = completed,
 			elapsedSeconds = elapsedSeconds,
 			schedule = schedule,
@@ -642,6 +735,10 @@ object CookingSessionController {
 			earliestUnscheduledStartSeconds = itinerarySessionStartOffset(),
 		)
 
+		if (paused) {
+			return schedule
+		}
+
 		// A manual jump temporarily occupies its real wall-clock slot so the rest of the
 		// itinerary still adapts around fixed events. It is not persisted as a start override
 		// until the user actually completes or skips the task.
@@ -683,6 +780,7 @@ object CookingSessionController {
 					.filter {
 						it.task.kind == TaskKind.ACTIVE &&
 							it.task.id !in durationOverrides &&
+							it.task.id !in deferredTaskIds &&
 							it.task.id !in blockedIds &&
 							it.startSeconds <= elapsedSeconds
 					}
