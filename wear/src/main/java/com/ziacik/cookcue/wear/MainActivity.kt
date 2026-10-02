@@ -100,7 +100,7 @@ private fun WearCookCueScreen() {
 		}
 	}
 
-	LaunchedEffect(state.started) {
+	LaunchedEffect(state.started, state.paused) {
 		if (
 			state.started &&
 			!state.paused &&
