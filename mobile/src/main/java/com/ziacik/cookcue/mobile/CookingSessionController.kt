@@ -307,6 +307,14 @@ object CookingSessionController {
 			return
 		}
 
+		snapshot().currentAction
+			?.task
+			?.id
+			?.takeIf { it != task.id }
+			?.let { currentTaskId ->
+				deferredTaskIds = deferredTaskIds + currentTaskId
+			}
+
 		val elapsedSeconds = currentElapsedSeconds()
 		deferredTaskIds = deferredTaskIds - task.id
 		activeTaskOverrideId = task.id
@@ -577,6 +585,7 @@ object CookingSessionController {
 
 		val nextScheduled = schedule.firstOrNull {
 			it.task.id !in blockedIds &&
+				it.task.id !in deferredTaskIds &&
 				it.startSeconds > elapsedSeconds
 		}
 
@@ -771,6 +780,7 @@ object CookingSessionController {
 					.filter {
 						it.task.kind == TaskKind.ACTIVE &&
 							it.task.id !in durationOverrides &&
+							it.task.id !in deferredTaskIds &&
 							it.task.id !in blockedIds &&
 							it.startSeconds <= elapsedSeconds
 					}
