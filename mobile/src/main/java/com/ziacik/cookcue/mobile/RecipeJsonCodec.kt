@@ -9,8 +9,10 @@ import com.ziacik.cookcue.core.model.ResourceRequirement
 import com.ziacik.cookcue.core.model.ScheduleMode
 import com.ziacik.cookcue.core.model.SensorActivationMode
 import com.ziacik.cookcue.core.model.Skill
+import com.ziacik.cookcue.core.model.TaskAvailability
 import com.ziacik.cookcue.core.model.TaskImage
 import com.ziacik.cookcue.core.model.TaskKind
+import com.ziacik.cookcue.core.model.TaskPlace
 import com.ziacik.cookcue.core.model.TaskLink
 import com.ziacik.cookcue.core.model.TaskSensor
 import com.ziacik.cookcue.core.model.TimeWindow
@@ -83,6 +85,18 @@ internal object RecipeJsonCodec {
 				TaskImage(
 					url = image.getString("url"),
 					alt = image.optionalString("alt"),
+				)
+			},
+			place = task.optJSONObject("place")?.let { place ->
+				TaskPlace(
+					area = place.getString("area"),
+					venue = place.optionalString("venue"),
+				)
+			},
+			availability = task.optJSONObject("availability")?.let { availability ->
+				TaskAvailability(
+					label = availability.getString("label"),
+					timeLimited = availability.optBoolean("timeLimited", false),
 				)
 			},
 			links = task.optJSONArray("links")
