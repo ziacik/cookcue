@@ -60,6 +60,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-29.jpg&w=1080&q=75",
 				"alt": "Drawn Together"
+			},
+			"place": {
+				"area": "Eurovea",
+				"venue": "Prízemie pri Infopulte / Magenta Experience Center"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -108,6 +116,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FRotoskop%20BN%202026%20Landscape.jpg&w=1080&q=75",
 				"alt": "Rotoskop"
+			},
+			"place": {
+				"area": "Eurovea",
+				"venue": "Promenáda E2"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -143,7 +159,24 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-16.png&w=1080&q=75",
 				"alt": "Kŕdeľ · 300 dronov"
-			}
+			},
+			"place": {
+				"area": "Eurovea",
+				"venue": "Nábrežie Dunaja"
+			},
+			"availability": {
+				"label": "Pi: 20:00–20:15 · 21:00–21:15",
+				"timeLimited": true
+			},
+			"sensors": [
+				{
+					"type": "LOCATION_PROXIMITY",
+					"latitude": 48.1407,
+					"longitude": 17.1203,
+					"radiusMeters": 100,
+					"activationMode": "SUGGEST"
+				}
+			]
 		},
 		{
 			"id": "strata",
@@ -191,6 +224,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2Fweb%20nove.png&w=1080&q=75",
 				"alt": "STRATA"
+			},
+			"place": {
+				"area": "Eurovea",
+				"venue": "Námestie pri Eurovea"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -239,6 +280,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-14.png&w=1080&q=75",
 				"alt": "Everything That Connects Us"
+			},
+			"place": {
+				"area": "Eurovea",
+				"venue": "Central 2 / Pribinova 6 (Vajíčko)"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -287,6 +336,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-13.png&w=1080&q=75",
 				"alt": "Huso huso"
+			},
+			"place": {
+				"area": "Eurovea",
+				"venue": "Promenáda pri Starom Moste"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -335,6 +392,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FSni%CC%81mka%20obrazovky%202026-09-12%20o%2011.11.41.png&w=1080&q=75",
 				"alt": "SEE YOU"
+			},
+			"place": {
+				"area": "Staré Mesto",
+				"venue": "Umelka / Pavilón / Dostojevského rad 2"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -383,6 +448,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2Fweb%20Atelier%20Meter.jpg&w=1080&q=75",
 				"alt": "Magický les"
+			},
+			"place": {
+				"area": "Staré Mesto",
+				"venue": "SNM / Múzejná 6"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -431,6 +504,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-7.jpg&w=1080&q=75",
 				"alt": "Seed Sprout"
+			},
+			"place": {
+				"area": "Vydrica",
+				"venue": "Floriánska"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -481,6 +562,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-5.JPG&w=1080&q=75",
 				"alt": "Ray"
+			},
+			"place": {
+				"area": "Vydrica",
+				"venue": "Vodná veža"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -531,6 +620,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-4.png&w=1080&q=75",
 				"alt": "GEOFÓNIA"
+			},
+			"place": {
+				"area": "Staré Mesto",
+				"venue": "Charitná záhrada / Kapitulská 18"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -579,6 +676,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-2.jpg&w=1080&q=75",
 				"alt": "SATELLITES"
+			},
+			"place": {
+				"area": "Staré Mesto",
+				"venue": "Stará tržnica / Námestie SNP 25"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -627,6 +732,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-8.png&w=1080&q=75",
 				"alt": "Catch them all!"
+			},
+			"place": {
+				"area": "Staré Mesto",
+				"venue": "Námestie SNP"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -675,6 +788,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-15.png&w=1080&q=75",
 				"alt": "Sféra spojenia"
+			},
+			"place": {
+				"area": "Staré Mesto",
+				"venue": "Hotel Kyjev"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -723,6 +844,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-13.jpg&w=1080&q=75",
 				"alt": "PURE RAIN II"
+			},
+			"place": {
+				"area": "Staré Mesto",
+				"venue": "Nádvorie Ruttkayovcov Vrútockých / Uršulínska 6"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -771,6 +900,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB.jpg&w=1080&q=75",
 				"alt": "SOL MACHINA"
+			},
+			"place": {
+				"area": "Staré Mesto",
+				"venue": "Primaciálne námestie"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -819,6 +956,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FSni%CC%81mka%20obrazovky%202026-09-12%20o%2011.43.06.png&w=1080&q=75",
 				"alt": "AFTEREAL"
+			},
+			"place": {
+				"area": "Staré Mesto",
+				"venue": "Hlavné námestie"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -871,6 +1016,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-6.png&w=1080&q=75",
 				"alt": "Wellness"
+			},
+			"place": {
+				"area": "Staré Mesto",
+				"venue": "Mirbachov palác / nádvorie / Františkánske námestie 11"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–23:00",
+				"timeLimited": true
 			}
 		},
 		{
@@ -923,6 +1076,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FGemini_Generated_Image_ffqg4ffqg4ffqg4f.jpg&w=1080&q=75",
 				"alt": "The Lights Are Not What They Seem"
+			},
+			"place": {
+				"area": "Staré Mesto",
+				"venue": "Galéria Edison FilmHub / Baštová 6"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–23:00",
+				"timeLimited": true
 			}
 		},
 		{
@@ -971,6 +1132,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-6.jpg&w=1080&q=75",
 				"alt": "Zákoutí evoluce"
+			},
+			"place": {
+				"area": "Staré Mesto",
+				"venue": "Meštiansky dom / Biela 6"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -1019,6 +1188,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB.jpeg&w=1080&q=75",
 				"alt": "preSVIT"
+			},
+			"place": {
+				"area": "Staré Mesto",
+				"venue": "Palackého 54"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -1067,6 +1244,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-5.png&w=1080&q=75",
 				"alt": "TOTEM"
+			},
+			"place": {
+				"area": "Staré Mesto",
+				"venue": "TU-BA / Štúrova 12/4"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -1115,6 +1300,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-18.jpg&w=1080&q=75",
 				"alt": "Skryté scény"
+			},
+			"place": {
+				"area": "Staré Mesto",
+				"venue": "Divadelný ústav / Jakubovo námestie 12"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		},
 		{
@@ -1163,6 +1356,14 @@
 			"image": {
 				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB.png&w=1080&q=75",
 				"alt": "Power Tree"
+			},
+			"place": {
+				"area": "Nivy",
+				"venue": "Twin City B / vstupná hala / Mlynské nivy 12"
+			},
+			"availability": {
+				"label": "Pi, So, Ne: 19:00–24:00",
+				"timeLimited": false
 			}
 		}
 	]
