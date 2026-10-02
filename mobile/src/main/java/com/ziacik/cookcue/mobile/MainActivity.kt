@@ -128,6 +128,8 @@ private fun CookCueScreen() {
 	val startedAt = CookingSessionController.startedAt
 	val durationOverrides = CookingSessionController.durationOverrides
 	val skippedTaskIds = CookingSessionController.skippedTaskIds
+	val deferredTaskIds = CookingSessionController.deferredTaskIds
+	val paused = CookingSessionController.paused
 	val activeTaskOverrideId = CookingSessionController.activeTaskOverrideId
 	val activeTaskOverrideStartedAtSeconds =
 		CookingSessionController.activeTaskOverrideStartedAtSeconds
@@ -164,8 +166,8 @@ private fun CookCueScreen() {
 		}
 	}
 
-	LaunchedEffect(startedAt) {
-		while (startedAt != null) {
+	LaunchedEffect(startedAt, paused) {
+		while (startedAt != null && !paused) {
 			now = SystemClock.elapsedRealtime()
 			delay(500)
 		}
@@ -182,6 +184,8 @@ private fun CookCueScreen() {
 		startedAt,
 		durationOverrides,
 		skippedTaskIds,
+		deferredTaskIds,
+		paused,
 		activeTaskOverrideId,
 		activeTaskOverrideStartedAtSeconds,
 		eventDeferredUntil,
@@ -242,6 +246,7 @@ private fun CookCueScreen() {
 	) {
 		if (
 			snapshot.started &&
+			!snapshot.paused &&
 			hasLocationSensors &&
 			notificationPermissionResolved &&
 			!fineLocationPermissionGranted
@@ -386,7 +391,39 @@ private fun CookCueScreen() {
 					}
 				}
 			} else {
-				nearbySuggestion?.let { suggestion ->
+				if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
+					item {
+						Column(
+							modifier = Modifier.padding(horizontal = 16.dp),
+						) {
+							Spacer(Modifier.height(12.dp))
+							if (snapshot.paused) {
+								PausedItineraryCard(
+									onResume = {
+										CookingSessionController.resumeItinerary()
+										persistAndSync()
+									},
+								)
+							} else {
+								OutlinedButton(
+									onClick = {
+										CookingSessionController.pauseItinerary()
+										persistAndSync()
+									},
+									modifier = Modifier.fillMaxWidth(),
+									shape = RoundedCornerShape(12.dp),
+								) {
+									Text(
+										text = "⏸  POZASTAVIŤ ITINERÁR",
+										fontWeight = FontWeight.Bold,
+									)
+								}
+							}
+						}
+					}
+				}
+
+				if (!snapshot.paused) nearbySuggestion?.let { suggestion ->
 					item {
 						Column(
 							modifier = Modifier.padding(horizontal = 16.dp),
@@ -413,6 +450,8 @@ private fun CookCueScreen() {
 					) {
 						Spacer(Modifier.height(12.dp))
 						when {
+							snapshot.paused -> Unit
+
 							current != null -> {
 								val elapsed =
 									(snapshot.elapsedSeconds - current.startSeconds).coerceAtLeast(0)
@@ -428,6 +467,11 @@ private fun CookCueScreen() {
 									stepCount = snapshot.schedule.size,
 									actionLabel = "HOTOVO",
 									optional = current.task.optional,
+									isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY,
+									onDefer = {
+										CookingSessionController.deferCurrentAction(current.task.id)
+										persistAndSync()
+									},
 									onSkip = {
 										CookingSessionController.skipAction(current.task.id)
 										persistAndSync()
@@ -457,6 +501,8 @@ private fun CookCueScreen() {
 									stepCount = snapshot.schedule.size,
 									actionLabel = null,
 									optional = false,
+									isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY,
+									onDefer = {},
 									onSkip = {},
 									onAction = {},
 								)
@@ -522,7 +568,7 @@ private fun CookCueScreen() {
 					}
 				}
 
-				snapshot.nextScheduled?.let { next ->
+				if (!snapshot.paused) snapshot.nextScheduled?.let { next ->
 					item {
 						Column(
 							modifier = Modifier.padding(horizontal = 20.dp),
@@ -859,6 +905,8 @@ private fun CurrentStepCard(
 	stepCount: Int,
 	actionLabel: String?,
 	optional: Boolean,
+	isItinerary: Boolean,
+	onDefer: () -> Unit,
 	onSkip: () -> Unit,
 	onAction: () -> Unit,
 ) {
@@ -960,7 +1008,47 @@ private fun CurrentStepCard(
 
 			if (actionLabel != null) {
 				Spacer(Modifier.height(14.dp))
-				if (optional) {
+				if (isItinerary) {
+					Row(
+						modifier = Modifier.fillMaxWidth(),
+						horizontalArrangement = Arrangement.spacedBy(10.dp),
+					) {
+						OutlinedButton(
+							onClick = onDefer,
+							modifier = Modifier.weight(1f),
+							shape = RoundedCornerShape(12.dp),
+						) {
+							Text(
+								text = "ODLOŽIŤ",
+								fontWeight = FontWeight.Bold,
+							)
+						}
+						Button(
+							onClick = onAction,
+							modifier = Modifier.weight(1f),
+							shape = RoundedCornerShape(12.dp),
+							colors = ButtonDefaults.buttonColors(
+								containerColor = MaterialTheme.colorScheme.primary,
+							),
+						) {
+							Text(
+								text = "✓  $actionLabel",
+								fontWeight = FontWeight.Bold,
+							)
+						}
+					}
+					if (optional) {
+						TextButton(
+							onClick = onSkip,
+							modifier = Modifier.fillMaxWidth(),
+						) {
+							Text(
+								text = "PRESKOČIŤ ÚPLNE",
+								fontWeight = FontWeight.Bold,
+							)
+						}
+					}
+				} else if (optional) {
 					Row(
 						modifier = Modifier.fillMaxWidth(),
 						horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -979,9 +1067,6 @@ private fun CurrentStepCard(
 							onClick = onAction,
 							modifier = Modifier.weight(1f),
 							shape = RoundedCornerShape(12.dp),
-							colors = ButtonDefaults.buttonColors(
-								containerColor = MaterialTheme.colorScheme.primary,
-							),
 						) {
 							Text(
 								text = "✓  $actionLabel",
@@ -1152,6 +1237,46 @@ private fun CompletionCard(
 					text = if (isItinerary) "UKONČIŤ ITINERÁR" else "UKONČIŤ VARENIE",
 					fontWeight = FontWeight.Bold,
 					modifier = Modifier.padding(vertical = 4.dp),
+				)
+			}
+		}
+	}
+}
+
+@Composable
+private fun PausedItineraryCard(
+	onResume: () -> Unit,
+) {
+	Surface(
+		modifier = Modifier.fillMaxWidth(),
+		color = MaterialTheme.colorScheme.secondaryContainer,
+		shape = RoundedCornerShape(18.dp),
+	) {
+		Column(modifier = Modifier.padding(18.dp)) {
+			SmallLabel("ITINERÁR POZASTAVENÝ")
+			Spacer(Modifier.height(7.dp))
+			Text(
+				text = "Stav zostáva uložený",
+				style = MaterialTheme.typography.titleLarge.copy(
+					fontFamily = FontFamily.Serif,
+					fontWeight = FontWeight.SemiBold,
+				),
+			)
+			Spacer(Modifier.height(4.dp))
+			Text(
+				text = "Žiadne proximity ani časové notifikácie. Keď chcete pokračovať, stačí itinerár znovu spustiť.",
+				style = MaterialTheme.typography.bodyMedium,
+				color = MaterialTheme.colorScheme.onSecondaryContainer,
+			)
+			Spacer(Modifier.height(12.dp))
+			Button(
+				onClick = onResume,
+				modifier = Modifier.fillMaxWidth(),
+				shape = RoundedCornerShape(12.dp),
+			) {
+				Text(
+					text = "▶  POKRAČOVAŤ",
+					fontWeight = FontWeight.Bold,
 				)
 			}
 		}
@@ -1574,6 +1699,7 @@ private fun PlanRowContent(
 					when (progress) {
 						TaskProgress.COMPLETED -> "✓ " + item.task.title
 						TaskProgress.SKIPPED -> "↷ " + item.task.title
+						TaskProgress.DEFERRED -> "⏸ " + item.task.title
 						else -> item.task.title
 					}
 				} else {
@@ -1602,6 +1728,7 @@ private fun PlanRowContent(
 					text = when (progress) {
 						TaskProgress.COMPLETED -> "absolvované"
 						TaskProgress.SKIPPED -> "preskočené"
+						TaskProgress.DEFERRED -> "odložené"
 						TaskProgress.ACTIVE -> "aktívne"
 						TaskProgress.PENDING -> "čaká"
 					},
@@ -1616,7 +1743,7 @@ private fun PlanRowContent(
 			if (
 				recipe.scheduleMode == ScheduleMode.ITINERARY &&
 					item.task.kind == TaskKind.ACTIVE &&
-					progress == TaskProgress.PENDING
+					(progress == TaskProgress.PENDING || progress == TaskProgress.DEFERRED)
 			) {
 				TextButton(
 					onClick = onActivate,
