@@ -139,7 +139,8 @@ class CookingSessionService : Service() {
 		}
 
 		val snapshot = CookingSessionController.snapshot()
-		if (snapshot.taskProgress[match.taskId] != TaskProgress.PENDING) {
+		val progress = snapshot.taskProgress[match.taskId]
+		if (progress != TaskProgress.PENDING && progress != TaskProgress.DEFERRED) {
 			CookingSessionController.clearNearbySuggestion()
 			return
 		}
