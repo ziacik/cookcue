@@ -14,6 +14,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,6 +55,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -64,8 +66,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import com.ziacik.cookcue.core.model.CookingTask
 import com.ziacik.cookcue.core.model.LocationProximitySensor
 import com.ziacik.cookcue.core.model.Recipe
 import com.ziacik.cookcue.core.model.ScheduleMode
@@ -138,6 +143,7 @@ private fun CookCueScreen() {
 
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
 	var showStopCookingDialog by remember { mutableStateOf(false) }
+	var selectedTaskDetailId by remember { mutableStateOf<String?>(null) }
 
 	DisposableEffect(context) {
 		val activity = context as? ComponentActivity
@@ -260,6 +266,25 @@ private fun CookCueScreen() {
 			)
 		}
 	}
+
+	selectedTaskDetailId
+		?.let { taskId -> recipe.tasks.firstOrNull { it.id == taskId } }
+		?.let { task ->
+			TaskDetailDialog(
+				task = task,
+				progress = snapshot.taskProgress[task.id] ?: TaskProgress.PENDING,
+				locationPermissionGranted = fineLocationPermissionGranted,
+				onRequestLocation = {
+					locationPermissionLauncher.launch(
+						arrayOf(
+							Manifest.permission.ACCESS_FINE_LOCATION,
+							Manifest.permission.ACCESS_COARSE_LOCATION,
+						)
+					)
+				},
+				onDismiss = { selectedTaskDetailId = null },
+			)
+		}
 
 	if (showStopCookingDialog) {
 		AlertDialog(
@@ -655,6 +680,7 @@ private fun CookCueScreen() {
 					active = item.task.id == activeTaskId,
 					isLast = index == snapshot.schedule.lastIndex,
 					canActivate = !snapshot.paused,
+					onOpenDetail = { selectedTaskDetailId = item.task.id },
 					onActivate = {
 						CookingSessionController.activateTask(item.task.id)
 						persistAndSync()
@@ -1606,11 +1632,13 @@ private fun PlanRow(
 	active: Boolean,
 	isLast: Boolean,
 	canActivate: Boolean,
+	onOpenDetail: () -> Unit,
 	onActivate: () -> Unit,
 ) {
 	Row(
 		modifier = Modifier
 			.fillMaxWidth()
+			.clickable(onClick = onOpenDetail)
 			.padding(horizontal = 20.dp),
 		verticalAlignment = Alignment.Top,
 	) {
@@ -1742,6 +1770,29 @@ private fun PlanRowContent(
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
 			)
 			if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
+				val placeBits = buildList {
+					item.task.place?.area?.let(::add)
+					item.task.availability
+						?.takeIf { it.timeLimited }
+						?.let { add("⏱ " + it.label) }
+				}
+				if (placeBits.isNotEmpty()) {
+					Text(
+						text = placeBits.joinToString(" · "),
+						style = MaterialTheme.typography.bodySmall,
+						fontWeight = if (item.task.availability?.timeLimited == true) {
+							FontWeight.SemiBold
+						} else {
+							FontWeight.Normal
+						},
+						color = if (item.task.availability?.timeLimited == true) {
+							MaterialTheme.colorScheme.primary
+						} else {
+							MaterialTheme.colorScheme.onSurfaceVariant
+						},
+					)
+				}
+
 				Text(
 					text = when (progress) {
 						TaskProgress.COMPLETED -> "absolvované"
@@ -1783,6 +1834,278 @@ private fun PlanRowContent(
 				color = MaterialTheme.colorScheme.primary,
 			)
 		}
+	}
+}
+
+@Composable
+private fun TaskDetailDialog(
+	task: CookingTask,
+	progress: TaskProgress,
+	locationPermissionGranted: Boolean,
+	onRequestLocation: () -> Unit,
+	onDismiss: () -> Unit,
+) {
+	val context = LocalContext.current
+	val locationSensor = task.sensors.filterIsInstance<LocationProximitySensor>().firstOrNull()
+	var navigation by remember(task.id) { mutableStateOf(TaskNavigationReading()) }
+
+	DisposableEffect(
+		task.id,
+		locationPermissionGranted,
+		locationSensor?.latitude,
+		locationSensor?.longitude,
+	) {
+		if (locationPermissionGranted && locationSensor != null) {
+			val monitor = TaskNavigationMonitor(
+				context = context,
+				targetLatitude = locationSensor.latitude,
+				targetLongitude = locationSensor.longitude,
+				onReading = { navigation = it },
+			)
+			monitor.start()
+			onDispose { monitor.stop() }
+		} else {
+			navigation = TaskNavigationReading()
+			onDispose {}
+		}
+	}
+
+	Dialog(
+		onDismissRequest = onDismiss,
+		properties = DialogProperties(usePlatformDefaultWidth = false),
+	) {
+		Surface(
+			modifier = Modifier.fillMaxSize(),
+			color = MaterialTheme.colorScheme.background,
+		) {
+			LazyColumn(
+				modifier = Modifier.fillMaxSize(),
+				contentPadding = PaddingValues(bottom = 28.dp),
+			) {
+				item {
+					Row(
+						modifier = Modifier
+							.fillMaxWidth()
+							.padding(horizontal = 18.dp, vertical = 10.dp),
+						verticalAlignment = Alignment.CenterVertically,
+					) {
+						Text(
+							text = task.title,
+							style = MaterialTheme.typography.titleLarge.copy(
+								fontFamily = FontFamily.Serif,
+								fontWeight = FontWeight.SemiBold,
+							),
+							modifier = Modifier.weight(1f),
+						)
+						TextButton(onClick = onDismiss) {
+							Text("ZAVRIEŤ")
+						}
+					}
+					HorizontalDivider(
+						color = MaterialTheme.colorScheme.outline.copy(alpha = 0.65f),
+					)
+				}
+
+				item {
+					Column(modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp)) {
+						task.image?.let {
+							TaskHeroImage(it, height = 210.dp)
+							Spacer(Modifier.height(14.dp))
+						}
+
+						SmallLabel(
+							text = when (progress) {
+								TaskProgress.COMPLETED -> "ABSOLVOVANÉ"
+								TaskProgress.SKIPPED -> "PRESKOČENÉ"
+								TaskProgress.DEFERRED -> "ODLOŽENÉ"
+								TaskProgress.ACTIVE -> "AKTÍVNE"
+								TaskProgress.PENDING -> "ČAKÁ"
+							}
+						)
+						Spacer(Modifier.height(7.dp))
+						Text(
+							text = task.title,
+							style = MaterialTheme.typography.headlineMedium.copy(
+								fontFamily = FontFamily.Serif,
+								fontWeight = FontWeight.SemiBold,
+							),
+						)
+
+						task.place?.let { place ->
+							Spacer(Modifier.height(10.dp))
+							Text(
+								text = place.area,
+								style = MaterialTheme.typography.titleMedium,
+								fontWeight = FontWeight.SemiBold,
+							)
+							place.venue?.let { venue ->
+								Text(
+									text = venue,
+									style = MaterialTheme.typography.bodyMedium,
+									color = MaterialTheme.colorScheme.onSurfaceVariant,
+								)
+							}
+						}
+
+						task.availability?.let { availability ->
+							Spacer(Modifier.height(10.dp))
+							Surface(
+								color = if (availability.timeLimited) {
+									MaterialTheme.colorScheme.primaryContainer
+								} else {
+									MaterialTheme.colorScheme.surfaceVariant
+								},
+								shape = RoundedCornerShape(10.dp),
+							) {
+								Text(
+									text = if (availability.timeLimited) {
+										"⏱ ČASOVO OBMEDZENÉ · " + availability.label
+									} else {
+										availability.label
+									},
+									style = MaterialTheme.typography.labelMedium,
+									fontWeight = if (availability.timeLimited) {
+										FontWeight.Bold
+									} else {
+										FontWeight.Medium
+									},
+									modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
+								)
+							}
+						}
+
+						if (locationSensor != null) {
+							Spacer(Modifier.height(18.dp))
+							TaskCompassPanel(
+								reading = navigation,
+								locationPermissionGranted = locationPermissionGranted,
+								onRequestLocation = onRequestLocation,
+							)
+						}
+
+						Spacer(Modifier.height(18.dp))
+						Text(
+							text = task.instruction,
+							style = MaterialTheme.typography.bodyLarge,
+							color = MaterialTheme.colorScheme.onSurfaceVariant,
+						)
+
+						if (task.tips.isNotEmpty()) {
+							Spacer(Modifier.height(14.dp))
+							task.tips.forEach { tip ->
+								Text(
+									text = "• " + tip,
+									style = MaterialTheme.typography.bodyMedium,
+									color = MaterialTheme.colorScheme.onSurfaceVariant,
+								)
+								Spacer(Modifier.height(4.dp))
+							}
+						}
+
+						if (task.links.isNotEmpty()) {
+							Spacer(Modifier.height(14.dp))
+							TaskLinks(task.links)
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+@Composable
+private fun TaskCompassPanel(
+	reading: TaskNavigationReading,
+	locationPermissionGranted: Boolean,
+	onRequestLocation: () -> Unit,
+) {
+	Surface(
+		modifier = Modifier.fillMaxWidth(),
+		color = MaterialTheme.colorScheme.surfaceVariant,
+		shape = RoundedCornerShape(16.dp),
+	) {
+		Column(
+			modifier = Modifier.padding(16.dp),
+			horizontalAlignment = Alignment.CenterHorizontally,
+		) {
+			if (!locationPermissionGranted) {
+				Text(
+					text = "Pre vzdialenosť a kompas treba presnú polohu.",
+					style = MaterialTheme.typography.bodyMedium,
+					color = MaterialTheme.colorScheme.onSurfaceVariant,
+				)
+				Spacer(Modifier.height(10.dp))
+				OutlinedButton(onClick = onRequestLocation) {
+					Text("POVOLIŤ POLOHU")
+				}
+				return@Column
+			}
+
+			Box(
+				modifier = Modifier.size(122.dp),
+				contentAlignment = Alignment.Center,
+			) {
+				Surface(
+					modifier = Modifier.fillMaxSize(),
+					shape = CircleShape,
+					border = BorderStroke(
+						1.dp,
+						MaterialTheme.colorScheme.outline,
+					),
+					color = MaterialTheme.colorScheme.surface,
+				) {}
+				Text(
+					text = "N",
+					style = MaterialTheme.typography.labelMedium,
+					fontWeight = FontWeight.Bold,
+					modifier = Modifier.align(Alignment.TopCenter).padding(top = 8.dp),
+				)
+				Text(
+					text = "↑",
+					fontSize = 54.sp,
+					fontWeight = FontWeight.Bold,
+					color = MaterialTheme.colorScheme.primary,
+					modifier = Modifier.graphicsLayer(
+						rotationZ = reading.relativeBearingDegrees ?: 0f,
+					),
+				)
+			}
+
+			Spacer(Modifier.height(10.dp))
+			Text(
+				text = reading.distanceMeters?.let(::formatDistance) ?: "Hľadám polohu…",
+				style = MaterialTheme.typography.headlineSmall.copy(
+					fontFamily = FontFamily.Serif,
+					fontWeight = FontWeight.SemiBold,
+				),
+			)
+			if (reading.relativeBearingDegrees == null && reading.distanceMeters != null) {
+				Text(
+					text = "Vzdialenosť funguje, kompas v zariadení nie je dostupný.",
+					style = MaterialTheme.typography.bodySmall,
+					color = MaterialTheme.colorScheme.onSurfaceVariant,
+				)
+			}
+			reading.accuracyMeters?.let { accuracy ->
+				Text(
+					text = "presnosť polohy ±" + accuracy.toInt() + " m",
+					style = MaterialTheme.typography.labelSmall,
+					color = MaterialTheme.colorScheme.onSurfaceVariant,
+				)
+			}
+		}
+	}
+}
+
+private fun formatDistance(distanceMeters: Float): String {
+	return if (distanceMeters < 1_000f) {
+		distanceMeters.toInt().coerceAtLeast(0).toString() + " m"
+	} else {
+		String.format(
+			Locale.getDefault(),
+			"%.1f km",
+			distanceMeters / 1_000f,
+		)
 	}
 }
 
