@@ -15,6 +15,7 @@ object DataLayerProtocol {
 
 	const val KEY_VERSION = "version"
 	const val KEY_STARTED = "started"
+	const val KEY_PAUSED = "paused"
 	const val KEY_COMPLETED = "completed"
 	const val KEY_RECIPE_TITLE = "recipe_title"
 	const val KEY_CURRENT_TASK_ID = "current_task_id"
