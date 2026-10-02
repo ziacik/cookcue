@@ -201,7 +201,7 @@ private fun CookCueScreen() {
 	val secondaryBackground = snapshot.background.filterNot {
 		it.task.id == displayedWait?.task?.id
 	}
-	LaunchedEffect(snapshot.started) {
+	LaunchedEffect(snapshot.started, snapshot.paused) {
 		if (
 			snapshot.started &&
 			!snapshot.paused &&
