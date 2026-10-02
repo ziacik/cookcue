@@ -56,7 +56,11 @@
 					"radiusMeters": 35,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-29.jpg&w=1080&q=75",
+				"alt": "Drawn Together"
+			}
 		},
 		{
 			"id": "rotoskop",
@@ -100,7 +104,11 @@
 					"radiusMeters": 50,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FRotoskop%20BN%202026%20Landscape.jpg&w=1080&q=75",
+				"alt": "Rotoskop"
+			}
 		},
 		{
 			"id": "krdel",
@@ -131,6 +139,10 @@
 					"2026-10-02T19:50:00+02:00",
 					"2026-10-02T20:50:00+02:00"
 				]
+			},
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-16.png&w=1080&q=75",
+				"alt": "Kŕdeľ · 300 dronov"
 			}
 		},
 		{
@@ -175,7 +187,11 @@
 					"radiusMeters": 50,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2Fweb%20nove.png&w=1080&q=75",
+				"alt": "STRATA"
+			}
 		},
 		{
 			"id": "everything-connects",
@@ -219,7 +235,11 @@
 					"radiusMeters": 35,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-14.png&w=1080&q=75",
+				"alt": "Everything That Connects Us"
+			}
 		},
 		{
 			"id": "huso-huso",
@@ -263,7 +283,11 @@
 					"radiusMeters": 60,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-13.png&w=1080&q=75",
+				"alt": "Huso huso"
+			}
 		},
 		{
 			"id": "see-you",
@@ -307,7 +331,11 @@
 					"radiusMeters": 50,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FSni%CC%81mka%20obrazovky%202026-09-12%20o%2011.11.41.png&w=1080&q=75",
+				"alt": "SEE YOU"
+			}
 		},
 		{
 			"id": "magicky-les",
@@ -351,7 +379,11 @@
 					"radiusMeters": 50,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2Fweb%20Atelier%20Meter.jpg&w=1080&q=75",
+				"alt": "Magický les"
+			}
 		},
 		{
 			"id": "seed-sprout",
@@ -395,7 +427,11 @@
 					"radiusMeters": 60,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-7.jpg&w=1080&q=75",
+				"alt": "Seed Sprout"
+			}
 		},
 		{
 			"id": "ray",
@@ -441,7 +477,11 @@
 					"radiusMeters": 50,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-5.JPG&w=1080&q=75",
+				"alt": "Ray"
+			}
 		},
 		{
 			"id": "geofonia",
@@ -487,7 +527,11 @@
 					"radiusMeters": 45,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-4.png&w=1080&q=75",
+				"alt": "GEOFÓNIA"
+			}
 		},
 		{
 			"id": "satellites",
@@ -531,7 +575,11 @@
 					"radiusMeters": 45,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-2.jpg&w=1080&q=75",
+				"alt": "SATELLITES"
+			}
 		},
 		{
 			"id": "catch-them-all",
@@ -575,7 +623,11 @@
 					"radiusMeters": 80,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-8.png&w=1080&q=75",
+				"alt": "Catch them all!"
+			}
 		},
 		{
 			"id": "sfera-spojenia",
@@ -619,7 +671,11 @@
 					"radiusMeters": 60,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-15.png&w=1080&q=75",
+				"alt": "Sféra spojenia"
+			}
 		},
 		{
 			"id": "pure-rain",
@@ -663,7 +719,11 @@
 					"radiusMeters": 40,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-13.jpg&w=1080&q=75",
+				"alt": "PURE RAIN II"
+			}
 		},
 		{
 			"id": "sol-machina",
@@ -707,7 +767,11 @@
 					"radiusMeters": 60,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB.jpg&w=1080&q=75",
+				"alt": "SOL MACHINA"
+			}
 		},
 		{
 			"id": "aftereal",
@@ -751,7 +815,11 @@
 					"radiusMeters": 60,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FSni%CC%81mka%20obrazovky%202026-09-12%20o%2011.43.06.png&w=1080&q=75",
+				"alt": "AFTEREAL"
+			}
 		},
 		{
 			"id": "wellness",
@@ -799,7 +867,11 @@
 					"radiusMeters": 40,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-6.png&w=1080&q=75",
+				"alt": "Wellness"
+			}
 		},
 		{
 			"id": "the-lights",
@@ -847,7 +919,11 @@
 					"radiusMeters": 50,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FGemini_Generated_Image_ffqg4ffqg4ffqg4f.jpg&w=1080&q=75",
+				"alt": "The Lights Are Not What They Seem"
+			}
 		},
 		{
 			"id": "zakouti-evoluce",
@@ -891,7 +967,11 @@
 					"radiusMeters": 35,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-6.jpg&w=1080&q=75",
+				"alt": "Zákoutí evoluce"
+			}
 		},
 		{
 			"id": "presvit",
@@ -935,7 +1015,11 @@
 					"radiusMeters": 60,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB.jpeg&w=1080&q=75",
+				"alt": "preSVIT"
+			}
 		},
 		{
 			"id": "totem",
@@ -979,7 +1063,11 @@
 					"radiusMeters": 45,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-5.png&w=1080&q=75",
+				"alt": "TOTEM"
+			}
 		},
 		{
 			"id": "skryte-sceny",
@@ -1023,7 +1111,11 @@
 					"radiusMeters": 50,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB-18.jpg&w=1080&q=75",
+				"alt": "Skryté scény"
+			}
 		},
 		{
 			"id": "power-tree",
@@ -1067,7 +1159,11 @@
 					"radiusMeters": 60,
 					"activationMode": "SUGGEST"
 				}
-			]
+			],
+			"image": {
+				"url": "https://www.bielanoc.sk/_next/image?url=https%3A%2F%2Fmedia.bielanoc.sk%2FWEB.png&w=1080&q=75",
+				"alt": "Power Tree"
+			}
 		}
 	]
 }

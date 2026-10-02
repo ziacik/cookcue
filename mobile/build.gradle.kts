@@ -13,8 +13,8 @@ android {
 		applicationId = "com.ziacik.cookcue"
 		minSdk = 26
 		targetSdk = 37
-		versionCode = 4
-		versionName = "0.4.0"
+		versionCode = 5
+		versionName = "0.5.0"
 	}
 
 	buildFeatures {
@@ -55,6 +55,7 @@ dependencies {
 	implementation("androidx.compose.ui:ui")
 	implementation("androidx.compose.ui:ui-tooling-preview")
 	implementation("com.google.android.gms:play-services-wearable:20.0.1")
+	implementation("io.coil-kt:coil-compose:2.7.0")
 
 	debugImplementation("androidx.compose.ui:ui-tooling")
 }

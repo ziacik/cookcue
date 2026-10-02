@@ -55,6 +55,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
@@ -69,8 +70,10 @@ import com.ziacik.cookcue.core.model.LocationProximitySensor
 import com.ziacik.cookcue.core.model.Recipe
 import com.ziacik.cookcue.core.model.ScheduleMode
 import com.ziacik.cookcue.core.model.ScheduledTask
+import com.ziacik.cookcue.core.model.TaskImage
 import com.ziacik.cookcue.core.model.TaskKind
 import com.ziacik.cookcue.core.model.TaskLink
+import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import java.time.Instant
 import java.time.ZoneId
@@ -391,6 +394,7 @@ private fun CookCueScreen() {
 							Spacer(Modifier.height(12.dp))
 							NearbySuggestionCard(
 								suggestion = suggestion,
+								image = recipe.tasks.firstOrNull { it.id == suggestion.taskId }?.image,
 								onDismiss = {
 									CookingSessionController.dismissNearbySuggestion(suggestion.taskId)
 									persistAndSync()
@@ -414,6 +418,7 @@ private fun CookCueScreen() {
 									(snapshot.elapsedSeconds - current.startSeconds).coerceAtLeast(0)
 								CurrentStepCard(
 									title = current.task.title,
+									image = current.task.image,
 									instruction = current.task.instruction,
 									tips = current.task.tips,
 									links = current.task.links,
@@ -442,6 +447,7 @@ private fun CookCueScreen() {
 										.coerceAtLeast(1)
 								CurrentStepCard(
 									title = displayedWait.task.title,
+									image = displayedWait.task.image,
 									instruction = displayedWait.task.instruction,
 									tips = displayedWait.task.tips,
 									links = displayedWait.task.links,
@@ -480,6 +486,7 @@ private fun CookCueScreen() {
 						Spacer(Modifier.height(12.dp))
 						PendingEventCard(
 							title = event.task.title,
+							image = event.task.image,
 							instruction = event.task.instruction,
 							tips = event.task.tips,
 							links = event.task.links,
@@ -842,6 +849,7 @@ private fun IngredientList(
 @Composable
 private fun CurrentStepCard(
 	title: String,
+	image: TaskImage?,
 	instruction: String,
 	tips: List<String>,
 	links: List<TaskLink>,
@@ -889,6 +897,11 @@ private fun CurrentStepCard(
 						color = MaterialTheme.colorScheme.onSurfaceVariant,
 					)
 				}
+			}
+
+			if (image != null) {
+				Spacer(Modifier.height(13.dp))
+				TaskHeroImage(image)
 			}
 
 			Spacer(Modifier.height(13.dp))
@@ -1175,6 +1188,7 @@ private fun IdleCard(isItinerary: Boolean) {
 @Composable
 private fun PendingEventCard(
 	title: String,
+	image: TaskImage?,
 	instruction: String,
 	tips: List<String>,
 	links: List<TaskLink>,
@@ -1194,6 +1208,10 @@ private fun PendingEventCard(
 				text = "ČAKÁ NA TEBA",
 				color = MaterialTheme.colorScheme.tertiary,
 			)
+			if (image != null) {
+				Spacer(Modifier.height(10.dp))
+				TaskHeroImage(image, height = 150.dp)
+			}
 			Spacer(Modifier.height(6.dp))
 			Text(
 				text = title,
@@ -1272,6 +1290,7 @@ private fun PendingEventCard(
 @Composable
 private fun NearbySuggestionCard(
 	suggestion: NearbyTaskSuggestion,
+	image: TaskImage?,
 	onDismiss: () -> Unit,
 	onActivate: () -> Unit,
 ) {
@@ -1282,6 +1301,10 @@ private fun NearbySuggestionCard(
 	) {
 		Column(modifier = Modifier.padding(16.dp)) {
 			SmallLabel("SI BLÍZKO")
+			if (image != null) {
+				Spacer(Modifier.height(8.dp))
+				TaskHeroImage(image, height = 120.dp)
+			}
 			Spacer(Modifier.height(6.dp))
 			Text(
 				text = suggestion.taskTitle,
@@ -1312,6 +1335,43 @@ private fun NearbySuggestionCard(
 				}
 			}
 		}
+	}
+}
+
+@Composable
+private fun TaskHeroImage(
+	image: TaskImage,
+	height: Dp = 190.dp,
+) {
+	Surface(
+		modifier = Modifier
+			.fillMaxWidth()
+			.height(height),
+		shape = RoundedCornerShape(14.dp),
+		color = MaterialTheme.colorScheme.surfaceVariant,
+	) {
+		AsyncImage(
+			model = image.url,
+			contentDescription = image.alt,
+			contentScale = ContentScale.Crop,
+			modifier = Modifier.fillMaxSize(),
+		)
+	}
+}
+
+@Composable
+private fun TaskThumbnail(image: TaskImage) {
+	Surface(
+		modifier = Modifier.size(width = 72.dp, height = 54.dp),
+		shape = RoundedCornerShape(10.dp),
+		color = MaterialTheme.colorScheme.surfaceVariant,
+	) {
+		AsyncImage(
+			model = image.url,
+			contentDescription = image.alt,
+			contentScale = ContentScale.Crop,
+			modifier = Modifier.fillMaxSize(),
+		)
 	}
 }
 
@@ -1504,6 +1564,10 @@ private fun PlanRowContent(
 			),
 		verticalAlignment = Alignment.CenterVertically,
 	) {
+		item.task.image?.let { image ->
+			TaskThumbnail(image)
+			Spacer(Modifier.width(10.dp))
+		}
 		Column(modifier = Modifier.weight(1f)) {
 			Text(
 				text = if (recipe.scheduleMode == ScheduleMode.ITINERARY) {

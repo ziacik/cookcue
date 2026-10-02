@@ -9,6 +9,7 @@ import com.ziacik.cookcue.core.model.ResourceRequirement
 import com.ziacik.cookcue.core.model.ScheduleMode
 import com.ziacik.cookcue.core.model.SensorActivationMode
 import com.ziacik.cookcue.core.model.Skill
+import com.ziacik.cookcue.core.model.TaskImage
 import com.ziacik.cookcue.core.model.TaskKind
 import com.ziacik.cookcue.core.model.TaskLink
 import com.ziacik.cookcue.core.model.TaskSensor
@@ -78,6 +79,12 @@ internal object RecipeJsonCodec {
 			retryActionLabel = task.optionalString("retryActionLabel"),
 			retryAfterSeconds = task.optionalLong("retryAfterSeconds"),
 			optional = task.optBoolean("optional", false),
+			image = task.optJSONObject("image")?.let { image ->
+				TaskImage(
+					url = image.getString("url"),
+					alt = image.optionalString("alt"),
+				)
+			},
 			links = task.optJSONArray("links")
 				?.mapObjects { link ->
 					TaskLink(
