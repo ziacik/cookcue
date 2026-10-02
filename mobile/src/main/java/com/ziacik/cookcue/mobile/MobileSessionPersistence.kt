@@ -13,6 +13,8 @@ object MobileSessionPersistence {
 	private const val KEY_TASK_START_OVERRIDES = "task-start-overrides"
 	private const val KEY_EVENT_DEFERRED_UNTIL = "event-deferred-until"
 	private const val KEY_SKIPPED_TASK_IDS = "skipped-task-ids"
+	private const val KEY_DEFERRED_TASK_IDS = "deferred-task-ids"
+	private const val KEY_PAUSED = "paused"
 	private const val KEY_ACTIVE_TASK_OVERRIDE_ID = "active-task-override-id"
 	private const val KEY_ACTIVE_TASK_OVERRIDE_STARTED_AT = "active-task-override-started-at"
 	private const val KEY_NEARBY_SNOOZE_TASK_ID = "nearby-snooze-task-id"
@@ -50,6 +52,10 @@ object MobileSessionPersistence {
 			val skippedTaskIds = decodeSet(
 				prefs.getString(KEY_SKIPPED_TASK_IDS, null).orEmpty()
 			)
+			val deferredTaskIds = decodeSet(
+				prefs.getString(KEY_DEFERRED_TASK_IDS, null).orEmpty()
+			)
+			val paused = prefs.getBoolean(KEY_PAUSED, false)
 			val activeTaskOverrideId = prefs.getString(KEY_ACTIVE_TASK_OVERRIDE_ID, null)
 			val storedActiveTaskOverrideStartedAt =
 				prefs.getLong(KEY_ACTIVE_TASK_OVERRIDE_STARTED_AT, -1L)
@@ -68,6 +74,8 @@ object MobileSessionPersistence {
 				durationOverrides = overrides,
 				taskStartOverrides = taskStartOverrides,
 				skippedTaskIds = skippedTaskIds,
+				deferredTaskIds = deferredTaskIds,
+				paused = paused,
 				activeTaskOverrideId = activeTaskOverrideId,
 				activeTaskOverrideStartedAtSeconds = activeTaskOverrideStartedAtSeconds,
 				nearbySuggestionSnoozeTaskId = nearbySuggestionSnoozeTaskId,
@@ -84,6 +92,7 @@ object MobileSessionPersistence {
 		val taskStartOverrides = encodeMap(CookingSessionController.taskStartOverrides)
 		val eventDeferredUntil = encodeMap(CookingSessionController.eventDeferredUntil)
 		val skippedTaskIds = encodeSet(CookingSessionController.skippedTaskIds)
+		val deferredTaskIds = encodeSet(CookingSessionController.deferredTaskIds)
 
 		context
 			.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
@@ -95,6 +104,8 @@ object MobileSessionPersistence {
 				putString(KEY_TASK_START_OVERRIDES, taskStartOverrides)
 				putString(KEY_EVENT_DEFERRED_UNTIL, eventDeferredUntil)
 				putString(KEY_SKIPPED_TASK_IDS, skippedTaskIds)
+				putString(KEY_DEFERRED_TASK_IDS, deferredTaskIds)
+				putBoolean(KEY_PAUSED, CookingSessionController.paused)
 				putString(KEY_ACTIVE_TASK_OVERRIDE_ID, CookingSessionController.activeTaskOverrideId)
 				putLong(KEY_ACTIVE_TASK_OVERRIDE_STARTED_AT, CookingSessionController.activeTaskOverrideStartedAtSeconds ?: -1L)
 				putString(KEY_NEARBY_SNOOZE_TASK_ID, CookingSessionController.nearbySuggestionSnoozeTaskId)
