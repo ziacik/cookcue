@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
+import android.hardware.GeomagneticField
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.location.Location
@@ -132,7 +133,16 @@ class TaskNavigationMonitor(
 		}
 
 		val targetBearing = normalizeDegrees(location.bearingTo(target))
-		val relativeBearing = heading?.let { currentHeading ->
+		val trueHeading = heading?.let { magneticHeading ->
+			val field = GeomagneticField(
+				location.latitude.toFloat(),
+				location.longitude.toFloat(),
+				location.altitude.toFloat(),
+				System.currentTimeMillis(),
+			)
+			normalizeDegrees(magneticHeading + field.declination)
+		}
+		val relativeBearing = trueHeading?.let { currentHeading ->
 			normalizeSignedDegrees(targetBearing - currentHeading)
 		}
 
@@ -140,7 +150,7 @@ class TaskNavigationMonitor(
 			TaskNavigationReading(
 				distanceMeters = location.distanceTo(target),
 				relativeBearingDegrees = relativeBearing,
-				headingDegrees = heading,
+				headingDegrees = trueHeading,
 				targetBearingDegrees = targetBearing,
 				accuracyMeters = location.accuracy.takeIf { location.hasAccuracy() },
 			)
