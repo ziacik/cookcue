@@ -84,6 +84,7 @@ private fun WearCookCueScreen() {
 
 	val keepScreenAwake =
 		state.started &&
+			!state.paused &&
 			(
 				state.currentTaskId.isNotBlank() ||
 					state.eventTaskId.isNotBlank() ||
@@ -102,6 +103,7 @@ private fun WearCookCueScreen() {
 	LaunchedEffect(state.started) {
 		if (
 			state.started &&
+			!state.paused &&
 			Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
 			context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
 			PackageManager.PERMISSION_GRANTED
@@ -110,9 +112,9 @@ private fun WearCookCueScreen() {
 		}
 	}
 
-	LaunchedEffect(state.receivedAtElapsedRealtime, state.started) {
+	LaunchedEffect(state.receivedAtElapsedRealtime, state.started, state.paused) {
 		var ticks = 0
-		while (state.started) {
+		while (state.started && !state.paused) {
 			now = SystemClock.elapsedRealtime()
 			ticks++
 			if (ticks % 10 == 0) {
@@ -220,6 +222,14 @@ private fun WearCookCueScreen() {
 							DataLayerProtocol.ACTION_START,
 						)
 					},
+				)
+			}
+
+			state.paused -> {
+				SimpleState(
+					message = "Itinerár je pozastavený",
+					buttonText = null,
+					onClick = {},
 				)
 			}
 
