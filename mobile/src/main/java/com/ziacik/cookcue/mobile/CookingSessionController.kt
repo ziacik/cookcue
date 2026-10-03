@@ -289,6 +289,17 @@ object CookingSessionController {
 		}
 
 		val task = recipe.tasks.firstOrNull { it.id == taskId } ?: return
+		if (taskId in skippedTaskIds) {
+			durationOverrides = durationOverrides - taskId
+			taskStartOverrides = taskStartOverrides - taskId
+			skippedTaskIds = skippedTaskIds - taskId
+			manuallyCompletedTaskIds = manuallyCompletedTaskIds + task.id
+			deferredTaskIds = deferredTaskIds - task.id
+			eventDeferredUntil = eventDeferredUntil - task.id
+			clearNearbySuggestion()
+			markSilentTransition()
+			return
+		}
 		if (isTaskCompleted(taskId)) {
 			return
 		}
