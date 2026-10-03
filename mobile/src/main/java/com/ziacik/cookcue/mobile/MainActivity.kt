@@ -282,6 +282,10 @@ private fun CookCueScreen() {
 						)
 					)
 				},
+				onUndoCompleted = {
+					CookingSessionController.undoCompletedTask(task.id)
+					persistAndSync()
+				},
 				onDismiss = { selectedTaskDetailId = null },
 			)
 		}
@@ -1755,6 +1759,27 @@ private fun PlanRowContent(
 				fontWeight = if (active) FontWeight.Bold else FontWeight.Medium,
 				color = MaterialTheme.colorScheme.onSurface,
 			)
+			if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
+				item.task.place?.area?.let { area ->
+					Spacer(Modifier.height(2.dp))
+					Text(
+						text = area,
+						style = MaterialTheme.typography.bodyMedium,
+						fontWeight = FontWeight.SemiBold,
+						color = MaterialTheme.colorScheme.primary,
+					)
+				}
+				item.task.availability
+					?.takeIf { it.timeLimited }
+					?.let { availability ->
+						Text(
+							text = "⏱ " + availability.label,
+							style = MaterialTheme.typography.bodySmall,
+							fontWeight = FontWeight.SemiBold,
+							color = MaterialTheme.colorScheme.primary,
+						)
+					}
+			}
 			Spacer(Modifier.height(2.dp))
 			Text(
 				text = if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
@@ -1770,29 +1795,6 @@ private fun PlanRowContent(
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
 			)
 			if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
-				val placeBits = buildList {
-					item.task.place?.area?.let(::add)
-					item.task.availability
-						?.takeIf { it.timeLimited }
-						?.let { add("⏱ " + it.label) }
-				}
-				if (placeBits.isNotEmpty()) {
-					Text(
-						text = placeBits.joinToString(" · "),
-						style = MaterialTheme.typography.bodySmall,
-						fontWeight = if (item.task.availability?.timeLimited == true) {
-							FontWeight.SemiBold
-						} else {
-							FontWeight.Normal
-						},
-						color = if (item.task.availability?.timeLimited == true) {
-							MaterialTheme.colorScheme.primary
-						} else {
-							MaterialTheme.colorScheme.onSurfaceVariant
-						},
-					)
-				}
-
 				Text(
 					text = when (progress) {
 						TaskProgress.COMPLETED -> "absolvované"
@@ -1805,9 +1807,12 @@ private fun PlanRowContent(
 					color = MaterialTheme.colorScheme.onSurfaceVariant,
 				)
 			}
-			if (item.task.links.isNotEmpty()) {
+			val compactLinks = item.task.links.filterNot {
+				it.label.equals("DETAIL", ignoreCase = true)
+			}
+			if (compactLinks.isNotEmpty()) {
 				Spacer(Modifier.height(3.dp))
-				TaskLinks(item.task.links, compact = true)
+				TaskLinks(compactLinks, compact = true)
 			}
 			if (
 				recipe.scheduleMode == ScheduleMode.ITINERARY &&
@@ -1843,6 +1848,7 @@ private fun TaskDetailDialog(
 	progress: TaskProgress,
 	locationPermissionGranted: Boolean,
 	onRequestLocation: () -> Unit,
+	onUndoCompleted: () -> Unit,
 	onDismiss: () -> Unit,
 ) {
 	val context = LocalContext.current
@@ -2005,6 +2011,20 @@ private fun TaskDetailDialog(
 						if (task.links.isNotEmpty()) {
 							Spacer(Modifier.height(14.dp))
 							TaskLinks(task.links)
+						}
+
+						if (progress == TaskProgress.COMPLETED) {
+							Spacer(Modifier.height(20.dp))
+							OutlinedButton(
+								onClick = onUndoCompleted,
+								modifier = Modifier.fillMaxWidth(),
+								shape = RoundedCornerShape(12.dp),
+							) {
+								Text(
+									text = "ZRUŠIŤ ABSOLVOVANIE",
+									fontWeight = FontWeight.Bold,
+								)
+							}
 						}
 					}
 				}
