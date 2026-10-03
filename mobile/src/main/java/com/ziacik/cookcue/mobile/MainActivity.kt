@@ -282,6 +282,10 @@ private fun CookCueScreen() {
 						)
 					)
 				},
+				onMarkCompleted = {
+					CookingSessionController.markTaskCompleted(task.id)
+					persistAndSync()
+				},
 				onUndoCompleted = {
 					CookingSessionController.undoCompletedTask(task.id)
 					persistAndSync()
@@ -1852,6 +1856,7 @@ private fun TaskDetailDialog(
 	progress: TaskProgress,
 	locationPermissionGranted: Boolean,
 	onRequestLocation: () -> Unit,
+	onMarkCompleted: () -> Unit,
 	onUndoCompleted: () -> Unit,
 	onRestoreDeferred: () -> Unit,
 	onDismiss: () -> Unit,
@@ -2018,8 +2023,8 @@ private fun TaskDetailDialog(
 							TaskLinks(task.links)
 						}
 
+						Spacer(Modifier.height(20.dp))
 						if (progress == TaskProgress.COMPLETED) {
-							Spacer(Modifier.height(20.dp))
 							OutlinedButton(
 								onClick = onUndoCompleted,
 								modifier = Modifier.fillMaxWidth(),
@@ -2030,20 +2035,33 @@ private fun TaskDetailDialog(
 									fontWeight = FontWeight.Bold,
 								)
 							}
-						} else if (
-							progress == TaskProgress.DEFERRED &&
-							task.kind == TaskKind.EVENT
-						) {
-							Spacer(Modifier.height(20.dp))
-							OutlinedButton(
-								onClick = onRestoreDeferred,
+						} else {
+							Button(
+								onClick = onMarkCompleted,
 								modifier = Modifier.fillMaxWidth(),
 								shape = RoundedCornerShape(12.dp),
 							) {
 								Text(
-									text = "VRÁTIŤ MEDZI ČAKAJÚCE",
+									text = "✓  OZNAČIŤ AKO ABSOLVOVANÉ",
 									fontWeight = FontWeight.Bold,
 								)
+							}
+
+							if (
+								progress == TaskProgress.DEFERRED &&
+								task.kind == TaskKind.EVENT
+							) {
+								Spacer(Modifier.height(8.dp))
+								OutlinedButton(
+									onClick = onRestoreDeferred,
+									modifier = Modifier.fillMaxWidth(),
+									shape = RoundedCornerShape(12.dp),
+								) {
+									Text(
+										text = "VRÁTIŤ MEDZI ČAKAJÚCE",
+										fontWeight = FontWeight.Bold,
+									)
+								}
 							}
 						}
 					}
