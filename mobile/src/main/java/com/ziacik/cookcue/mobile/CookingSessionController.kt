@@ -271,6 +271,41 @@ object CookingSessionController {
 		markUserAction()
 	}
 
+	fun undoCompletedTask(taskId: String) {
+		if (
+			recipe.scheduleMode != ScheduleMode.ITINERARY ||
+			startedAt == null ||
+			taskId !in durationOverrides ||
+			taskId in skippedTaskIds
+		) {
+			return
+		}
+
+		durationOverrides = durationOverrides - taskId
+		taskStartOverrides = taskStartOverrides - taskId
+		deferredTaskIds = deferredTaskIds + taskId
+		if (activeTaskOverrideId == taskId) {
+			activeTaskOverrideId = null
+			activeTaskOverrideStartedAtSeconds = null
+		}
+		clearNearbySuggestion()
+		markSilentTransition()
+	}
+
+	fun restoreDeferredTask(taskId: String) {
+		if (
+			recipe.scheduleMode != ScheduleMode.ITINERARY ||
+			startedAt == null ||
+			taskId !in deferredTaskIds
+		) {
+			return
+		}
+
+		deferredTaskIds = deferredTaskIds - taskId
+		eventDeferredUntil = eventDeferredUntil - taskId
+		markSilentTransition()
+	}
+
 	fun skipAction(taskId: String) {
 		val snapshot = snapshot()
 		val action = snapshot.currentAction
@@ -435,6 +470,7 @@ object CookingSessionController {
 		}
 		durationOverrides = durationOverrides + (taskId to actualDuration)
 		taskStartOverrides = taskStartOverrides + (taskId to event.startSeconds)
+		deferredTaskIds = deferredTaskIds - taskId
 		eventDeferredUntil = eventDeferredUntil - taskId
 		markUserAction()
 	}
@@ -506,6 +542,7 @@ object CookingSessionController {
 			schedule.filter {
 				it.task.kind == TaskKind.EVENT &&
 					it.task.id !in durationOverrides &&
+					it.task.id !in deferredTaskIds &&
 					it.task.id !in blockedIds &&
 					it.startSeconds <= elapsedSeconds &&
 					eventIsDue(it.task.id, elapsedSeconds)
