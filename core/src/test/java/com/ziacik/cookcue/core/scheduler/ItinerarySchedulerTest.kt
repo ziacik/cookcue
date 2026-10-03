@@ -70,6 +70,33 @@ class ItinerarySchedulerTest {
 	}
 
 	@Test
+	fun manuallySatisfiedStopDoesNotOccupyTimeOrBlockDependencies() {
+		val recipe = recipe(
+			CookingTask(
+				id = "already-seen",
+				title = "Already seen",
+				durationSeconds = 150,
+				itineraryTiming = windows(0, 300),
+			),
+			CookingTask(
+				id = "next",
+				title = "Next",
+				durationSeconds = 60,
+				dependsOn = setOf("already-seen"),
+				itineraryTiming = windows(0, 300),
+			),
+		)
+
+		val schedule = scheduler.schedule(
+			recipe = recipe,
+			satisfiedTaskIds = setOf("already-seen"),
+		)
+
+		assertEquals(0L, schedule.single { it.task.id == "already-seen" }.startSeconds)
+		assertEquals(0L, schedule.single { it.task.id == "next" }.startSeconds)
+	}
+
+	@Test
 	fun manuallyPinnedStopDoesNotMoveFixedEvent() {
 		val recipe = recipe(
 			CookingTask(
