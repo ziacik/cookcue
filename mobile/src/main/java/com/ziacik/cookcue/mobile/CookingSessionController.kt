@@ -271,6 +271,27 @@ object CookingSessionController {
 		markUserAction()
 	}
 
+	fun undoCompletedTask(taskId: String) {
+		if (
+			recipe.scheduleMode != ScheduleMode.ITINERARY ||
+			startedAt == null ||
+			taskId !in durationOverrides ||
+			taskId in skippedTaskIds
+		) {
+			return
+		}
+
+		durationOverrides = durationOverrides - taskId
+		taskStartOverrides = taskStartOverrides - taskId
+		deferredTaskIds = deferredTaskIds + taskId
+		if (activeTaskOverrideId == taskId) {
+			activeTaskOverrideId = null
+			activeTaskOverrideStartedAtSeconds = null
+		}
+		clearNearbySuggestion()
+		markSilentTransition()
+	}
+
 	fun skipAction(taskId: String) {
 		val snapshot = snapshot()
 		val action = snapshot.currentAction
