@@ -13,6 +13,7 @@ object MobileSessionPersistence {
 	private const val KEY_TASK_START_OVERRIDES = "task-start-overrides"
 	private const val KEY_EVENT_DEFERRED_UNTIL = "event-deferred-until"
 	private const val KEY_SKIPPED_TASK_IDS = "skipped-task-ids"
+	private const val KEY_MANUALLY_COMPLETED_TASK_IDS = "manually-completed-task-ids"
 	private const val KEY_DEFERRED_TASK_IDS = "deferred-task-ids"
 	private const val KEY_PAUSED = "paused"
 	private const val KEY_ACTIVE_TASK_OVERRIDE_ID = "active-task-override-id"
@@ -52,6 +53,9 @@ object MobileSessionPersistence {
 			val skippedTaskIds = decodeSet(
 				prefs.getString(KEY_SKIPPED_TASK_IDS, null).orEmpty()
 			)
+			val manuallyCompletedTaskIds = decodeSet(
+				prefs.getString(KEY_MANUALLY_COMPLETED_TASK_IDS, null).orEmpty()
+			)
 			val deferredTaskIds = decodeSet(
 				prefs.getString(KEY_DEFERRED_TASK_IDS, null).orEmpty()
 			)
@@ -74,6 +78,7 @@ object MobileSessionPersistence {
 				durationOverrides = overrides,
 				taskStartOverrides = taskStartOverrides,
 				skippedTaskIds = skippedTaskIds,
+				manuallyCompletedTaskIds = manuallyCompletedTaskIds,
 				deferredTaskIds = deferredTaskIds,
 				paused = paused,
 				activeTaskOverrideId = activeTaskOverrideId,
@@ -92,6 +97,8 @@ object MobileSessionPersistence {
 		val taskStartOverrides = encodeMap(CookingSessionController.taskStartOverrides)
 		val eventDeferredUntil = encodeMap(CookingSessionController.eventDeferredUntil)
 		val skippedTaskIds = encodeSet(CookingSessionController.skippedTaskIds)
+		val manuallyCompletedTaskIds =
+			encodeSet(CookingSessionController.manuallyCompletedTaskIds)
 		val deferredTaskIds = encodeSet(CookingSessionController.deferredTaskIds)
 
 		context
@@ -104,6 +111,7 @@ object MobileSessionPersistence {
 				putString(KEY_TASK_START_OVERRIDES, taskStartOverrides)
 				putString(KEY_EVENT_DEFERRED_UNTIL, eventDeferredUntil)
 				putString(KEY_SKIPPED_TASK_IDS, skippedTaskIds)
+				putString(KEY_MANUALLY_COMPLETED_TASK_IDS, manuallyCompletedTaskIds)
 				putString(KEY_DEFERRED_TASK_IDS, deferredTaskIds)
 				putBoolean(KEY_PAUSED, CookingSessionController.paused)
 				putString(KEY_ACTIVE_TASK_OVERRIDE_ID, CookingSessionController.activeTaskOverrideId)
