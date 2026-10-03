@@ -107,6 +107,16 @@ class ItineraryScheduler {
 				"Flexible itinerary task '${task.id}' must define availability windows."
 			}
 
+			if (task.id in satisfiedTaskIds) {
+				pin(
+					task = task,
+					startSeconds = windows.first().startEpochSeconds - epochStart,
+					occupiesTime = false,
+				)
+				remaining.remove(task)
+				continue
+			}
+
 			val start = windows
 				.asSequence()
 				.map { window ->
