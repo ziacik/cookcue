@@ -97,6 +97,34 @@ class ItinerarySchedulerTest {
 	}
 
 	@Test
+	fun satisfiedStopCanRemainRecordedAfterItsWindowExpired() {
+		val recipe = recipe(
+			CookingTask(
+				id = "yesterday",
+				title = "Yesterday",
+				durationSeconds = 60,
+				itineraryTiming = windows(0, 100),
+			),
+			CookingTask(
+				id = "today",
+				title = "Today",
+				durationSeconds = 60,
+				dependsOn = setOf("yesterday"),
+				itineraryTiming = windows(200, 400),
+			),
+		)
+
+		val schedule = scheduler.schedule(
+			recipe = recipe,
+			satisfiedTaskIds = setOf("yesterday"),
+			earliestUnscheduledStartSeconds = 200,
+		)
+
+		assertEquals(0L, schedule.single { it.task.id == "yesterday" }.startSeconds)
+		assertEquals(200L, schedule.single { it.task.id == "today" }.startSeconds)
+	}
+
+	@Test
 	fun manuallyPinnedStopDoesNotMoveFixedEvent() {
 		val recipe = recipe(
 			CookingTask(
