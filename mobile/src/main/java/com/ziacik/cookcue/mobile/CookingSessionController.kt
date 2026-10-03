@@ -963,6 +963,9 @@ object CookingSessionController {
 		while (queue.isNotEmpty()) {
 			val current = queue.removeFirst()
 			children[current].orEmpty().forEach { child ->
+				if (isTaskCompleted(child)) {
+					return@forEach
+				}
 				if (blocked.add(child)) {
 					queue.addLast(child)
 				}
