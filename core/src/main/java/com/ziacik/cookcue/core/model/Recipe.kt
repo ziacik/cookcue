@@ -63,6 +63,24 @@ data class TaskImage(
 	}
 }
 
+data class TaskPlace(
+	val area: String,
+	val venue: String? = null,
+) {
+	init {
+		require(area.isNotBlank())
+	}
+}
+
+data class TaskAvailability(
+	val label: String,
+	val timeLimited: Boolean = false,
+) {
+	init {
+		require(label.isNotBlank())
+	}
+}
+
 enum class SensorActivationMode {
 	SUGGEST,
 	AUTO_ACTIVATE,
@@ -104,6 +122,8 @@ data class CookingTask(
 	val retryAfterSeconds: Long? = null,
 	val optional: Boolean = false,
 	val image: TaskImage? = null,
+	val place: TaskPlace? = null,
+	val availability: TaskAvailability? = null,
 	val links: List<TaskLink> = emptyList(),
 	val sensors: List<TaskSensor> = emptyList(),
 	val itineraryTiming: ItineraryTiming? = null,
