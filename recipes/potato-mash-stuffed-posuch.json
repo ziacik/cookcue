@@ -1,0 +1,146 @@
+{
+	"schemaVersion": 1,
+	"id": "potato-mash-stuffed-posuch",
+	"title": "Posúch plnený zemiakovou kašou",
+	"description": "Jeden veľký pečený posúch · kysnuté cesto · zemiaková kaša s opečenou cibuľkou",
+	"servings": 4,
+	"ingredients": [
+		{"name": "hladká múka", "amount": "350 g"},
+		{"name": "vlažná voda", "amount": "200 ml"},
+		{"name": "sušené droždie", "amount": "7 g"},
+		{"name": "cukor", "amount": "1 ČL"},
+		{"name": "soľ", "amount": "1 ČL do cesta + podľa chuti do kaše"},
+		{"name": "olej", "amount": "2 PL do cesta + trochu na plech"},
+		{"name": "zemiaky", "amount": "500 g"},
+		{"name": "maslo", "amount": "35 g + trochu na potretie po upečení"},
+		{"name": "mlieko", "amount": "cca 80–120 ml, podľa potreby"},
+		{"name": "cibuľa", "amount": "1 stredná"},
+		{"name": "mleté čierne korenie", "amount": "podľa chuti"}
+	],
+	"resourceCapacities": {"cook": 1, "pot": 1, "burner": 1, "oven": 1},
+	"preCookingNote": "Kaša musí byť skôr hustá než riedka, inak sa bude posúch zle zatvárať. Po uvarení ju nechaj aspoň mierne vychladnúť.",
+	"tasks": [
+		{
+			"id": "make-dough",
+			"title": "Zamies cesto",
+			"durationSeconds": 600,
+			"resources": ["cook"],
+			"instruction": "Do misy daj 350 g hladkej múky, 7 g sušeného droždia, 1 ČL cukru a 1 ČL soli. Prilej 200 ml vlažnej vody a 2 PL oleja. Mies približne 8–10 minút, kým je cesto hladké a pružné."
+		},
+		{
+			"id": "dough-rise",
+			"title": "Nechaj cesto vykysnúť",
+			"durationSeconds": 2700,
+			"dependsOn": ["make-dough"],
+			"kind": "WAIT",
+			"instruction": "Misu prikry a nechaj cesto kysnúť približne 45 minút. Počas kysnutia priprav zemiakovú plnku."
+		},
+		{
+			"id": "prep-potatoes",
+			"title": "Ošúp a nakrájaj zemiaky",
+			"durationSeconds": 600,
+			"dependsOn": ["make-dough"],
+			"resources": ["cook"],
+			"skill": "PEELING",
+			"instruction": "Ošúp 500 g zemiakov a nakrájaj ich na podobne veľké menšie kúsky."
+		},
+		{
+			"id": "boil-potatoes",
+			"title": "Uvar zemiaky",
+			"durationSeconds": 1200,
+			"dependsOn": ["prep-potatoes"],
+			"resources": ["pot", "burner"],
+			"kind": "WAIT",
+			"instruction": "Zemiaky zalej studenou vodou, osol a priveď do varu. Potom var mierne približne 15–20 minút, kým sa dajú ľahko prepichnúť vidličkou."
+		},
+		{
+			"id": "chop-onion",
+			"title": "Nakrájaj cibuľu",
+			"durationSeconds": 300,
+			"dependsOn": ["prep-potatoes"],
+			"resources": ["cook"],
+			"skill": "KNIFE",
+			"instruction": "Ošúp 1 strednú cibuľu a nakrájaj ju nadrobno."
+		},
+		{
+			"id": "saute-onion",
+			"title": "Opeč cibuľu",
+			"durationSeconds": 480,
+			"dependsOn": ["chop-onion"],
+			"resources": ["cook", "burner"],
+			"instruction": "Na panvici alebo v malom hrnci rozohrej trochu oleja alebo kúsok masla. Cibuľu opekaj 6–8 minút, kým zmäkne a jemne zozlatne."
+		},
+		{
+			"id": "mash-potatoes",
+			"title": "Urob hustú zemiakovú kašu",
+			"durationSeconds": 420,
+			"dependsOn": ["boil-potatoes", "saute-onion"],
+			"resources": ["cook", "pot"],
+			"instruction": "Uvarené zemiaky zlej. Pridaj 35 g masla a najprv asi 80 ml mlieka. Roztlač ich na hustú kašu. Primiešaj opečenú cibuľu, dochuť soľou a čiernym korením. Mlieko pridávaj len po troške."
+		},
+		{
+			"id": "cool-filling",
+			"title": "Nechaj kašu trochu vychladnúť",
+			"durationSeconds": 600,
+			"dependsOn": ["mash-potatoes"],
+			"kind": "WAIT",
+			"instruction": "Kašu rozprestri v mise alebo na tanieri a nechaj približne 10 minút vychladnúť. Nemusí byť studená, ale nemala by byť horúca."
+		},
+		{
+			"id": "preheat-oven",
+			"title": "Predhrej rúru na 210 °C",
+			"durationSeconds": 600,
+			"dependsOn": ["mash-potatoes"],
+			"resources": ["oven"],
+			"kind": "WAIT",
+			"instruction": "Zapni rúru na 210 °C, horný/dolný ohrev. Pri teplovzduchu nastav približne 190 °C."
+		},
+		{
+			"id": "shape-dough",
+			"title": "Rozvaľkaj cesto",
+			"durationSeconds": 420,
+			"dependsOn": ["dough-rise", "cool-filling"],
+			"resources": ["cook"],
+			"instruction": "Vykysnuté cesto krátko premies a rozvaľkaj na veľký kruh alebo ovál hrubý približne 5–7 mm."
+		},
+		{
+			"id": "fill-posuch",
+			"title": "Naplň posúch kašou",
+			"durationSeconds": 360,
+			"dependsOn": ["shape-dough"],
+			"resources": ["cook"],
+			"instruction": "Kašu rozlož na stred cesta a nechaj po obvode voľný okraj približne 4–5 cm. Okraje cesta vytiahni smerom do stredu a pevne ich spoj."
+		},
+		{
+			"id": "flatten-posuch",
+			"title": "Opatrne posúch splošti",
+			"durationSeconds": 300,
+			"dependsOn": ["fill-posuch"],
+			"resources": ["cook"],
+			"instruction": "Posúch otoč spojom nadol na papier na pečenie alebo jemne naolejovaný plech. Dlaňami ho pomaly splošť na hrúbku približne 2–3 cm."
+		},
+		{
+			"id": "bake-posuch",
+			"title": "Upeč posúch",
+			"durationSeconds": 1500,
+			"dependsOn": ["flatten-posuch", "preheat-oven"],
+			"resources": ["oven"],
+			"kind": "WAIT",
+			"instruction": "Peč pri 210 °C približne 20–25 minút, kým je povrch výrazne zlatistý."
+		},
+		{
+			"id": "butter-finish",
+			"title": "Potri horúci posúch maslom",
+			"durationSeconds": 120,
+			"dependsOn": ["bake-posuch"],
+			"resources": ["cook"],
+			"instruction": "Hneď po vytiahnutí z rúry potri povrch kúskom masla. Nechaj 5–10 minút postáť, potom krájaj."
+		}
+	],
+	"troubleshooting": [
+		{"problem": "Kaša je príliš riedka", "advice": "Nepridávaj ďalšie mlieko. Nechaj ju chvíľu odkrytú chladnúť; pri chladnutí ešte zhustne."},
+		{"problem": "Cesto sa pri plnení trhá", "advice": "Nenaťahuj ho nasilu. Miesto pritlač prstami k sebe a pri splošťovaní postupuj pomaly."},
+		{"problem": "Plnka vyteká", "advice": "Prasklinu hneď zaštipni kúskom cesta. Posúch potom už nerozťahuj tak natenko."},
+		{"problem": "Povrch tmavne príliš rýchlo", "advice": "Prikry ho voľne alobalom a dopeč, aby sa prehrial aj stred."}
+	]
+}
