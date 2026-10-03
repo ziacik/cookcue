@@ -286,6 +286,10 @@ private fun CookCueScreen() {
 					CookingSessionController.undoCompletedTask(task.id)
 					persistAndSync()
 				},
+				onRestoreDeferred = {
+					CookingSessionController.restoreDeferredTask(task.id)
+					persistAndSync()
+				},
 				onDismiss = { selectedTaskDetailId = null },
 			)
 		}
@@ -1849,6 +1853,7 @@ private fun TaskDetailDialog(
 	locationPermissionGranted: Boolean,
 	onRequestLocation: () -> Unit,
 	onUndoCompleted: () -> Unit,
+	onRestoreDeferred: () -> Unit,
 	onDismiss: () -> Unit,
 ) {
 	val context = LocalContext.current
@@ -2022,6 +2027,21 @@ private fun TaskDetailDialog(
 							) {
 								Text(
 									text = "ZRUŠIŤ ABSOLVOVANIE",
+									fontWeight = FontWeight.Bold,
+								)
+							}
+						} else if (
+							progress == TaskProgress.DEFERRED &&
+							task.kind == TaskKind.EVENT
+						) {
+							Spacer(Modifier.height(20.dp))
+							OutlinedButton(
+								onClick = onRestoreDeferred,
+								modifier = Modifier.fillMaxWidth(),
+								shape = RoundedCornerShape(12.dp),
+							) {
+								Text(
+									text = "VRÁTIŤ MEDZI ČAKAJÚCE",
 									fontWeight = FontWeight.Bold,
 								)
 							}
