@@ -731,6 +731,7 @@ object CookingSessionController {
 				recipe = recipe,
 				durationOverrides = durationOverrides,
 				startOverrides = taskStartOverrides,
+				satisfiedTaskIds = manuallyCompletedTaskIds,
 				elapsedSeconds = elapsedSeconds,
 				earliestUnscheduledStartSeconds = itinerarySessionStartOffset(),
 			)
@@ -818,6 +819,7 @@ object CookingSessionController {
 			recipe = recipe,
 			durationOverrides = durationOverrides,
 			startOverrides = taskStartOverrides,
+			satisfiedTaskIds = manuallyCompletedTaskIds,
 			elapsedSeconds = elapsedSeconds,
 			earliestUnscheduledStartSeconds = itinerarySessionStartOffset(),
 		)
@@ -833,7 +835,7 @@ object CookingSessionController {
 		val manualStartedAt = activeTaskOverrideStartedAtSeconds
 		if (manualTaskId != null && manualStartedAt != null) {
 			val manualTask = recipe.tasks.firstOrNull { it.id == manualTaskId }
-			if (manualTask != null && manualTaskId !in durationOverrides) {
+			if (manualTask != null && !isTaskCompleted(manualTaskId)) {
 				val elapsedForTask =
 					(elapsedSeconds - manualStartedAt + 1).coerceAtLeast(1)
 				val liveDuration = maxOf(
@@ -844,6 +846,7 @@ object CookingSessionController {
 					recipe = recipe,
 					durationOverrides = durationOverrides + (manualTaskId to liveDuration),
 					startOverrides = taskStartOverrides + (manualTaskId to manualStartedAt),
+					satisfiedTaskIds = manuallyCompletedTaskIds,
 					elapsedSeconds = elapsedSeconds,
 					earliestUnscheduledStartSeconds = itinerarySessionStartOffset(),
 				)
@@ -893,6 +896,7 @@ object CookingSessionController {
 				recipe = recipe,
 				durationOverrides = liveOverrides,
 				startOverrides = liveStarts,
+				satisfiedTaskIds = manuallyCompletedTaskIds,
 				elapsedSeconds = elapsedSeconds,
 				earliestUnscheduledStartSeconds = itinerarySessionStartOffset(),
 			)
