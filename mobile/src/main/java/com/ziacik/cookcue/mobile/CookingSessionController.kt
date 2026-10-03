@@ -102,6 +102,7 @@ object CookingSessionController {
 		durationOverrides = emptyMap()
 		taskStartOverrides = emptyMap()
 		skippedTaskIds = emptySet()
+		manuallyCompletedTaskIds = emptySet()
 		deferredTaskIds = emptySet()
 		paused = false
 		activeTaskOverrideId = null
@@ -129,6 +130,9 @@ object CookingSessionController {
 		private set
 
 	var skippedTaskIds by mutableStateOf<Set<String>>(emptySet())
+		private set
+
+	var manuallyCompletedTaskIds by mutableStateOf<Set<String>>(emptySet())
 		private set
 
 	var deferredTaskIds by mutableStateOf<Set<String>>(emptySet())
@@ -174,6 +178,7 @@ object CookingSessionController {
 		durationOverrides = emptyMap()
 		taskStartOverrides = emptyMap()
 		skippedTaskIds = emptySet()
+		manuallyCompletedTaskIds = emptySet()
 		deferredTaskIds = emptySet()
 		paused = false
 		activeTaskOverrideId = null
@@ -193,6 +198,7 @@ object CookingSessionController {
 		durationOverrides = emptyMap()
 		taskStartOverrides = emptyMap()
 		skippedTaskIds = emptySet()
+		manuallyCompletedTaskIds = emptySet()
 		deferredTaskIds = emptySet()
 		paused = false
 		activeTaskOverrideId = null
@@ -216,6 +222,7 @@ object CookingSessionController {
 		durationOverrides: Map<String, Long>,
 		taskStartOverrides: Map<String, Long> = emptyMap(),
 		skippedTaskIds: Set<String> = emptySet(),
+		manuallyCompletedTaskIds: Set<String> = emptySet(),
 		deferredTaskIds: Set<String> = emptySet(),
 		paused: Boolean = false,
 		activeTaskOverrideId: String? = null,
@@ -241,6 +248,7 @@ object CookingSessionController {
 		this.durationOverrides = durationOverrides
 		this.taskStartOverrides = taskStartOverrides
 		this.skippedTaskIds = skippedTaskIds
+		this.manuallyCompletedTaskIds = manuallyCompletedTaskIds
 		this.deferredTaskIds = deferredTaskIds
 		this.paused = paused
 		this.activeTaskOverrideId = if (paused) null else activeTaskOverrideId
@@ -263,6 +271,7 @@ object CookingSessionController {
 		durationOverrides = durationOverrides + (taskId to actualDuration)
 		taskStartOverrides = taskStartOverrides + (taskId to action.startSeconds)
 		skippedTaskIds = skippedTaskIds - taskId
+		manuallyCompletedTaskIds = manuallyCompletedTaskIds - taskId
 		deferredTaskIds = deferredTaskIds - taskId
 		if (activeTaskOverrideId == taskId) {
 			activeTaskOverrideId = null
@@ -271,11 +280,55 @@ object CookingSessionController {
 		markUserAction()
 	}
 
+	fun markTaskCompleted(taskId: String) {
+		if (
+			recipe.scheduleMode != ScheduleMode.ITINERARY ||
+			startedAt == null
+		) {
+			return
+		}
+
+		val task = recipe.tasks.firstOrNull { it.id == taskId } ?: return
+		if (taskId in skippedTaskIds) {
+			durationOverrides = durationOverrides - taskId
+			taskStartOverrides = taskStartOverrides - taskId
+			skippedTaskIds = skippedTaskIds - taskId
+			manuallyCompletedTaskIds = manuallyCompletedTaskIds + task.id
+			deferredTaskIds = deferredTaskIds - task.id
+			eventDeferredUntil = eventDeferredUntil - task.id
+			clearNearbySuggestion()
+			markSilentTransition()
+			return
+		}
+		if (isTaskCompleted(taskId)) {
+			return
+		}
+
+		val current = snapshot().currentAction
+		if (current?.task?.id == taskId) {
+			completeAction(taskId)
+			return
+		}
+
+		manuallyCompletedTaskIds = manuallyCompletedTaskIds + task.id
+		skippedTaskIds = skippedTaskIds - task.id
+		deferredTaskIds = deferredTaskIds - task.id
+		eventDeferredUntil = eventDeferredUntil - task.id
+		if (activeTaskOverrideId == task.id) {
+			activeTaskOverrideId = null
+			activeTaskOverrideStartedAtSeconds = null
+		}
+		if (nearbySuggestion?.taskId == task.id) {
+			nearbySuggestion = null
+		}
+		markSilentTransition()
+	}
+
 	fun undoCompletedTask(taskId: String) {
 		if (
 			recipe.scheduleMode != ScheduleMode.ITINERARY ||
 			startedAt == null ||
-			taskId !in durationOverrides ||
+			!isTaskCompleted(taskId) ||
 			taskId in skippedTaskIds
 		) {
 			return
@@ -283,6 +336,7 @@ object CookingSessionController {
 
 		durationOverrides = durationOverrides - taskId
 		taskStartOverrides = taskStartOverrides - taskId
+		manuallyCompletedTaskIds = manuallyCompletedTaskIds - taskId
 		deferredTaskIds = deferredTaskIds + taskId
 		if (activeTaskOverrideId == taskId) {
 			activeTaskOverrideId = null
@@ -315,6 +369,7 @@ object CookingSessionController {
 		durationOverrides = durationOverrides + (taskId to 1L)
 		taskStartOverrides = taskStartOverrides + (taskId to action.startSeconds)
 		skippedTaskIds = skippedTaskIds + taskId
+		manuallyCompletedTaskIds = manuallyCompletedTaskIds - taskId
 		deferredTaskIds = deferredTaskIds - taskId
 		if (activeTaskOverrideId == taskId) {
 			activeTaskOverrideId = null
@@ -338,7 +393,7 @@ object CookingSessionController {
 		val task = recipe.tasks.firstOrNull {
 			it.id == taskId && it.kind == TaskKind.ACTIVE
 		} ?: return
-		if (task.id in durationOverrides) {
+		if (isTaskCompleted(task.id)) {
 			return
 		}
 
@@ -470,6 +525,7 @@ object CookingSessionController {
 		}
 		durationOverrides = durationOverrides + (taskId to actualDuration)
 		taskStartOverrides = taskStartOverrides + (taskId to event.startSeconds)
+		manuallyCompletedTaskIds = manuallyCompletedTaskIds - taskId
 		deferredTaskIds = deferredTaskIds - taskId
 		eventDeferredUntil = eventDeferredUntil - taskId
 		markUserAction()
@@ -528,7 +584,7 @@ object CookingSessionController {
 			.asSequence()
 			.filter { it.kind == TaskKind.ACTIVE || it.kind == TaskKind.EVENT }
 			.map { it.id }
-			.filterNot(durationOverrides::containsKey)
+			.filterNot(::isTaskCompleted)
 			.toSet()
 
 		val blockedIds = blockedTaskIds(
@@ -541,7 +597,7 @@ object CookingSessionController {
 		} else {
 			schedule.filter {
 				it.task.kind == TaskKind.EVENT &&
-					it.task.id !in durationOverrides &&
+					!isTaskCompleted(it.task.id) &&
 					it.task.id !in deferredTaskIds &&
 					it.task.id !in blockedIds &&
 					it.startSeconds <= elapsedSeconds &&
@@ -558,7 +614,7 @@ object CookingSessionController {
 					val planned = schedule.firstOrNull {
 						it.task.id == taskId &&
 							it.task.kind == TaskKind.ACTIVE &&
-							it.task.id !in durationOverrides
+							!isTaskCompleted(it.task.id)
 					}
 					if (planned != null && startedAtSeconds != null) {
 						planned.copy(
@@ -573,7 +629,7 @@ object CookingSessionController {
 					.asSequence()
 					.filter {
 						it.task.kind == TaskKind.ACTIVE &&
-							it.task.id !in durationOverrides &&
+							!isTaskCompleted(it.task.id) &&
 							it.task.id !in deferredTaskIds &&
 							it.task.id !in blockedIds &&
 							it.startSeconds <= elapsedSeconds
@@ -621,7 +677,8 @@ object CookingSessionController {
 		}
 
 		val nextScheduled = schedule.firstOrNull {
-			it.task.id !in blockedIds &&
+			!isTaskCompleted(it.task.id) &&
+				it.task.id !in blockedIds &&
 				it.task.id !in deferredTaskIds &&
 				it.startSeconds > elapsedSeconds
 		}
@@ -633,7 +690,7 @@ object CookingSessionController {
 		val taskProgress = recipe.tasks.associate { task ->
 			task.id to when {
 				task.id in skippedTaskIds -> TaskProgress.SKIPPED
-				task.id in durationOverrides -> TaskProgress.COMPLETED
+				isTaskCompleted(task.id) -> TaskProgress.COMPLETED
 				task.id in activeIds -> TaskProgress.ACTIVE
 				task.id in deferredTaskIds -> TaskProgress.DEFERRED
 				else -> TaskProgress.PENDING
@@ -665,6 +722,10 @@ object CookingSessionController {
 		)
 	}
 
+	private fun isTaskCompleted(taskId: String): Boolean {
+		return taskId in durationOverrides || taskId in manuallyCompletedTaskIds
+	}
+
 	private fun currentElapsedSeconds(): Long {
 		val start = startedAt ?: return 0
 		return if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
@@ -681,6 +742,7 @@ object CookingSessionController {
 				recipe = recipe,
 				durationOverrides = durationOverrides,
 				startOverrides = taskStartOverrides,
+				satisfiedTaskIds = manuallyCompletedTaskIds,
 				elapsedSeconds = elapsedSeconds,
 				earliestUnscheduledStartSeconds = itinerarySessionStartOffset(),
 			)
@@ -707,7 +769,7 @@ object CookingSessionController {
 				.asSequence()
 				.filter { it.kind == TaskKind.ACTIVE || it.kind == TaskKind.EVENT }
 				.map { it.id }
-				.filterNot(durationOverrides::containsKey)
+				.filterNot(::isTaskCompleted)
 				.toSet()
 			val blockedIds = blockedTaskIds(
 				recipe = recipe,
@@ -718,7 +780,7 @@ object CookingSessionController {
 				.asSequence()
 				.filter {
 					it.task.kind == TaskKind.ACTIVE &&
-						it.task.id !in durationOverrides &&
+						!isTaskCompleted(it.task.id) &&
 						it.task.id !in blockedIds &&
 						it.startSeconds <= elapsedSeconds
 				}
@@ -729,7 +791,7 @@ object CookingSessionController {
 
 			val pendingEvents = schedule.filter {
 				it.task.kind == TaskKind.EVENT &&
-					it.task.id !in durationOverrides &&
+					!isTaskCompleted(it.task.id) &&
 					it.task.id !in blockedIds &&
 					it.startSeconds <= elapsedSeconds &&
 					eventIsDue(it.task.id, elapsedSeconds)
@@ -768,6 +830,7 @@ object CookingSessionController {
 			recipe = recipe,
 			durationOverrides = durationOverrides,
 			startOverrides = taskStartOverrides,
+			satisfiedTaskIds = manuallyCompletedTaskIds,
 			elapsedSeconds = elapsedSeconds,
 			earliestUnscheduledStartSeconds = itinerarySessionStartOffset(),
 		)
@@ -783,7 +846,7 @@ object CookingSessionController {
 		val manualStartedAt = activeTaskOverrideStartedAtSeconds
 		if (manualTaskId != null && manualStartedAt != null) {
 			val manualTask = recipe.tasks.firstOrNull { it.id == manualTaskId }
-			if (manualTask != null && manualTaskId !in durationOverrides) {
+			if (manualTask != null && !isTaskCompleted(manualTaskId)) {
 				val elapsedForTask =
 					(elapsedSeconds - manualStartedAt + 1).coerceAtLeast(1)
 				val liveDuration = maxOf(
@@ -794,6 +857,7 @@ object CookingSessionController {
 					recipe = recipe,
 					durationOverrides = durationOverrides + (manualTaskId to liveDuration),
 					startOverrides = taskStartOverrides + (manualTaskId to manualStartedAt),
+					satisfiedTaskIds = manuallyCompletedTaskIds,
 					elapsedSeconds = elapsedSeconds,
 					earliestUnscheduledStartSeconds = itinerarySessionStartOffset(),
 				)
@@ -805,7 +869,7 @@ object CookingSessionController {
 				.asSequence()
 				.filter { it.kind == TaskKind.ACTIVE || it.kind == TaskKind.EVENT }
 				.map { it.id }
-				.filterNot(durationOverrides::containsKey)
+				.filterNot(::isTaskCompleted)
 				.toSet()
 			val blockedIds = blockedTaskIds(
 				recipe = recipe,
@@ -816,7 +880,7 @@ object CookingSessionController {
 				.asSequence()
 					.filter {
 						it.task.kind == TaskKind.ACTIVE &&
-							it.task.id !in durationOverrides &&
+							!isTaskCompleted(it.task.id) &&
 							it.task.id !in deferredTaskIds &&
 							it.task.id !in blockedIds &&
 							it.startSeconds <= elapsedSeconds
@@ -843,6 +907,7 @@ object CookingSessionController {
 				recipe = recipe,
 				durationOverrides = liveOverrides,
 				startOverrides = liveStarts,
+				satisfiedTaskIds = manuallyCompletedTaskIds,
 				elapsedSeconds = elapsedSeconds,
 				earliestUnscheduledStartSeconds = itinerarySessionStartOffset(),
 			)
@@ -898,6 +963,9 @@ object CookingSessionController {
 		while (queue.isNotEmpty()) {
 			val current = queue.removeFirst()
 			children[current].orEmpty().forEach { child ->
+				if (isTaskCompleted(child)) {
+					return@forEach
+				}
 				if (blocked.add(child)) {
 					queue.addLast(child)
 				}

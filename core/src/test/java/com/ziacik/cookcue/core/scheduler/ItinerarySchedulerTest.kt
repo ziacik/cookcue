@@ -70,6 +70,61 @@ class ItinerarySchedulerTest {
 	}
 
 	@Test
+	fun manuallySatisfiedStopDoesNotOccupyTimeOrBlockDependencies() {
+		val recipe = recipe(
+			CookingTask(
+				id = "already-seen",
+				title = "Already seen",
+				durationSeconds = 150,
+				itineraryTiming = windows(0, 300),
+			),
+			CookingTask(
+				id = "next",
+				title = "Next",
+				durationSeconds = 60,
+				dependsOn = setOf("already-seen"),
+				itineraryTiming = windows(0, 300),
+			),
+		)
+
+		val schedule = scheduler.schedule(
+			recipe = recipe,
+			satisfiedTaskIds = setOf("already-seen"),
+		)
+
+		assertEquals(0L, schedule.single { it.task.id == "already-seen" }.startSeconds)
+		assertEquals(0L, schedule.single { it.task.id == "next" }.startSeconds)
+	}
+
+	@Test
+	fun satisfiedStopCanRemainRecordedAfterItsWindowExpired() {
+		val recipe = recipe(
+			CookingTask(
+				id = "yesterday",
+				title = "Yesterday",
+				durationSeconds = 60,
+				itineraryTiming = windows(0, 100),
+			),
+			CookingTask(
+				id = "today",
+				title = "Today",
+				durationSeconds = 60,
+				dependsOn = setOf("yesterday"),
+				itineraryTiming = windows(200, 400),
+			),
+		)
+
+		val schedule = scheduler.schedule(
+			recipe = recipe,
+			satisfiedTaskIds = setOf("yesterday"),
+			earliestUnscheduledStartSeconds = 200,
+		)
+
+		assertEquals(0L, schedule.single { it.task.id == "yesterday" }.startSeconds)
+		assertEquals(200L, schedule.single { it.task.id == "today" }.startSeconds)
+	}
+
+	@Test
 	fun manuallyPinnedStopDoesNotMoveFixedEvent() {
 		val recipe = recipe(
 			CookingTask(

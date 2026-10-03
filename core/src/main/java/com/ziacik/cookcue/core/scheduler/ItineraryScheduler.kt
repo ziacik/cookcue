@@ -10,6 +10,7 @@ class ItineraryScheduler {
 		recipe: Recipe,
 		durationOverrides: Map<String, Long> = emptyMap(),
 		startOverrides: Map<String, Long> = emptyMap(),
+		satisfiedTaskIds: Set<String> = emptySet(),
 		elapsedSeconds: Long = 0,
 		earliestUnscheduledStartSeconds: Long = 0,
 	): List<ScheduledTask> {
@@ -26,6 +27,7 @@ class ItineraryScheduler {
 		startOverrides.forEach { (id, start) ->
 			require(id in ids && start >= 0)
 		}
+		require(satisfiedTaskIds.all(ids::contains))
 
 		val scheduledById = linkedMapOf<String, ScheduledTask>()
 		val occupied = mutableListOf<ScheduledTask>()
@@ -34,14 +36,20 @@ class ItineraryScheduler {
 			return durationOverrides[task.id] ?: task.durationSeconds
 		}
 
-		fun pin(task: CookingTask, startSeconds: Long) {
+		fun pin(
+			task: CookingTask,
+			startSeconds: Long,
+			occupiesTime: Boolean = true,
+		) {
 			val item = ScheduledTask(
 				task = task,
 				startSeconds = startSeconds,
 				endSeconds = startSeconds + durationFor(task),
 			)
 			scheduledById[task.id] = item
-			occupied += item
+			if (occupiesTime) {
+				occupied += item
+			}
 		}
 
 		// Completed/running tasks keep their actual start. Fixed events are anchors that never
@@ -50,7 +58,11 @@ class ItineraryScheduler {
 		recipe.tasks.forEach { task ->
 			val explicitStart = startOverrides[task.id]
 			if (explicitStart != null) {
-				pin(task, explicitStart)
+				pin(
+					task = task,
+					startSeconds = explicitStart,
+					occupiesTime = task.id !in satisfiedTaskIds,
+				)
 				return@forEach
 			}
 
@@ -63,7 +75,11 @@ class ItineraryScheduler {
 				val selected = relativeOptions.firstOrNull {
 					it + duration + FIXED_OPTION_GRACE_SECONDS > elapsedSeconds
 				} ?: relativeOptions.last()
-				pin(task, selected)
+				pin(
+					task = task,
+					startSeconds = selected,
+					occupiesTime = task.id !in satisfiedTaskIds,
+				)
 			}
 		}
 
@@ -77,6 +93,8 @@ class ItineraryScheduler {
 			} ?: error("Itinerary contains a dependency cycle or an invalid fixed dependency.")
 
 			val dependencyEnd = task.dependsOn
+				.asSequence()
+				.filterNot(satisfiedTaskIds::contains)
 				.maxOfOrNull { scheduledById.getValue(it).endSeconds }
 				?: 0L
 			val notBefore = maxOf(dependencyEnd, earliestUnscheduledStartSeconds)
@@ -87,6 +105,16 @@ class ItineraryScheduler {
 				.orEmpty()
 			require(windows.isNotEmpty()) {
 				"Flexible itinerary task '${task.id}' must define availability windows."
+			}
+
+			if (task.id in satisfiedTaskIds) {
+				pin(
+					task = task,
+					startSeconds = windows.first().startEpochSeconds - epochStart,
+					occupiesTime = false,
+				)
+				remaining.remove(task)
+				continue
 			}
 
 			val start = windows
@@ -107,7 +135,11 @@ class ItineraryScheduler {
 				.firstOrNull()
 				?: error("No itinerary window can fit task '${task.id}'.")
 
-			pin(task, start)
+			pin(
+				task = task,
+				startSeconds = start,
+				occupiesTime = task.id !in satisfiedTaskIds,
+			)
 			remaining.remove(task)
 		}
 
