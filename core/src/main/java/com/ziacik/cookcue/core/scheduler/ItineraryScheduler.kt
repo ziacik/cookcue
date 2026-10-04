@@ -103,14 +103,16 @@ class ItineraryScheduler {
 			val windows = task.itineraryTiming
 				?.availabilityWindows
 				.orEmpty()
-			require(windows.isNotEmpty()) {
-				"Flexible itinerary task '${task.id}' must define availability windows."
-			}
 
 			if (task.id in satisfiedTaskIds) {
+				val recordedStart = windows
+					.firstOrNull()
+					?.startEpochSeconds
+					?.minus(epochStart)
+					?: notBefore
 				pin(
 					task = task,
-					startSeconds = windows.first().startEpochSeconds - epochStart,
+					startSeconds = recordedStart,
 					occupiesTime = false,
 				)
 				remaining.remove(task)
@@ -133,7 +135,11 @@ class ItineraryScheduler {
 					)
 				}
 				.firstOrNull()
-				?: error("No itinerary window can fit task '${task.id}'.")
+				?: findUnboundedSlot(
+					duration = duration,
+					notBefore = notBefore,
+					occupied = occupied,
+				)
 
 			pin(
 				task = task,
@@ -152,6 +158,26 @@ class ItineraryScheduler {
 
 	private companion object {
 		const val FIXED_OPTION_GRACE_SECONDS = 10 * 60L
+	}
+
+	private fun findUnboundedSlot(
+		duration: Long,
+		notBefore: Long,
+		occupied: List<ScheduledTask>,
+	): Long {
+		var candidate = notBefore
+		while (true) {
+			val collision = occupied
+				.asSequence()
+				.filter {
+					it.startSeconds < candidate + duration &&
+						it.endSeconds > candidate
+				}
+				.minByOrNull { it.startSeconds }
+				?: return candidate
+
+			candidate = maxOf(candidate, collision.endSeconds)
+		}
 	}
 
 	private fun findSlot(
