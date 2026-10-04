@@ -30,6 +30,12 @@
 			"version": 1,
 			"file": "potato-mash-stuffed-posuch.json",
 			"minAppVersion": 1
+		},
+		{
+			"id": "shopping",
+			"version": 1,
+			"file": "shopping.json",
+			"minAppVersion": 1
 		}
 	]
 }
