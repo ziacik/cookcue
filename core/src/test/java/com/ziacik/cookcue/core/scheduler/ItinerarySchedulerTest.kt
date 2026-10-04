@@ -189,6 +189,26 @@ class ItinerarySchedulerTest {
 	}
 
 	@Test
+	fun expiredWindowFallsBackInsteadOfCrashing() {
+		val recipe = recipe(
+			CookingTask(
+				id = "missed",
+				title = "Missed",
+				durationSeconds = 60,
+				itineraryTiming = windows(0, 100),
+			),
+		)
+
+		val schedule = scheduler.schedule(
+			recipe = recipe,
+			earliestUnscheduledStartSeconds = 200,
+		)
+
+		assertEquals(200L, schedule.single().startSeconds)
+		assertEquals(260L, schedule.single().endSeconds)
+	}
+
+	@Test
 	fun missedFixedShowingMovesToNextOption() {
 		val recipe = recipe(
 			CookingTask(
