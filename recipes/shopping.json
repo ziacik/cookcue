@@ -1,0 +1,43 @@
+{
+	"schemaVersion": 1,
+	"id": "shopping",
+	"title": "Nákup",
+	"description": "Nákupný zoznam",
+	"servings": 1,
+	"ingredients": [
+		{"name": "Polohrubá múka", "amount": ""},
+		{"name": "Čokoládové kúsky", "amount": ""},
+		{"name": "Lentilky", "amount": ""},
+		{"name": "Vajcia", "amount": ""},
+		{"name": "Eidam blok", "amount": ""},
+		{"name": "Kečup", "amount": ""},
+		{"name": "Špagety Cessi, grahamové", "amount": ""},
+		{"name": "Smotana kyslá / pochúťková", "amount": ""},
+		{"name": "Pareničky neúdené", "amount": ""},
+		{"name": "Mlieko", "amount": ""},
+		{"name": "Maslo", "amount": ""},
+		{"name": "Rožky", "amount": ""},
+		{"name": "Nugeta", "amount": ""},
+		{"name": "Horalky", "amount": ""},
+		{"name": "Paradajky", "amount": ""}
+	],
+	"resourceCapacities": {},
+	"preCookingNote": "Spusti nákup a položky odškrtávaj tlačidlom KÚPENÉ. Poradie nie je pevné.",
+	"tasks": [
+		{"id": "flour", "title": "Polohrubá múka", "durationSeconds": 1, "kind": "EVENT", "actionLabel": "KÚPENÉ"},
+		{"id": "chocolate-chips", "title": "Čokoládové kúsky", "durationSeconds": 1, "kind": "EVENT", "actionLabel": "KÚPENÉ"},
+		{"id": "lentilky", "title": "Lentilky", "durationSeconds": 1, "kind": "EVENT", "actionLabel": "KÚPENÉ"},
+		{"id": "eggs", "title": "Vajcia", "durationSeconds": 1, "kind": "EVENT", "actionLabel": "KÚPENÉ"},
+		{"id": "eidam", "title": "Eidam blok", "durationSeconds": 1, "kind": "EVENT", "actionLabel": "KÚPENÉ"},
+		{"id": "ketchup", "title": "Kečup", "durationSeconds": 1, "kind": "EVENT", "actionLabel": "KÚPENÉ"},
+		{"id": "spaghetti", "title": "Špagety Cessi, grahamové", "durationSeconds": 1, "kind": "EVENT", "actionLabel": "KÚPENÉ"},
+		{"id": "sour-cream", "title": "Smotana kyslá / pochúťková", "durationSeconds": 1, "kind": "EVENT", "actionLabel": "KÚPENÉ"},
+		{"id": "parenicky", "title": "Pareničky neúdené", "durationSeconds": 1, "kind": "EVENT", "actionLabel": "KÚPENÉ"},
+		{"id": "milk", "title": "Mlieko", "durationSeconds": 1, "kind": "EVENT", "actionLabel": "KÚPENÉ"},
+		{"id": "butter", "title": "Maslo", "durationSeconds": 1, "kind": "EVENT", "actionLabel": "KÚPENÉ"},
+		{"id": "rolls", "title": "Rožky", "durationSeconds": 1, "kind": "EVENT", "actionLabel": "KÚPENÉ"},
+		{"id": "nugeta", "title": "Nugeta", "durationSeconds": 1, "kind": "EVENT", "actionLabel": "KÚPENÉ"},
+		{"id": "horalky", "title": "Horalky", "durationSeconds": 1, "kind": "EVENT", "actionLabel": "KÚPENÉ"},
+		{"id": "tomatoes", "title": "Paradajky", "durationSeconds": 1, "kind": "EVENT", "actionLabel": "KÚPENÉ"}
+	]
+}
