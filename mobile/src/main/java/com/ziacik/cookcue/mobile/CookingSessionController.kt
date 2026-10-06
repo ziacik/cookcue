@@ -32,6 +32,7 @@ data class MobileSessionSnapshot(
 	val completed: Boolean,
 	val elapsedSeconds: Long,
 	val schedule: List<ScheduledTask>,
+	val activeActions: List<ScheduledTask>,
 	val currentAction: ScheduledTask?,
 	val background: List<ScheduledTask>,
 	val pendingEvents: List<ScheduledTask>,
@@ -263,8 +264,8 @@ object CookingSessionController {
 
 	fun completeAction(taskId: String) {
 		val snapshot = snapshot()
-		val action = snapshot.currentAction
-			?.takeIf { it.task.id == taskId }
+		val action = snapshot.activeActions
+			.firstOrNull { it.task.id == taskId }
 			?: return
 
 		val actualDuration = (snapshot.elapsedSeconds - action.startSeconds).coerceAtLeast(1)
@@ -304,8 +305,8 @@ object CookingSessionController {
 			return
 		}
 
-		val current = snapshot().currentAction
-		if (current?.task?.id == taskId) {
+		val current = snapshot().activeActions.firstOrNull { it.task.id == taskId }
+		if (current != null) {
 			completeAction(taskId)
 			return
 		}
@@ -362,8 +363,8 @@ object CookingSessionController {
 
 	fun skipAction(taskId: String) {
 		val snapshot = snapshot()
-		val action = snapshot.currentAction
-			?.takeIf { it.task.id == taskId && it.task.optional }
+		val action = snapshot.activeActions
+			.firstOrNull { it.task.id == taskId && it.task.optional }
 			?: return
 
 		durationOverrides = durationOverrides + (taskId to 1L)
@@ -605,8 +606,8 @@ object CookingSessionController {
 			}
 		}
 
-		val currentAction = if (start == null || paused) {
-			null
+		val activeActions = if (start == null || paused) {
+			emptyList()
 		} else {
 			activeTaskOverrideId
 				?.let { taskId ->
@@ -617,9 +618,11 @@ object CookingSessionController {
 							!isTaskCompleted(it.task.id)
 					}
 					if (planned != null && startedAtSeconds != null) {
-						planned.copy(
-							startSeconds = startedAtSeconds,
-							endSeconds = startedAtSeconds + planned.task.durationSeconds,
+						listOf(
+							planned.copy(
+								startSeconds = startedAtSeconds,
+								endSeconds = startedAtSeconds + planned.task.durationSeconds,
+							)
 						)
 					} else {
 						null
@@ -634,11 +637,13 @@ object CookingSessionController {
 							it.task.id !in blockedIds &&
 							it.startSeconds <= elapsedSeconds
 					}
-					.minWithOrNull(
+					.sortedWith(
 						compareBy<ScheduledTask> { it.startSeconds }
 							.thenBy { it.task.id }
 					)
+					.toList()
 		}
+		val currentAction = activeActions.firstOrNull()
 
 		val background = if (start == null || paused) {
 			emptyList()
@@ -663,7 +668,7 @@ object CookingSessionController {
 
 		val navigationAllowed =
 			recipe.scheduleMode != ScheduleMode.ITINERARY &&
-				currentAction == null &&
+				activeActions.isEmpty() &&
 				pendingEvents.isEmpty()
 		val previousAction = if (navigationAllowed) {
 			actionSteps.getOrNull(navigationIndex - 1)
@@ -684,7 +689,7 @@ object CookingSessionController {
 		}
 
 		val activeIds = buildSet {
-			currentAction?.task?.id?.let(::add)
+			activeActions.mapTo(this) { it.task.id }
 			pendingEvents.mapTo(this) { it.task.id }
 		}
 		val taskProgress = recipe.tasks.associate { task ->
@@ -701,7 +706,7 @@ object CookingSessionController {
 			start != null &&
 				!paused &&
 				unconfirmedManualTaskIds.isEmpty() &&
-				currentAction == null &&
+				activeActions.isEmpty() &&
 				pendingEvents.isEmpty() &&
 				background.isEmpty() &&
 				nextScheduled == null
@@ -712,6 +717,7 @@ object CookingSessionController {
 			completed = completed,
 			elapsedSeconds = elapsedSeconds,
 			schedule = schedule,
+			activeActions = activeActions,
 			currentAction = currentAction,
 			background = background,
 			pendingEvents = pendingEvents,
@@ -776,7 +782,7 @@ object CookingSessionController {
 				roots = unconfirmedManualTaskIds,
 			)
 
-			val currentAction = schedule
+			val activeActions = schedule
 				.asSequence()
 				.filter {
 					it.task.kind == TaskKind.ACTIVE &&
@@ -784,10 +790,11 @@ object CookingSessionController {
 						it.task.id !in blockedIds &&
 						it.startSeconds <= elapsedSeconds
 				}
-				.minWithOrNull(
+				.sortedWith(
 					compareBy<ScheduledTask> { it.startSeconds }
 						.thenBy { it.task.id }
 				)
+				.toList()
 
 			val pendingEvents = schedule.filter {
 				it.task.kind == TaskKind.EVENT &&
@@ -798,7 +805,7 @@ object CookingSessionController {
 			}
 
 			val liveOverrides = durationOverrides.toMutableMap()
-			(listOfNotNull(currentAction) + pendingEvents).forEach { gate ->
+			(activeActions + pendingEvents).forEach { gate ->
 				val elapsedForTask = (elapsedSeconds - gate.startSeconds + 1).coerceAtLeast(1)
 				val liveDuration = maxOf(
 					gate.task.durationSeconds,
