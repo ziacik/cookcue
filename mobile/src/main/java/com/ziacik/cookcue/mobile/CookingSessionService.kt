@@ -31,9 +31,9 @@ class CookingSessionService : Service() {
 	private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 	private var monitorJob: Job? = null
 	private var transitionInitialized = false
-	private var previousTransitionKey: String? = null
+	private var previousTransitionKeys: Set<String> = emptySet()
 	private var previousSilentTransitionVersion = 0L
-	private var previousOverdueReminderKey: String? = null
+	private var previousOverdueReminderKeys: Set<String> = emptySet()
 	private var previousCompleted = false
 	private var previousOngoingText: String? = null
 	private val locationSensorMonitor by lazy { LocationSensorMonitor(applicationContext) }
@@ -183,25 +183,27 @@ class CookingSessionService : Service() {
 	}
 
 	private fun handleTransition(snapshot: MobileSessionSnapshot) {
-		val cue = snapshot.transitionCue()
+		val cues = snapshot.transitionCues()
+		val currentKeys = cues.mapTo(linkedSetOf()) { it.key }
 		val silentTransitionVersion = CookingSessionController.silentTransitionVersion
 
 		if (!transitionInitialized) {
 			transitionInitialized = true
-			previousTransitionKey = cue?.key
+			previousTransitionKeys = currentKeys
 			previousSilentTransitionVersion = silentTransitionVersion
 			return
 		}
 
-		val changedStep = cue?.key != previousTransitionKey
 		val changedSilently =
 			silentTransitionVersion != previousSilentTransitionVersion
 
-		if (changedStep && !changedSilently && cue != null) {
-			sendCue(cue)
+		if (!changedSilently) {
+			cues
+				.filter { it.key !in previousTransitionKeys }
+				.forEach(::sendCue)
 		}
 
-		previousTransitionKey = cue?.key
+		previousTransitionKeys = currentKeys
 		previousSilentTransitionVersion = silentTransitionVersion
 	}
 
@@ -224,37 +226,31 @@ class CookingSessionService : Service() {
 
 	private fun handleOverdueReminder(snapshot: MobileSessionSnapshot) {
 		if (isItinerary() || snapshot.paused) {
-			previousOverdueReminderKey = null
+			previousOverdueReminderKeys = emptySet()
 			return
 		}
 
-		val current = snapshot.currentAction
-		if (current == null) {
-			previousOverdueReminderKey = null
-			return
-		}
+		val dueReminders = snapshot.activeActions.mapNotNull { action ->
+			val elapsed = (snapshot.elapsedSeconds - action.startSeconds).coerceAtLeast(0)
+			if (elapsed < action.task.durationSeconds) {
+				return@mapNotNull null
+			}
 
-		val elapsed = (snapshot.elapsedSeconds - current.startSeconds).coerceAtLeast(0)
-		if (elapsed < current.task.durationSeconds) {
-			previousOverdueReminderKey = null
-			return
-		}
-
-		val reminderSlot = (elapsed - current.task.durationSeconds) / 60
-		val reminderKey = current.task.id + ":" + reminderSlot
-		if (reminderKey == previousOverdueReminderKey) {
-			return
-		}
-		previousOverdueReminderKey = reminderKey
-
-		sendCue(
-			TransitionCue(
+			val reminderSlot = (elapsed - action.task.durationSeconds) / 60
+			val reminderKey = action.task.id + ":" + reminderSlot
+			reminderKey to TransitionCue(
 				key = "overdue:" + reminderKey,
-				title = "Skontroluj: " + current.task.title,
+				title = "Skontroluj: " + action.task.title,
 				text = "Odhadovaný čas už uplynul. Pozri, či je krok hotový. " +
-					current.task.instruction,
-			),
-		)
+					action.task.instruction,
+			)
+		}
+
+		val currentKeys = dueReminders.mapTo(linkedSetOf()) { it.first }
+		dueReminders
+			.filter { it.first !in previousOverdueReminderKeys }
+			.forEach { (_, cue) -> sendCue(cue) }
+		previousOverdueReminderKeys = currentKeys
 	}
 
 	private fun sendCue(cue: TransitionCue) {
@@ -352,8 +348,11 @@ class CookingSessionService : Service() {
 		snapshot.pendingEvents.firstOrNull()?.let {
 			return "Skontroluj: " + it.task.title
 		}
-		snapshot.currentAction?.let {
-			return "Teraz: " + it.task.title
+		if (snapshot.activeActions.size == 1) {
+			return "Teraz: " + snapshot.activeActions.single().task.title
+		}
+		if (snapshot.activeActions.size > 1) {
+			return "Teraz: " + snapshot.activeActions.joinToString(" + ") { it.task.title }
 		}
 		snapshot.background.minByOrNull { it.endSeconds }?.let {
 			return "Čakám: " + it.task.title
