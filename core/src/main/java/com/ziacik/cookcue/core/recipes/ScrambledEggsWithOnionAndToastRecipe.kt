@@ -5,7 +5,6 @@ import com.ziacik.cookcue.core.model.Ingredient
 import com.ziacik.cookcue.core.model.Recipe
 import com.ziacik.cookcue.core.model.ResourceRequirement
 import com.ziacik.cookcue.core.model.Skill
-import com.ziacik.cookcue.core.model.TaskKind
 import com.ziacik.cookcue.core.model.TroubleshootingTip
 
 object ScrambledEggsWithOnionAndToastRecipe {
@@ -21,7 +20,7 @@ object ScrambledEggsWithOnionAndToastRecipe {
 	val recipe = Recipe(
 		id = "scrambled-eggs-onion-toast",
 		title = "Praženica s cibuľou + maslové toasty",
-		description = "Pre 1 osobu · praženica s toastami opečenými v toastovači a natretými maslom",
+		description = "Pre 1 osobu · praženica a toasty ako dve skutočne paralelné vetvy",
 		servings = 1,
 		ingredients = listOf(
 			Ingredient("vajcia", "2 ks"),
@@ -33,7 +32,7 @@ object ScrambledEggsWithOnionAndToastRecipe {
 			Ingredient("čierne korenie", "podľa chuti"),
 		),
 		resourceCapacities = mapOf(
-			COOK to 1,
+			COOK to 2,
 			PAN to 1,
 			BURNER to 1,
 			TOASTER to 1,
@@ -48,94 +47,46 @@ object ScrambledEggsWithOnionAndToastRecipe {
 				instruction = "Ošúp 1/2 malej cibule a nakrájaj ju nadrobno.",
 			),
 			CookingTask(
-				id = "heat-fat",
-				title = "Rozohrej panvicu",
-				durationSeconds = 60,
+				id = "cook-onion",
+				title = "Rozohrej panvicu a orestuj cibuľu",
+				durationSeconds = 5 * 60,
 				dependsOn = setOf("prep-onion"),
 				resources = uses(COOK, PAN, BURNER),
-				instruction = "Daj panvicu na stredný výkon a pridaj 1 ČL masla alebo oleja. Nechaj tuk zohriať, ale maslo nenechaj zhnednúť.",
+				instruction = "Rozohrej tuk, pridaj cibuľu a restuj ju, kým zmäkne. Občas premiešaj. HOTOVO daj až keď je pripravená na vajcia.",
 			),
 			CookingTask(
-				id = "saute-onion-first",
-				title = "Začni restovať cibuľu",
-				durationSeconds = 2 * 60,
-				dependsOn = setOf("heat-fat"),
-				resources = uses(COOK, PAN, BURNER),
-				instruction = "Pridaj nakrájanú cibuľu a restuj ju 2 minúty na strednom výkone. Občas premiešaj.",
-			),
-			CookingTask(
-				id = "start-toast",
-				title = "Daj toasty do toastovača",
-				durationSeconds = 60,
-				dependsOn = setOf("saute-onion-first"),
+				id = "make-toasts",
+				title = "Opeč a natri toasty",
+				durationSeconds = 4 * 60,
+				dependsOn = setOf("prep-onion"),
 				resources = uses(COOK, TOASTER),
-				instruction = "Vlož 2 krajce toastového chleba do toastovača a spusti opekanie na bežný stupeň.",
+				instruction = "Daj 2 krajce do toastovača. Keď vyskočia, natri ich maslom. HOTOVO daj až keď sú oba natreté.",
 			),
 			CookingTask(
-				id = "toast",
-				title = "Toasty sa opekajú",
-				durationSeconds = 2 * 60,
-				dependsOn = setOf("start-toast"),
-				resources = uses(TOASTER),
-				kind = TaskKind.WAIT,
-				instruction = "Nechaj toasty opiecť v toastovači.",
-			),
-			CookingTask(
-				id = "saute-onion-finish",
-				title = "Dorestuj cibuľu",
-				durationSeconds = 2 * 60,
-				dependsOn = setOf("start-toast"),
-				resources = uses(COOK, PAN, BURNER),
-				instruction = "Pokračuj v restovaní cibule ďalšie približne 2 minúty. Občas premiešaj. Keď je mäkká a prestane voňať surovo, odstav panvicu zo sporáka, aby sa cibuľa počas natierania toastov nespálila.",
-				tips = listOf(
-					"Ak začne rýchlo hnednúť, stiahni výkon.",
-				),
-			),
-			CookingTask(
-				id = "butter-toast",
-				title = "Natri toasty maslom",
-				durationSeconds = 3 * 60,
-				dependsOn = setOf("toast", "saute-onion-finish"),
-				resources = uses(COOK),
-				instruction = "Vyber opečené toasty a ešte teplé ich natri maslom.",
-			),
-			CookingTask(
-				id = "add-eggs",
+				id = "cook-eggs",
 				title = "Pridaj vajcia a miešaj",
 				durationSeconds = 2 * 60,
-				dependsOn = setOf("butter-toast"),
+				dependsOn = setOf("cook-onion"),
 				resources = uses(COOK, PAN, BURNER),
-				instruction = "Vráť panvicu na stredný výkon. Rozbi 2 vajcia priamo do panvice k cibuli, hneď ich osol malou štipkou soli a začni miešať. Stiahni na stredne nízky výkon. Keď už vajcia nie sú tekuté, ale stále sú mäkké a trochu lesklé, daj panvicu zo sporáka a až vtedy potvrď HOTOVO.",
+				instruction = "Pridaj 2 vajcia, hneď ich osol a miešaj na stredne nízkom výkone. Keď už nie sú tekuté, ale stále sú mäkké a lesklé, daj panvicu zo sporáka a potvrď HOTOVO.",
 				tips = listOf(
-					"Nečakaj, kým bude praženica na panvici úplne suchá. Vajcia ešte chvíľu dôjdu zvyškovým teplom.",
+					"Ak toasty ešte nie sú hotové, vajcia kvôli nim nenechávaj na panvici dlhšie.",
 				),
 			),
 			CookingTask(
 				id = "finish",
 				title = "Dochuť a podávaj",
-				durationSeconds = 2 * 60,
-				dependsOn = setOf("add-eggs"),
+				durationSeconds = 90,
+				dependsOn = setOf("cook-eggs", "make-toasts"),
 				resources = uses(COOK, PAN),
-				instruction = "Ochutnaj. Ak treba, už len jemne dosoľ a pridaj čierne korenie. Hneď podávaj s maslovými toastami.",
+				instruction = "Keď sú hotové praženica aj toasty, dochuť praženicu a hneď podávaj.",
 			),
 		),
 		troubleshooting = listOf(
-			TroubleshootingTip(
-				problem = "Praženica je príliš suchá",
-				advice = "Hneď ju daj z panvice na tanier. Nabudúce ju odstav o trochu skôr; na horúcej panvici ďalej tuhne.",
-			),
-			TroubleshootingTip(
-				problem = "Praženica je ešte príliš tekutá",
-				advice = "Vráť ju na nízky výkon a miešaj ešte 20–30 sekúnd.",
-			),
-			TroubleshootingTip(
-				problem = "Cibuľa sa pripaľuje",
-				advice = "Stiahni výkon a pridaj malú kvapku oleja alebo kúsok masla.",
-			),
-			TroubleshootingTip(
-				problem = "Toasty sú príliš tmavé",
-				advice = "Vyber ich hneď a nabudúce nastav toastovač o stupeň nižšie.",
-			),
+			TroubleshootingTip("Praženica je príliš suchá", "Hneď ju daj z panvice na tanier. Nabudúce ju odstav skôr."),
+			TroubleshootingTip("Praženica je ešte príliš tekutá", "Vráť ju na nízky výkon a miešaj ešte 20–30 sekúnd."),
+			TroubleshootingTip("Cibuľa sa pripaľuje", "Stiahni výkon a pridaj malú kvapku oleja alebo kúsok masla."),
+			TroubleshootingTip("Toasty sú príliš tmavé", "Nabudúce nastav toastovač o stupeň nižšie."),
 		),
 	)
 }
