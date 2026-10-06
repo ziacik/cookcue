@@ -113,6 +113,60 @@ class SchedulerTest {
 		assertEquals(3120, actual.single { it.task.id == "simmer" }.endSeconds)
 	}
 
+
+	@Test
+	fun delayedParallelTaskDoesNotShortenIndependentCookingTask() {
+		val source = recipe(
+			capacities = mapOf(
+				"cook" to 2,
+				"pan" to 1,
+				"burner" to 1,
+				"toaster" to 1,
+			),
+			CookingTask(
+				id = "onion",
+				title = "Cook onion",
+				durationSeconds = 300,
+				resources = uses("cook", "pan", "burner"),
+			),
+			CookingTask(
+				id = "toast",
+				title = "Make toast",
+				durationSeconds = 240,
+				resources = uses("cook", "toaster"),
+			),
+			CookingTask(
+				id = "eggs",
+				title = "Cook eggs",
+				durationSeconds = 120,
+				dependsOn = setOf("onion"),
+				resources = uses("cook", "pan", "burner"),
+			),
+			CookingTask(
+				id = "finish",
+				title = "Serve",
+				durationSeconds = 60,
+				dependsOn = setOf("eggs", "toast"),
+				resources = uses("cook"),
+			),
+		)
+
+		val result = scheduler.schedule(
+			recipe = source,
+			durationOverrides = mapOf("toast" to 480),
+		)
+		val onion = result.single { it.task.id == "onion" }
+		val toast = result.single { it.task.id == "toast" }
+		val eggs = result.single { it.task.id == "eggs" }
+		val finish = result.single { it.task.id == "finish" }
+
+		assertEquals(onion.endSeconds, eggs.startSeconds)
+		assertEquals(120, eggs.endSeconds - eggs.startSeconds)
+		assertTrue(eggs.startSeconds < toast.endSeconds)
+		assertTrue(finish.startSeconds >= eggs.endSeconds)
+		assertTrue(finish.startSeconds >= toast.endSeconds)
+	}
+
 	private fun recipe(
 		capacities: Map<String, Int>,
 		vararg tasks: CookingTask,
