@@ -199,9 +199,10 @@ private fun CookCueScreen() {
 	) {
 		CookingSessionController.snapshot(now)
 	}
-	val current = snapshot.currentAction
+	val activeActions = snapshot.activeActions
+	val current = activeActions.firstOrNull()
 	val primaryWait = snapshot.background.minByOrNull { it.endSeconds }
-	val displayedWait = if (current == null) primaryWait else null
+	val displayedWait = if (activeActions.isEmpty()) primaryWait else null
 	val activeTaskId = current?.task?.id ?: displayedWait?.task?.id
 	val activeStepIndex = snapshot.schedule.indexOfFirst { it.task.id == activeTaskId }
 	val secondaryBackground = snapshot.background.filterNot {
@@ -490,35 +491,43 @@ private fun CookCueScreen() {
 						when {
 							snapshot.paused -> Unit
 
-							current != null -> {
-								val elapsed =
-									(snapshot.elapsedSeconds - current.startSeconds).coerceAtLeast(0)
-								CurrentStepCard(
-									title = current.task.title,
-									image = current.task.image,
-									instruction = current.task.instruction,
-									tips = current.task.tips,
-									links = current.task.links,
-									estimateSeconds = current.task.durationSeconds,
-									elapsedSeconds = elapsed,
-									stepNumber = activeStepIndex.takeIf { it >= 0 }?.plus(1),
-									stepCount = snapshot.schedule.size,
-									actionLabel = "HOTOVO",
-									optional = current.task.optional,
-									isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY,
-									onDefer = {
-										CookingSessionController.deferCurrentAction(current.task.id)
-										persistAndSync()
-									},
-									onSkip = {
-										CookingSessionController.skipAction(current.task.id)
-										persistAndSync()
-									},
-									onAction = {
-										CookingSessionController.completeAction(current.task.id)
-										persistAndSync()
-									},
-								)
+							activeActions.isNotEmpty() -> {
+								Column(
+									verticalArrangement = Arrangement.spacedBy(12.dp),
+								) {
+									activeActions.forEach { action ->
+										val elapsed =
+											(snapshot.elapsedSeconds - action.startSeconds).coerceAtLeast(0)
+										val stepIndex =
+											snapshot.schedule.indexOfFirst { it.task.id == action.task.id }
+										CurrentStepCard(
+											title = action.task.title,
+											image = action.task.image,
+											instruction = action.task.instruction,
+											tips = action.task.tips,
+											links = action.task.links,
+											estimateSeconds = action.task.durationSeconds,
+											elapsedSeconds = elapsed,
+											stepNumber = stepIndex.takeIf { it >= 0 }?.plus(1),
+											stepCount = snapshot.schedule.size,
+											actionLabel = "HOTOVO",
+											optional = action.task.optional,
+											isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY,
+											onDefer = {
+												CookingSessionController.deferCurrentAction(action.task.id)
+												persistAndSync()
+											},
+											onSkip = {
+												CookingSessionController.skipAction(action.task.id)
+												persistAndSync()
+											},
+											onAction = {
+												CookingSessionController.completeAction(action.task.id)
+												persistAndSync()
+											},
+										)
+									}
+								}
 							}
 
 							displayedWait != null -> {
