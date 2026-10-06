@@ -16,37 +16,45 @@ data class TransitionCue(
 	val text: String,
 )
 
-fun MobileSessionSnapshot.transitionCue(): TransitionCue? {
-	pendingEvents.firstOrNull()?.let { event ->
-		return TransitionCue(
+fun MobileSessionSnapshot.transitionCues(): List<TransitionCue> {
+	val foreground = mutableListOf<TransitionCue>()
+
+	pendingEvents.forEach { event ->
+		foreground += TransitionCue(
 			key = "event:" + event.task.id,
 			title = event.task.title,
 			text = event.task.instruction,
 		)
 	}
 
-	currentAction?.let { action ->
-		return TransitionCue(
+	activeActions.forEach { action ->
+		foreground += TransitionCue(
 			key = "active:" + action.task.id,
 			title = action.task.title,
 			text = action.task.instruction,
 		)
 	}
 
+	if (foreground.isNotEmpty()) {
+		return foreground
+	}
+
 	background.minByOrNull { it.endSeconds }?.let { wait ->
-		return TransitionCue(
-			key = "wait:" + wait.task.id,
-			title = wait.task.title,
-			text = wait.task.instruction,
+		return listOf(
+			TransitionCue(
+				key = "wait:" + wait.task.id,
+				title = wait.task.title,
+				text = wait.task.instruction,
+			)
 		)
 	}
 
-	return null
+	return emptyList()
 }
 
 object MobileTransitionNotifier {
 	private const val CHANNEL_ID = "cooking_transitions"
-	private const val NOTIFICATION_ID = 2001
+	private const val NOTIFICATION_ID_BASE = 2001
 
 	fun ensureChannel(context: Context) {
 		val manager = context.getSystemService(NotificationManager::class.java)
@@ -93,8 +101,9 @@ object MobileTransitionNotifier {
 			.setLocalOnly(true)
 			.build()
 
+		val notificationId = NOTIFICATION_ID_BASE + (cue.key.hashCode() and 0x0fff)
 		context
 			.getSystemService(NotificationManager::class.java)
-			.notify(NOTIFICATION_ID, notification)
+			.notify(notificationId, notification)
 	}
 }
