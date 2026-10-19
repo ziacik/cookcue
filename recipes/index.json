@@ -36,6 +36,12 @@
 			"version": 1,
 			"file": "shopping.json",
 			"minAppVersion": 1
+		},
+		{
+			"id": "aeropress-inverted",
+			"version": 1,
+			"file": "aeropress-inverted.json",
+			"minAppVersion": 1
 		}
 	]
 }
