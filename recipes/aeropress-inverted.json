@@ -1,0 +1,167 @@
+{
+	"schemaVersion": 1,
+	"id": "aeropress-inverted",
+	"title": "AeroPress – inverted",
+	"description": "1 šálka · 15 g kávy / 210 g vody · 93–94 °C · plná, čistá a vyvážená chuť",
+	"servings": 1,
+	"ingredients": [
+		{
+			"name": "čerstvo pražená zrnková káva",
+			"amount": "15 g, stredne jemne mletá (ako jemnejší kryštálový cukor)"
+		},
+		{
+			"name": "filtrovaná voda",
+			"amount": "210 g do AeroPressu + trochu na opláchnutie filtra"
+		},
+		{
+			"name": "papierový filter AeroPress",
+			"amount": "1 ks"
+		}
+	],
+	"resourceCapacities": {
+		"cook": 1,
+		"kettle": 1,
+		"aeropress": 1
+	},
+	"preCookingNote": "Recept na štandardný AeroPress Original/Clear. Priprav si váhu, mlynček, kanvicu, pevnú šálku a stopky v appke. Inverted metóda je menej stabilná a výrobca ju pre riziko obarenia neodporúča: pracuj na rovnej stabilnej ploche, piest zasuň aspoň 1,5–2 cm, nenapĺňaj až po okraj a pri otáčaní pevne drž šálku aj telo AeroPressu. Všetky manuálne úlohy potvrdzuj až po skutočnom dokončení.",
+	"tasks": [
+		{
+			"id": "start-kettle",
+			"title": "Zapni kanvicu",
+			"durationSeconds": 40,
+			"resources": [
+				"cook",
+				"kettle"
+			],
+			"instruction": "Nalej do kanvice aspoň 300 ml čerstvej vody a zapni ohrev na 93–94 °C. Ak kanvica nemá reguláciu, priveď vodu do varu a potom ju nechaj trochu vychladnúť. Ideálne použi teplomer."
+		},
+		{
+			"id": "prepare-brewer",
+			"title": "Odváž, pomeľ a priprav AeroPress",
+			"durationSeconds": 210,
+			"dependsOn": [
+				"start-kettle"
+			],
+			"resources": [
+				"cook",
+				"aeropress"
+			],
+			"instruction": "Odváž 15 g kávy a pomeľ ju stredne jemne. Piest zasuň do AeroPressu aspoň 1,5–2 cm, otoč ho piestom nadol a postav na stabilnú rovnú plochu. Nasyp kávu dovnútra. Do viečka vlož papierový filter, prepláchni ho vodou a odlož viečko nabok. Zatiaľ ho nenasadzuj.",
+			"tips": [
+				"Mletie: o trochu jemnejšie než pri bežnom filtri, ale hrubšie než na espresso.",
+				"Nechaj v tele rezervu na vodu, aby pri nasadzovaní viečka nepretiekla."
+			]
+		},
+		{
+			"id": "water-ready",
+			"title": "Je voda na 93–94 °C?",
+			"durationSeconds": 180,
+			"dependsOn": [
+				"start-kettle"
+			],
+			"resources": [
+				"kettle"
+			],
+			"kind": "EVENT",
+			"instruction": "Počas prípravy AeroPressu sa voda zohrieva. Potvrď, až keď má približne 93–94 °C. Ak teplota ešte nie je správna, zvoľ EŠTE NIE. Ak vychladla príliš, krátko ju dohřej. Samotné lúhovanie sa začne až po zaliatí a premiešaní kávy.",
+			"actionLabel": "VODA PRIPRAVENÁ",
+			"retryActionLabel": "EŠTE NIE",
+			"retryAfterSeconds": 30
+		},
+		{
+			"id": "pour-and-stir",
+			"title": "Zalej 210 g vody a krátko premiešaj",
+			"durationSeconds": 50,
+			"dependsOn": [
+				"prepare-brewer",
+				"water-ready"
+			],
+			"resources": [
+				"cook",
+				"aeropress"
+			],
+			"instruction": "Vynuluj váhu s AeroPressom. Plynulo nalej 210 g vody pri 93–94 °C približne za 20–30 sekúnd. Jemne premiešaj 3–4-krát tak, aby nezostala suchá káva. Keď je všetka káva mokrá a miešanie dokončené, hneď stlač Hotovo — tým sa spustí presný dvojminútový časovač lúhovania.",
+			"tips": [
+				"Samostatný bloom pri tejto ponornej metóde netreba.",
+				"Ak sa ti celé množstvo vody bezpečne nezmestí, použi 200 g a po vylisovaní doplň 10 g do šálky."
+			]
+		},
+		{
+			"id": "steep",
+			"title": "Lúhuj 2 minúty",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"pour-and-stir"
+			],
+			"kind": "WAIT",
+			"instruction": "Káva sa lúhuje presne 2 minúty od dokončenia zalievania a miešania. Neotáčaj AeroPress skôr. Počas lúhovania môžeš nasadiť viečko s filtrom a pripraviť šálku."
+		},
+		{
+			"id": "cap-and-cup",
+			"title": "Nasaď filter a priprav šálku",
+			"durationSeconds": 50,
+			"dependsOn": [
+				"pour-and-stir"
+			],
+			"resources": [
+				"cook",
+				"aeropress"
+			],
+			"instruction": "Opatrne naskrutkuj viečko s navlhčeným filtrom nadoraz, bez tlačenia na piest. Priprav pevnú šálku, do ktorej budeš kávu lisovať, a postav ju hneď vedľa. Šálku na AeroPress nasadíš až pri otáčaní. Toto rob počas dvojminútového lúhovania.",
+			"tips": [
+				"Pri nasadzovaní viečka drž telo AeroPressu; nádobu neprevracaj ani zbytočne nenakláňaj."
+			]
+		},
+		{
+			"id": "flip-and-press",
+			"title": "Bezpečne otoč a pomaly lisuj",
+			"durationSeconds": 60,
+			"dependsOn": [
+				"steep",
+				"cap-and-cup"
+			],
+			"resources": [
+				"cook",
+				"aeropress"
+			],
+			"instruction": "Polož šálku hore dnom na pevne zavreté viečko. Jednou rukou drž šálku, druhou telo AeroPressu a obe naraz plynulo otoč do normálnej polohy. Postav na stabilnú podložku. Rovnomerne a veľmi jemne lisuj približne 30–45 sekúnd; skonči pri prvom zasyčaní vzduchu, netlač nasilu. Potvrď Hotovo až po dolisovaní.",
+			"tips": [
+				"Pri príliš veľkom odpore netlač prudšie; nabudúce zvoľ hrubšie mletie."
+			]
+		},
+		{
+			"id": "serve",
+			"title": "Premiešaj, ochutnaj a podávaj",
+			"durationSeconds": 40,
+			"dependsOn": [
+				"flip-and-press"
+			],
+			"resources": [
+				"cook"
+			],
+			"instruction": "Odlož AeroPress, šálku krátko premiešaj a nechaj niekoľko sekúnd ochladnúť, aby vynikli chute. Ochutnaj. Výsledok má byť plný, sladký a vyvážený. Pri ďalšom pokuse uprav iba jednu premennú naraz."
+		}
+	],
+	"troubleshooting": [
+		{
+			"problem": "Káva je kyslá alebo nevýrazná",
+			"advice": "Nabudúce pomeľ o trochu jemnejšie, prípadne zvýš teplotu na 95–96 °C alebo predĺž lúhovanie o 20–30 sekúnd."
+		},
+		{
+			"problem": "Káva je horká alebo drsná",
+			"advice": "Nabudúce pomeľ o trochu hrubšie alebo použi o 2 °C chladnejšiu vodu. Nemiešaj agresívne a lisuj jemne."
+		},
+		{
+			"problem": "Káva je príliš silná",
+			"advice": "Do hotovej šálky pridaj 10–30 g horúcej vody. Pri ďalšej príprave môžeš znížiť dávku na 14 g."
+		},
+		{
+			"problem": "Filter kvapká alebo nasadzovanie viečka je nebezpečné",
+			"advice": "Použi menšie množstvo vody v komore (200 g + 10 g do šálky), skontroluj, či je viečko pevne zaskrutkované, a pred otočením si priprav pevnú šálku. Pri neistote zvoľ klasickú polohu s Flow Control viečkom."
+		},
+		{
+			"problem": "Lisovanie ide príliš ťažko",
+			"advice": "Nabudúce pomeľ o niečo hrubšie. Netlač prudko na AeroPress plný horúcej vody."
+		}
+	]
+}
