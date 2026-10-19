@@ -63,7 +63,7 @@
 				"kettle"
 			],
 			"kind": "EVENT",
-			"instruction": "Počas prípravy AeroPressu sa voda zohrieva. Potvrď, až keď má približne 93–94 °C. Ak teplota ešte nie je správna, zvoľ EŠTE NIE. Ak vychladla príliš, krátko ju dohřej. Samotné lúhovanie sa začne až po zaliatí a premiešaní kávy.",
+			"instruction": "Počas prípravy AeroPressu sa voda zohrieva. Potvrď, až keď má približne 93–94 °C. Ak teplota ešte nie je správna, zvoľ EŠTE NIE. Ak vychladla príliš, krátko ju znovu zohrej. Samotné lúhovanie sa začne až po zaliatí a premiešaní kávy.",
 			"actionLabel": "VODA PRIPRAVENÁ",
 			"retryActionLabel": "EŠTE NIE",
 			"retryAfterSeconds": 30
