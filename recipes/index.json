@@ -20,21 +20,9 @@
 			"minAppVersion": 1
 		},
 		{
-			"id": "biela-noc-bratislava-2026",
-			"version": 5,
-			"file": "biela-noc-bratislava-2026.json",
-			"minAppVersion": 3
-		},
-		{
 			"id": "potato-mash-stuffed-posuch",
 			"version": 1,
 			"file": "potato-mash-stuffed-posuch.json",
-			"minAppVersion": 1
-		},
-		{
-			"id": "shopping",
-			"version": 1,
-			"file": "shopping.json",
 			"minAppVersion": 1
 		},
 		{
