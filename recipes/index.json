@@ -27,7 +27,7 @@
 		},
 		{
 			"id": "aeropress-inverted",
-			"version": 1,
+			"version": 2,
 			"file": "aeropress-inverted.json",
 			"minAppVersion": 1
 		}
