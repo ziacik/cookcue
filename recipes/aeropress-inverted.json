@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"id": "aeropress-inverted",
 	"title": "AeroPress – inverted",
-	"description": "1 šálka · 15 g kávy / 210 g vody · 93–94 °C · plná, čistá a vyvážená chuť",
+	"description": "1 šálka · 15 g / 210 g · 93–94 °C · presná extrakcia 2:00 od prvej kvapky",
 	"servings": 1,
 	"ingredients": [
 		{
@@ -23,7 +23,7 @@
 		"kettle": 1,
 		"aeropress": 1
 	},
-	"preCookingNote": "Recept na štandardný AeroPress Original/Clear. Priprav si váhu, mlynček, kanvicu, pevnú šálku a stopky v appke. Inverted metóda je menej stabilná a výrobca ju pre riziko obarenia neodporúča: pracuj na rovnej stabilnej ploche, piest zasuň aspoň 1,5–2 cm, nenapĺňaj až po okraj a pri otáčaní pevne drž šálku aj telo AeroPressu. Všetky manuálne úlohy potvrdzuj až po skutočnom dokončení.",
+	"preCookingNote": "Recept pre štandardný AeroPress Original/Clear. Prípravné kroky majú iba orientačný čas a môžu sa predĺžiť. Presný dvojminútový časovač začne až po stlačení ŠTART v okamihu, keď voda prvý raz dopadne na kávu. Pred stlačením ŠTART si preto vopred prečítaj postup zalievania, miešania a otáčania. Inverted metóda je menej stabilná a výrobca ju pre riziko obarenia neodporúča: pracuj na rovnej stabilnej ploche, piest zasuň aspoň 1,5–2 cm, nenapĺňaj po okraj a pri prevracaní pevne drž šálku aj telo AeroPressu.",
 	"tasks": [
 		{
 			"id": "start-kettle",
@@ -63,15 +63,15 @@
 				"kettle"
 			],
 			"kind": "EVENT",
-			"instruction": "Počas prípravy AeroPressu sa voda zohrieva. Potvrď, až keď má približne 93–94 °C. Ak teplota ešte nie je správna, zvoľ EŠTE NIE. Ak vychladla príliš, krátko ju znovu zohrej. Samotné lúhovanie sa začne až po zaliatí a premiešaní kávy.",
+			"instruction": "Počas prípravy AeroPressu sa voda zohrieva. Potvrď, až keď má približne 93–94 °C. Ak ešte nie je pripravená, zvoľ EŠTE NIE. Toto NIE JE štart lúhovania; časovanie extrakcie začne až neskôr samostatným tlačidlom ŠTART.",
 			"actionLabel": "VODA PRIPRAVENÁ",
 			"retryActionLabel": "EŠTE NIE",
 			"retryAfterSeconds": 30
 		},
 		{
-			"id": "pour-and-stir",
-			"title": "Zalej 210 g vody a krátko premiešaj",
-			"durationSeconds": 50,
+			"id": "read-brew-timing",
+			"title": "Prečítaj časovanie a priprav pracovné miesto",
+			"durationSeconds": 100,
 			"dependsOn": [
 				"prepare-brewer",
 				"water-ready"
@@ -80,53 +80,89 @@
 				"cook",
 				"aeropress"
 			],
-			"instruction": "Vynuluj váhu s AeroPressom. Plynulo nalej 210 g vody pri 93–94 °C približne za 20–30 sekúnd. Jemne premiešaj 3–4-krát tak, aby nezostala suchá káva. Keď je všetka káva mokrá a miešanie dokončené, hneď stlač Hotovo — tým sa spustí presný dvojminútový časovač lúhovania.",
+			"instruction": "Teraz máš čas všetko nachystať, bez spusteného časovača. Postav AeroPress s kávou na váhu a vynuluj ju. Kanvicu s vodou pri 93–94 °C, miešadlo a šálku maj na dosah. Časový plán OD PRVEJ KVAPKY: 0:00–0:30 nalej 210 g vody; 0:30–0:40 premiešaj 3–4 jemnými pohybmi; 0:40–2:00 nechaj lúhovať, počas toho nasaď filter a priprav šálku. Presne pri 2:00 začni prevracať a pomaly lisovať. Až keď máš postup prečítaný a všetko po ruke, potvrď Hotovo.",
 			"tips": [
-				"Samostatný bloom pri tejto ponornej metóde netreba.",
-				"Ak sa ti celé množstvo vody bezpečne nezmestí, použi 200 g a po vylisovaní doplň 10 g do šálky."
+				"Pri váhe kontroluj množstvo vody: 210 g, nie 210 ml podľa rysky.",
+				"Ak je telo AeroPressu príliš plné, priprav si namiesto toho 200 g vody a ďalších 10 g pridaj priamo do hotovej šálky."
 			]
 		},
 		{
-			"id": "steep",
-			"title": "Lúhuj 2 minúty",
-			"durationSeconds": 120,
+			"id": "start-brew",
+			"title": "ŠTART – prvá kvapka vody",
+			"durationSeconds": 1,
 			"dependsOn": [
-				"pour-and-stir"
+				"read-brew-timing"
+			],
+			"kind": "EVENT",
+			"actionLabel": "ŠTART · PRVÁ KVAPKA",
+			"instruction": "Až teraz začína presné časovanie: začni zalievať a stlač ŠTART v okamihu, keď voda prvý raz dopadne na mletú kávu. Nečakaj až na koniec zalievania. Od tohto stlačenia beží nepretržitých 2:00 až do začiatku prevrátenia."
+		},
+		{
+			"id": "pour-timed",
+			"title": "0:00–0:30 · Zalej 210 g vody",
+			"durationSeconds": 30,
+			"dependsOn": [
+				"start-brew"
 			],
 			"kind": "WAIT",
-			"instruction": "Káva sa lúhuje presne 2 minúty od dokončenia zalievania a miešania. Neotáčaj AeroPress skôr. Počas lúhovania môžeš nasadiť viečko s filtrom a pripraviť šálku."
+			"instruction": "Práve beží 30-sekundové zalievanie. Plynulo nalej 210 g vody pri 93–94 °C. Dokonči nalievanie do 0:30. Tento krok sa automaticky skončí po 30 sekundách; netreba nič potvrdzovať.",
+			"tips": [
+				"Pri zalievaní udržuj AeroPress stabilný; nedvíhaj ho z váhy."
+			]
+		},
+		{
+			"id": "extraction-timer",
+			"title": "Celková extrakcia · 2:00 od prvej kvapky",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"start-brew"
+			],
+			"kind": "WAIT",
+			"instruction": "Toto je jediný spoločný časovač extrakcie: počíta od PRVEJ kvapky, nie od konca nalievania. Súčasne prebieha zalievanie (30 s), miešanie (10 s) a zvyšné lúhovanie. Pri 2:00 sa začne prevrátenie a lisovanie. Nepredlžuj čas ďalšími dvoma minútami."
+		},
+		{
+			"id": "stir-timed",
+			"title": "0:30–0:40 · Krátko premiešaj",
+			"durationSeconds": 10,
+			"dependsOn": [
+				"pour-timed"
+			],
+			"kind": "WAIT",
+			"instruction": "Po skončení 30-sekundového zalievania urob počas 10 sekúnd 3–4 jemné pohyby miešadlom, aby sa všetka káva namočila. Na 0:40 miešadlo vytiahni. Dvojminútový časovač beží stále od prvej kvapky, nezačína znovu."
 		},
 		{
 			"id": "cap-and-cup",
-			"title": "Nasaď filter a priprav šálku",
-			"durationSeconds": 50,
+			"title": "0:40–1:20 · Nasaď viečko a priprav šálku",
+			"durationSeconds": 40,
 			"dependsOn": [
-				"pour-and-stir"
+				"stir-timed"
 			],
 			"resources": [
 				"cook",
 				"aeropress"
 			],
-			"instruction": "Opatrne naskrutkuj viečko s navlhčeným filtrom nadoraz, bez tlačenia na piest. Priprav pevnú šálku, do ktorej budeš kávu lisovať, a postav ju hneď vedľa. Šálku na AeroPress nasadíš až pri otáčaní. Toto rob počas dvojminútového lúhovania.",
+			"instruction": "Po miešaní opatrne naskrutkuj viečko s vopred navlhčeným filtrom nadoraz, bez tlačenia na piest. Priprav pevnú šálku tesne vedľa, aby si bol pripravený prevrátiť AeroPress. Cieľ je mať všetko hotové približne do 1:20; potom nechaj kávu lúhovať do 2:00. Klikni Hotovo hneď, ako viečko aj šálku pripravíš. Celkový dvojminútový časovač beží nezávisle od toho, kedy klikneš.",
 			"tips": [
-				"Pri nasadzovaní viečka drž telo AeroPressu; nádobu neprevracaj ani zbytočne nenakláňaj."
+				"Pozor, v AeroPresse je horúca voda; neskúšaj vyvíjať tlak na piest.",
+				"Nenechávaj šálku ani viečko na poslednú sekundu pred 2:00."
 			]
 		},
 		{
 			"id": "flip-and-press",
-			"title": "Bezpečne otoč a pomaly lisuj",
-			"durationSeconds": 60,
+			"title": "2:00 · Prevráť a pomaly lisuj",
+			"durationSeconds": 55,
 			"dependsOn": [
-				"steep",
+				"extraction-timer",
 				"cap-and-cup"
 			],
 			"resources": [
 				"cook",
 				"aeropress"
 			],
-			"instruction": "Polož šálku hore dnom na pevne zavreté viečko. Jednou rukou drž šálku, druhou telo AeroPressu a obe naraz plynulo otoč do normálnej polohy. Postav na stabilnú podložku. Rovnomerne a veľmi jemne lisuj približne 30–45 sekúnd; skonči pri prvom zasyčaní vzduchu, netlač nasilu. Potvrď Hotovo až po dolisovaní.",
+			"instruction": "Teraz, pri uplynutí 2:00 od prvej kvapky, polož šálku hore dnom na pevne uzatvorené viečko. Pevne uchop šálku aj AeroPress a spoločne ich bezpečne prevráť. Na stabilnej podložke pomaly a rovnomerne lisuj asi 30–45 sekúnd; skonči pri prvom syčaní. Celý krok vrátane otočenia trvá orientačne 55 sekúnd, nejde o ďalšie lúhovanie. Potvrď Hotovo až po dokončení.",
 			"tips": [
-				"Pri príliš veľkom odpore netlač prudšie; nabudúce zvoľ hrubšie mletie."
+				"Ak nasadenie viečka trvalo dlhšie než do 2:00, už nečakaj na ďalšie lúhovanie; bezpečne dokonči otočenie a lisovanie.",
+				"Ak piest kladie silný odpor, netlač prudko; nabudúce meli hrubšie."
 			]
 		},
 		{
