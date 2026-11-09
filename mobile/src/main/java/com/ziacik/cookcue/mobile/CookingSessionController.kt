@@ -106,6 +106,7 @@ object CookingSessionController {
 		manuallyCompletedTaskIds = emptySet()
 		deferredTaskIds = emptySet()
 		paused = false
+		completedEarly = false
 		activeTaskOverrideId = null
 		activeTaskOverrideStartedAtSeconds = null
 		nearbySuggestion = null
@@ -140,6 +141,9 @@ object CookingSessionController {
 		private set
 
 	var paused by mutableStateOf(false)
+		private set
+
+	var completedEarly by mutableStateOf(false)
 		private set
 
 	var activeTaskOverrideId by mutableStateOf<String?>(null)
@@ -182,6 +186,7 @@ object CookingSessionController {
 		manuallyCompletedTaskIds = emptySet()
 		deferredTaskIds = emptySet()
 		paused = false
+		completedEarly = false
 		activeTaskOverrideId = null
 		activeTaskOverrideStartedAtSeconds = null
 		nearbySuggestion = null
@@ -202,6 +207,7 @@ object CookingSessionController {
 		manuallyCompletedTaskIds = emptySet()
 		deferredTaskIds = emptySet()
 		paused = false
+		completedEarly = false
 		activeTaskOverrideId = null
 		activeTaskOverrideStartedAtSeconds = null
 		nearbySuggestion = null
@@ -231,6 +237,7 @@ object CookingSessionController {
 		nearbySuggestionSnoozeTaskId: String? = null,
 		nearbySuggestionSnoozeUntilElapsedRealtime: Long = 0L,
 		eventDeferredUntil: Map<String, Long> = emptyMap(),
+		completedEarly: Boolean = false,
 	) {
 		selectedRecipeId = availableRecipes
 			.firstOrNull { it.id == recipeId }
@@ -259,6 +266,36 @@ object CookingSessionController {
 		this.nearbySuggestionSnoozeTaskId = nearbySuggestionSnoozeTaskId
 		this.nearbySuggestionSnoozeUntilElapsedRealtime = nearbySuggestionSnoozeUntilElapsedRealtime
 		this.eventDeferredUntil = eventDeferredUntil
+		this.completedEarly = this.startedAt != null && completedEarly
+		markUserAction()
+	}
+
+
+	fun canFinishEarly(snapshot: MobileSessionSnapshot): Boolean {
+		if (
+			!snapshot.started ||
+			snapshot.paused ||
+			snapshot.completed ||
+			recipe.scheduleMode != ScheduleMode.COOKING ||
+			recipe.earlyFinishActionLabel.isNullOrBlank()
+		) {
+			return false
+		}
+
+		return (snapshot.activeActions + snapshot.pendingEvents).any {
+			it.task.id in recipe.earlyFinishTaskIds
+		}
+	}
+
+	fun finishEarly() {
+		if (!canFinishEarly(snapshot())) {
+			return
+		}
+
+		skippedTaskIds = skippedTaskIds + recipe.tasks
+			.filterNot { isTaskCompleted(it.id) }
+			.map { it.id }
+		completedEarly = true
 		markUserAction()
 	}
 
@@ -711,7 +748,7 @@ object CookingSessionController {
 				background.isEmpty() &&
 				nextScheduled == null
 
-		return MobileSessionSnapshot(
+		val result = MobileSessionSnapshot(
 			started = start != null,
 			paused = paused,
 			completed = completed,
@@ -726,6 +763,21 @@ object CookingSessionController {
 			nextScheduled = nextScheduled,
 			taskProgress = taskProgress,
 		)
+
+		return if (completedEarly && start != null) {
+			result.copy(
+				completed = true,
+				activeActions = emptyList(),
+				currentAction = null,
+				background = emptyList(),
+				pendingEvents = emptyList(),
+				previousAction = null,
+				nextAction = null,
+				nextScheduled = null,
+			)
+		} else {
+			result
+		}
 	}
 
 	private fun isTaskCompleted(taskId: String): Boolean {
