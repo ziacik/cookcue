@@ -215,6 +215,8 @@ class CookingSessionService : Service() {
 					title = if (isItinerary()) "Itinerár je hotový" else "Varenie je hotové",
 					text = if (isItinerary()) {
 						"Všetky zastávky sú vybavené. Ukonči itinerár v CookCue."
+					} else if (CookingSessionController.completedEarly) {
+						"Zvyšné placky boli preskočené. Varenie je hotové."
 					} else {
 						"Všetky kroky sú dokončené. Ukonči varenie v CookCue."
 					},
