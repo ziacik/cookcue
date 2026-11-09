@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"id": "potato-pancakes",
 	"title": "Zemiakové placky",
-	"description": "Polovičná dávka · 400 g zemiakov · približne 4 tenké placky, vždy len 1 na panvici",
+	"description": "Polovičná dávka · 400 g zemiakov · 7 menších tenkých placiek, vždy iba 1 na panvici",
 	"servings": 2,
 	"ingredients": [
 		{
@@ -43,7 +43,7 @@
 		"pan": 1,
 		"burner": 1
 	},
-	"preCookingNote": "Počítame s približne 4 tenkými plackami z 400 g zemiakov, ktoré sa vyprážajú postupne — na panvici je vždy len jedna. Skutočný počet závisí od ich veľkosti. Prípravné časy sú orientačné: ďalší krok sa spustí až po potvrdení Hotovo. Každá placka má samostatný časovač 1:40 na každú stranu, ktorý sa spustí až po skutočnom vložení či otočení. Sleduj aj farbu: ak je placka hotová skôr, otoč alebo vyber ju skôr. Počas vyprážania nenechávaj panvicu bez dozoru.",
+	"preCookingNote": "Zo 400 g zemiakov rozdeľ cesto na 7 menších tenkých placiek, približne 9–11 cm podľa hrúbky. Na panvici je vždy len jedna placka. Prípravné časy sú orientačné, ďalší krok sa spustí až po potvrdení Hotovo. Každá placka má samostatných 100 sekúnd na stranu, časovač druhej strany sa spúšťa až po potvrdení otočenia. Sleduj farbu: ak je placka hotová skôr, otoč alebo vyber ju skôr. Pri vyprážaní nenechávaj panvicu bez dozoru.",
 	"tasks": [
 		{
 			"id": "gather",
@@ -162,7 +162,7 @@
 				"pan",
 				"burner"
 			],
-			"instruction": "Naber približne štvrtinu cesta a na horúcej panvici ho lyžicou rozotri do jednej tenkej placky. Teraz robíš prvú placku, ostatné cesto zostáva v miske. Keď je placka na panvici a rozotretá, hneď stlač Hotovo: tým začne prvých 100 sekúnd."
+			"instruction": "Naber približne jednu sedminu cesta a na horúcej panvici ho lyžicou rozotri do jednej tenkej placky s priemerom asi 9–11 cm. Teraz robíš prvú placku, ostatné cesto zostáva v miske. Keď je placka na panvici a rozotretá, hneď stlač Hotovo: tým začne prvých 100 sekúnd."
 		},
 		{
 			"id": "side-1a",
@@ -271,7 +271,7 @@
 				"pan",
 				"burner"
 			],
-			"instruction": "Naber približne štvrtinu cesta a na horúcej panvici ho lyžicou rozotri do jednej tenkej placky. Teraz robíš druhú placku, ostatné cesto zostáva v miske. Keď je placka na panvici a rozotretá, hneď stlač Hotovo: tým začne prvých 100 sekúnd."
+			"instruction": "Naber približne jednu sedminu cesta a na horúcej panvici ho lyžicou rozotri do jednej tenkej placky s priemerom asi 9–11 cm. Teraz robíš druhú placku, ostatné cesto zostáva v miske. Keď je placka na panvici a rozotretá, hneď stlač Hotovo: tým začne prvých 100 sekúnd."
 		},
 		{
 			"id": "side-2a",
@@ -380,7 +380,7 @@
 				"pan",
 				"burner"
 			],
-			"instruction": "Naber približne štvrtinu cesta a na horúcej panvici ho lyžicou rozotri do jednej tenkej placky. Teraz robíš tretiu placku, ostatné cesto zostáva v miske. Keď je placka na panvici a rozotretá, hneď stlač Hotovo: tým začne prvých 100 sekúnd."
+			"instruction": "Naber približne jednu sedminu cesta a na horúcej panvici ho lyžicou rozotri do jednej tenkej placky s priemerom asi 9–11 cm. Teraz robíš tretiu placku, ostatné cesto zostáva v miske. Keď je placka na panvici a rozotretá, hneď stlač Hotovo: tým začne prvých 100 sekúnd."
 		},
 		{
 			"id": "side-3a",
@@ -489,7 +489,7 @@
 				"pan",
 				"burner"
 			],
-			"instruction": "Naber približne štvrtinu cesta a na horúcej panvici ho lyžicou rozotri do jednej tenkej placky. Teraz robíš štvrtú placku, ostatné cesto zostáva v miske. Keď je placka na panvici a rozotretá, hneď stlač Hotovo: tým začne prvých 100 sekúnd."
+			"instruction": "Naber približne jednu sedminu cesta a na horúcej panvici ho lyžicou rozotri do jednej tenkej placky s priemerom asi 9–11 cm. Teraz robíš štvrtú placku, ostatné cesto zostáva v miske. Keď je placka na panvici a rozotretá, hneď stlač Hotovo: tým začne prvých 100 sekúnd."
 		},
 		{
 			"id": "side-4a",
@@ -539,10 +539,337 @@
 		},
 		{
 			"id": "remove-4",
-			"title": "Vyber 4. placku a vypni sporák",
+			"title": "Vyber 4. placku",
 			"durationSeconds": 45,
 			"dependsOn": [
 				"side-4b"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"kind": "EVENT",
+			"actionLabel": "VYBRATÁ",
+			"retryActionLabel": "EŠTE NIE",
+			"retryAfterSeconds": 30,
+			"instruction": "Skontroluj prepečenie; ak je placka z oboch strán zlatá, vyber ju na tanier s papierovou utierkou. Až po vybratí stlač VYBRATÁ. Ak je ešte bledá, zvoľ EŠTE NIE a skontroluj o 30 sekúnd."
+		},
+		{
+			"id": "prepare-5",
+			"title": "Priprav panvicu na 5. placku",
+			"durationSeconds": 60,
+			"dependsOn": [
+				"remove-4"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Premiešaj zvyšné cesto, prípadne zlej voľnú tekutinu. Skontroluj olej, podľa potreby trochu pridaj a uprav výkon. Pokračuj, keď je panvica pripravená."
+		},
+		{
+			"id": "pan-ready-5",
+			"title": "Je panvica pripravená na 5. placku?",
+			"durationSeconds": 45,
+			"dependsOn": [
+				"prepare-5"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "EVENT",
+			"actionLabel": "ÁNO",
+			"retryActionLabel": "EŠTE NIE",
+			"retryAfterSeconds": 30,
+			"instruction": "Olej pri kvapke cesta jemne syčí, ale nedymí? Potvrď ÁNO. Ak nie, skontroluj panvicu znovu o 30 sekúnd."
+		},
+		{
+			"id": "load-5",
+			"title": "Rozotri 5. placku",
+			"durationSeconds": 75,
+			"dependsOn": [
+				"pan-ready-5"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Naber približne jednu sedminu pôvodného cesta a na horúcej panvici ho lyžicou rozotri do jednej tenkej placky s priemerom asi 9–11 cm. Teraz robíš piatu placku, ostatné cesto nechaj v miske. Keď je placka na panvici a rozotretá, hneď stlač Hotovo: tým začne prvých 100 sekúnd."
+		},
+		{
+			"id": "side-5a",
+			"title": "5. placka · prvá strana 1:40",
+			"durationSeconds": 100,
+			"dependsOn": [
+				"load-5"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "WAIT",
+			"instruction": "Vyprážaj prvú stranu 100 sekúnd. Sleduj, či okraje hnednú; ak sa placka pripaľuje, zníž výkon alebo otoč skôr. Po časovači skontroluj spodnú stranu."
+		},
+		{
+			"id": "flip-5",
+			"title": "Otoč 5. placku",
+			"durationSeconds": 45,
+			"dependsOn": [
+				"side-5a"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"kind": "EVENT",
+			"actionLabel": "OTOČENÁ",
+			"retryActionLabel": "EŠTE BLEDÁ",
+			"retryAfterSeconds": 30,
+			"instruction": "Obracačkou nadvihni okraj. Ak je spodná strana zlatohnedá, otoč placku a AŽ POTOM stlač OTOČENÁ. Tým začne 100-sekundový časovač druhej strany. Ak je ešte bledá, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách."
+		},
+		{
+			"id": "side-5b",
+			"title": "5. placka · druhá strana 1:40",
+			"durationSeconds": 100,
+			"dependsOn": [
+				"flip-5"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "WAIT",
+			"instruction": "Vyprážaj druhú stranu 100 sekúnd. Sleduj zlatistú farbu; ak je placka hotová skôr, vyber ju skôr."
+		},
+		{
+			"id": "remove-5",
+			"title": "Vyber 5. placku",
+			"durationSeconds": 45,
+			"dependsOn": [
+				"side-5b"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"kind": "EVENT",
+			"actionLabel": "VYBRATÁ",
+			"retryActionLabel": "EŠTE NIE",
+			"retryAfterSeconds": 30,
+			"instruction": "Skontroluj prepečenie; ak je placka z oboch strán zlatá, vyber ju na tanier s papierovou utierkou. Až po vybratí stlač VYBRATÁ. Ak je ešte bledá, zvoľ EŠTE NIE a skontroluj o 30 sekúnd."
+		},
+		{
+			"id": "prepare-6",
+			"title": "Priprav panvicu na 6. placku",
+			"durationSeconds": 60,
+			"dependsOn": [
+				"remove-5"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Premiešaj zvyšné cesto, prípadne zlej voľnú tekutinu. Skontroluj olej, podľa potreby trochu pridaj a uprav výkon. Pokračuj, keď je panvica pripravená."
+		},
+		{
+			"id": "pan-ready-6",
+			"title": "Je panvica pripravená na 6. placku?",
+			"durationSeconds": 45,
+			"dependsOn": [
+				"prepare-6"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "EVENT",
+			"actionLabel": "ÁNO",
+			"retryActionLabel": "EŠTE NIE",
+			"retryAfterSeconds": 30,
+			"instruction": "Olej pri kvapke cesta jemne syčí, ale nedymí? Potvrď ÁNO. Ak nie, skontroluj panvicu znovu o 30 sekúnd."
+		},
+		{
+			"id": "load-6",
+			"title": "Rozotri 6. placku",
+			"durationSeconds": 75,
+			"dependsOn": [
+				"pan-ready-6"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Naber približne jednu sedminu pôvodného cesta a na horúcej panvici ho lyžicou rozotri do jednej tenkej placky s priemerom asi 9–11 cm. Teraz robíš šiestu placku, ostatné cesto nechaj v miske. Keď je placka na panvici a rozotretá, hneď stlač Hotovo: tým začne prvých 100 sekúnd."
+		},
+		{
+			"id": "side-6a",
+			"title": "6. placka · prvá strana 1:40",
+			"durationSeconds": 100,
+			"dependsOn": [
+				"load-6"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "WAIT",
+			"instruction": "Vyprážaj prvú stranu 100 sekúnd. Sleduj, či okraje hnednú; ak sa placka pripaľuje, zníž výkon alebo otoč skôr. Po časovači skontroluj spodnú stranu."
+		},
+		{
+			"id": "flip-6",
+			"title": "Otoč 6. placku",
+			"durationSeconds": 45,
+			"dependsOn": [
+				"side-6a"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"kind": "EVENT",
+			"actionLabel": "OTOČENÁ",
+			"retryActionLabel": "EŠTE BLEDÁ",
+			"retryAfterSeconds": 30,
+			"instruction": "Obracačkou nadvihni okraj. Ak je spodná strana zlatohnedá, otoč placku a AŽ POTOM stlač OTOČENÁ. Tým začne 100-sekundový časovač druhej strany. Ak je ešte bledá, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách."
+		},
+		{
+			"id": "side-6b",
+			"title": "6. placka · druhá strana 1:40",
+			"durationSeconds": 100,
+			"dependsOn": [
+				"flip-6"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "WAIT",
+			"instruction": "Vyprážaj druhú stranu 100 sekúnd. Sleduj zlatistú farbu; ak je placka hotová skôr, vyber ju skôr."
+		},
+		{
+			"id": "remove-6",
+			"title": "Vyber 6. placku",
+			"durationSeconds": 45,
+			"dependsOn": [
+				"side-6b"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"kind": "EVENT",
+			"actionLabel": "VYBRATÁ",
+			"retryActionLabel": "EŠTE NIE",
+			"retryAfterSeconds": 30,
+			"instruction": "Skontroluj prepečenie; ak je placka z oboch strán zlatá, vyber ju na tanier s papierovou utierkou. Až po vybratí stlač VYBRATÁ. Ak je ešte bledá, zvoľ EŠTE NIE a skontroluj o 30 sekúnd."
+		},
+		{
+			"id": "prepare-7",
+			"title": "Priprav panvicu na 7. placku",
+			"durationSeconds": 60,
+			"dependsOn": [
+				"remove-6"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Premiešaj zvyšné cesto, prípadne zlej voľnú tekutinu. Skontroluj olej, podľa potreby trochu pridaj a uprav výkon. Pokračuj, keď je panvica pripravená."
+		},
+		{
+			"id": "pan-ready-7",
+			"title": "Je panvica pripravená na 7. placku?",
+			"durationSeconds": 45,
+			"dependsOn": [
+				"prepare-7"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "EVENT",
+			"actionLabel": "ÁNO",
+			"retryActionLabel": "EŠTE NIE",
+			"retryAfterSeconds": 30,
+			"instruction": "Olej pri kvapke cesta jemne syčí, ale nedymí? Potvrď ÁNO. Ak nie, skontroluj panvicu znovu o 30 sekúnd."
+		},
+		{
+			"id": "load-7",
+			"title": "Rozotri 7. placku",
+			"durationSeconds": 75,
+			"dependsOn": [
+				"pan-ready-7"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Naber približne jednu sedminu pôvodného cesta a na horúcej panvici ho lyžicou rozotri do jednej tenkej placky s priemerom asi 9–11 cm. Teraz robíš siedmu placku, ostatné cesto nechaj v miske. Keď je placka na panvici a rozotretá, hneď stlač Hotovo: tým začne prvých 100 sekúnd."
+		},
+		{
+			"id": "side-7a",
+			"title": "7. placka · prvá strana 1:40",
+			"durationSeconds": 100,
+			"dependsOn": [
+				"load-7"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "WAIT",
+			"instruction": "Vyprážaj prvú stranu 100 sekúnd. Sleduj, či okraje hnednú; ak sa placka pripaľuje, zníž výkon alebo otoč skôr. Po časovači skontroluj spodnú stranu."
+		},
+		{
+			"id": "flip-7",
+			"title": "Otoč 7. placku",
+			"durationSeconds": 45,
+			"dependsOn": [
+				"side-7a"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"kind": "EVENT",
+			"actionLabel": "OTOČENÁ",
+			"retryActionLabel": "EŠTE BLEDÁ",
+			"retryAfterSeconds": 30,
+			"instruction": "Obracačkou nadvihni okraj. Ak je spodná strana zlatohnedá, otoč placku a AŽ POTOM stlač OTOČENÁ. Tým začne 100-sekundový časovač druhej strany. Ak je ešte bledá, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách."
+		},
+		{
+			"id": "side-7b",
+			"title": "7. placka · druhá strana 1:40",
+			"durationSeconds": 100,
+			"dependsOn": [
+				"flip-7"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "WAIT",
+			"instruction": "Vyprážaj druhú stranu 100 sekúnd. Sleduj zlatistú farbu; ak je placka hotová skôr, vyber ju skôr."
+		},
+		{
+			"id": "remove-7",
+			"title": "Vyber 7. placku a vypni sporák",
+			"durationSeconds": 45,
+			"dependsOn": [
+				"side-7b"
 			],
 			"resources": [
 				"cook",
@@ -560,7 +887,7 @@
 			"title": "Podávaj chrumkavé placky",
 			"durationSeconds": 60,
 			"dependsOn": [
-				"remove-4"
+				"remove-7"
 			],
 			"resources": [
 				"cook"
