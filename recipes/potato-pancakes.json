@@ -169,8 +169,8 @@
 		},
 		{
 			"id": "side-1a",
-			"title": "1. várka · prvá strana 2:30",
-			"durationSeconds": 150,
+			"title": "1. várka · prvá strana 1:40",
+			"durationSeconds": 100,
 			"dependsOn": [
 				"load-1"
 			],
@@ -179,7 +179,7 @@
 				"burner"
 			],
 			"kind": "WAIT",
-			"instruction": "Placky vyprážaj 2 minúty 30 sekúnd. Sleduj okraje a farbu; ak sa pália, ihneď zníž výkon alebo otoč skôr. Po časovači skontroluj spodok a otoč ich až vtedy, keď sú zlaté."
+			"instruction": "Placky vyprážaj 100 sekúnd. Sleduj okraje a farbu; ak sa pália, ihneď zníž výkon alebo otoč skôr. Po časovači skontroluj spodok a otoč ich až vtedy, keď sú zlaté."
 		},
 		{
 			"id": "flip-1",
@@ -201,8 +201,8 @@
 		},
 		{
 			"id": "side-1b",
-			"title": "1. várka · druhá strana 2:30",
-			"durationSeconds": 150,
+			"title": "1. várka · druhá strana 1:40",
+			"durationSeconds": 100,
 			"dependsOn": [
 				"flip-1"
 			],
@@ -211,7 +211,7 @@
 				"burner"
 			],
 			"kind": "WAIT",
-			"instruction": "Vyprážaj druhú stranu 2 minúty 30 sekúnd. Sleduj zlatú farbu; podľa výkonu sporáka môžu byť hotové aj skôr."
+			"instruction": "Vyprážaj druhú stranu 100 sekúnd. Sleduj zlatú farbu; podľa výkonu sporáka môžu byť hotové aj skôr."
 		},
 		{
 			"id": "remove-1",
@@ -278,8 +278,8 @@
 		},
 		{
 			"id": "side-2a",
-			"title": "2. várka · prvá strana 2:30",
-			"durationSeconds": 150,
+			"title": "2. várka · prvá strana 1:40",
+			"durationSeconds": 100,
 			"dependsOn": [
 				"load-2"
 			],
@@ -288,7 +288,7 @@
 				"burner"
 			],
 			"kind": "WAIT",
-			"instruction": "Druhú várku vyprážaj 2 minúty 30 sekúnd. Sleduj farbu a pri nadmernom hnednutí stiahni výkon."
+			"instruction": "Druhú várku vyprážaj 100 sekúnd. Sleduj farbu a pri nadmernom hnednutí stiahni výkon."
 		},
 		{
 			"id": "flip-2",
@@ -310,8 +310,8 @@
 		},
 		{
 			"id": "side-2b",
-			"title": "2. várka · druhá strana 2:30",
-			"durationSeconds": 150,
+			"title": "2. várka · druhá strana 1:40",
+			"durationSeconds": 100,
 			"dependsOn": [
 				"flip-2"
 			],
@@ -320,7 +320,7 @@
 				"burner"
 			],
 			"kind": "WAIT",
-			"instruction": "Vyprážaj druhú stranu 2 minúty 30 sekúnd a sleduj farbu. Ak sa pripaľujú, vyber ich skôr."
+			"instruction": "Vyprážaj druhú stranu 100 sekúnd a sleduj farbu. Ak sa pripaľujú, vyber ich skôr."
 		},
 		{
 			"id": "remove-2",
