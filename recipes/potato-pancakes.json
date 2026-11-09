@@ -43,7 +43,7 @@
 		"pan": 1,
 		"burner": 1
 	},
-	"preCookingNote": "Zo 400 g zemiakov rozdeľ cesto na 7 placiek, vždy iba jednu na panvici. Každú rozotri do rovnomerného kruhu približne 14–15 cm, hrubého asi 3–4 mm. Nenechávaj okraje priesvitné ani stred vysoký: tenučký okraj sa spáli skôr, než sa prepečie stred. Vyprážaj na strednom výkone, nie na rozpálenej panvici. Každá strana má orientačný časovač 100 sekúnd, ale rozhodujúca je farba a prepečenie stredu; podľa potreby uprav výkon alebo dopraj dlhší čas. Časovač druhej strany začína až po potvrdení otočenia. Panvicu nenechávaj bez dozoru.",
+	"preCookingNote": "Zo 400 g zemiakov urob približne 7 placiek, vždy iba jednu na panvici. Rozotri cesto rovnomerne až po okraje, približne na 3–4 mm; ak sa pri roztieraní nahromadí hrubý prstenec cesta na okraji, rozotri ho späť alebo zarovnaj lyžicou. Hrubý okraj môže zvonka stmavnúť, kým vo vnútri zostane nedopečený. Priemer ber len orientačne podľa množstva cesta. Vyprážaj na strednom až miernejšom výkone, olej nesmie dymiť. Každá strana má orientačný časovač 100 sekúnd, ale dôležitá je farba aj prepečenie. Druhý časovač začne až po potvrdení skutočného otočenia. Panvicu nenechávaj bez dozoru.",
 	"tasks": [
 		{
 			"id": "gather",
@@ -162,7 +162,7 @@
 				"pan",
 				"burner"
 			],
-			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ju rovnomerne rozotri na jednu placku s priemerom približne 14–15 cm a hrúbkou asi 3–4 mm. Zvlášť skontroluj stred: nesmie zostať ako hrubá kopa. Okraje nerozotieraj do priesvitna — majú mať približne rovnakú hrúbku ako zvyšok. Keď je placka na panvici a rozotretá, hneď stlač Hotovo: tým začne prvých 100 sekúnd."
+			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ho rozotri do rovnomerne tenkej placky (orientačne 3–4 mm). Pri roztieraní skontroluj hlavne okraj: ak sa tam cesto nahrnulo do hrubého prstenca, rozotri ho smerom dovnútra, aby nebol hrubší než stred. Nerob ani priesvitné okraje. Priemer prispôsob množstvu cesta. Keď je placka na panvici a má rovnomernú hrúbku, stlač Hotovo; až tým začne 100-sekundový časovač."
 		},
 		{
 			"id": "side-1a",
@@ -176,7 +176,7 @@
 				"burner"
 			],
 			"kind": "WAIT",
-			"instruction": "Prvú stranu vyprážaj orientačne 100 sekúnd na strednom výkone. Sleduj okraje: ak tmavnú dočierna skôr, než stred spevnie, okamžite stiahni výkon a pri ďalšej placke rozotri cesto rovnomernejšie. Pri otočení rozhoduje zlatohnedá farba a spevnený stred, nie len časovač."
+			"instruction": "Vyprážaj prvú stranu približne 100 sekúnd na strednom až miernejšom výkone. Ak okraje tmavnú dočierna, ale stred vyzerá surový, hneď uber výkon: nesnaž sa to dohnať vyššou teplotou. Hrubý nahrnutý okraj nabudúce rozotri rovnomerne. Časovač je pomôcka, rozhoduje prepečenie."
 		},
 		{
 			"id": "flip-1",
@@ -194,7 +194,7 @@
 			"actionLabel": "OTOČENÁ",
 			"retryActionLabel": "EŠTE BLEDÁ",
 			"retryAfterSeconds": 30,
-			"instruction": "Nadvihni placku širokou obracačkou. Ak je spodok zlatohnedý, stred drží tvar a nie je tekutý, otoč placku a AŽ POTOM stlač OTOČENÁ; tým začne ďalších 100 sekúnd. Ak je spodok ešte bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a stred je surový, stiahni výkon hneď; pri ďalšej placke vyrovnaj hrúbku."
+			"instruction": "Skontroluj spodok a pevnosť placky širokou obracačkou. Keď je zlatohnedý a placka drží pokope, otoč ju. AŽ POTOM stlač OTOČENÁ; tým začne 100-sekundový časovač druhej strany. Ak je spodok bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a vnútro je surové, zníž výkon; pri ďalšej placke rozotri najmä hrubý okraj."
 		},
 		{
 			"id": "side-1b",
@@ -226,7 +226,7 @@
 			"actionLabel": "VYBRATÁ",
 			"retryActionLabel": "EŠTE NIE",
 			"retryAfterSeconds": 30,
-			"instruction": "Nadvihni placku a skontroluj nielen zlatohnedý povrch, ale aj stred. Ak si nie si istý, jemne ho otvor obracačkou: vnútro má byť prepečené, nie surové či kašovité. Ak je stred nedopečený, stiahni výkon a zvoľ EŠTE NIE – skontroluj znova o 30 sekúnd. Ak sú okraje už čierne, panvica bola príliš horúca alebo boli okraje pritenké; pri ďalšej placke zníž výkon a rozotieraj rovnomerne. Hotovú placku vyber na papierovú utierku. Až potom stlač VYBRATÁ."
+			"instruction": "Vyber placku, až keď je zlatohnedá a stred aj hrubšie časti sú prepečené; pri neistote kúsok v strede otvor a skontroluj. Ak je vnútri surová, zníž výkon a zvoľ EŠTE NIE – skontroluj po ďalších 30 sekundách. Ak už okraj černie, ďalšie prudké smaženie nepomôže; pri ďalšej placke zníž teplotu a zarovnaj hrúbku okraja. Hotovú placku polož na papierovú utierku. Až potom stlač VYBRATÁ."
 		},
 		{
 			"id": "prepare-2",
@@ -271,7 +271,7 @@
 				"pan",
 				"burner"
 			],
-			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ju rovnomerne rozotri na jednu placku s priemerom približne 14–15 cm a hrúbkou asi 3–4 mm. Zvlášť skontroluj stred: nesmie zostať ako hrubá kopa. Okraje nerozotieraj do priesvitna — majú mať približne rovnakú hrúbku ako zvyšok. Keď je placka na panvici a rozotretá, hneď stlač Hotovo: tým začne prvých 100 sekúnd."
+			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ho rozotri do rovnomerne tenkej placky (orientačne 3–4 mm). Pri roztieraní skontroluj hlavne okraj: ak sa tam cesto nahrnulo do hrubého prstenca, rozotri ho smerom dovnútra, aby nebol hrubší než stred. Nerob ani priesvitné okraje. Priemer prispôsob množstvu cesta. Keď je placka na panvici a má rovnomernú hrúbku, stlač Hotovo; až tým začne 100-sekundový časovač."
 		},
 		{
 			"id": "side-2a",
@@ -285,7 +285,7 @@
 				"burner"
 			],
 			"kind": "WAIT",
-			"instruction": "Prvú stranu vyprážaj orientačne 100 sekúnd na strednom výkone. Sleduj okraje: ak tmavnú dočierna skôr, než stred spevnie, okamžite stiahni výkon a pri ďalšej placke rozotri cesto rovnomernejšie. Pri otočení rozhoduje zlatohnedá farba a spevnený stred, nie len časovač."
+			"instruction": "Vyprážaj prvú stranu približne 100 sekúnd na strednom až miernejšom výkone. Ak okraje tmavnú dočierna, ale stred vyzerá surový, hneď uber výkon: nesnaž sa to dohnať vyššou teplotou. Hrubý nahrnutý okraj nabudúce rozotri rovnomerne. Časovač je pomôcka, rozhoduje prepečenie."
 		},
 		{
 			"id": "flip-2",
@@ -303,7 +303,7 @@
 			"actionLabel": "OTOČENÁ",
 			"retryActionLabel": "EŠTE BLEDÁ",
 			"retryAfterSeconds": 30,
-			"instruction": "Nadvihni placku širokou obracačkou. Ak je spodok zlatohnedý, stred drží tvar a nie je tekutý, otoč placku a AŽ POTOM stlač OTOČENÁ; tým začne ďalších 100 sekúnd. Ak je spodok ešte bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a stred je surový, stiahni výkon hneď; pri ďalšej placke vyrovnaj hrúbku."
+			"instruction": "Skontroluj spodok a pevnosť placky širokou obracačkou. Keď je zlatohnedý a placka drží pokope, otoč ju. AŽ POTOM stlač OTOČENÁ; tým začne 100-sekundový časovač druhej strany. Ak je spodok bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a vnútro je surové, zníž výkon; pri ďalšej placke rozotri najmä hrubý okraj."
 		},
 		{
 			"id": "side-2b",
@@ -335,7 +335,7 @@
 			"actionLabel": "VYBRATÁ",
 			"retryActionLabel": "EŠTE NIE",
 			"retryAfterSeconds": 30,
-			"instruction": "Nadvihni placku a skontroluj nielen zlatohnedý povrch, ale aj stred. Ak si nie si istý, jemne ho otvor obracačkou: vnútro má byť prepečené, nie surové či kašovité. Ak je stred nedopečený, stiahni výkon a zvoľ EŠTE NIE – skontroluj znova o 30 sekúnd. Ak sú okraje už čierne, panvica bola príliš horúca alebo boli okraje pritenké; pri ďalšej placke zníž výkon a rozotieraj rovnomerne. Hotovú placku vyber na papierovú utierku. Až potom stlač VYBRATÁ."
+			"instruction": "Vyber placku, až keď je zlatohnedá a stred aj hrubšie časti sú prepečené; pri neistote kúsok v strede otvor a skontroluj. Ak je vnútri surová, zníž výkon a zvoľ EŠTE NIE – skontroluj po ďalších 30 sekundách. Ak už okraj černie, ďalšie prudké smaženie nepomôže; pri ďalšej placke zníž teplotu a zarovnaj hrúbku okraja. Hotovú placku polož na papierovú utierku. Až potom stlač VYBRATÁ."
 		},
 		{
 			"id": "prepare-3",
@@ -380,7 +380,7 @@
 				"pan",
 				"burner"
 			],
-			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ju rovnomerne rozotri na jednu placku s priemerom približne 14–15 cm a hrúbkou asi 3–4 mm. Zvlášť skontroluj stred: nesmie zostať ako hrubá kopa. Okraje nerozotieraj do priesvitna — majú mať približne rovnakú hrúbku ako zvyšok. Keď je placka na panvici a rozotretá, hneď stlač Hotovo: tým začne prvých 100 sekúnd."
+			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ho rozotri do rovnomerne tenkej placky (orientačne 3–4 mm). Pri roztieraní skontroluj hlavne okraj: ak sa tam cesto nahrnulo do hrubého prstenca, rozotri ho smerom dovnútra, aby nebol hrubší než stred. Nerob ani priesvitné okraje. Priemer prispôsob množstvu cesta. Keď je placka na panvici a má rovnomernú hrúbku, stlač Hotovo; až tým začne 100-sekundový časovač."
 		},
 		{
 			"id": "side-3a",
@@ -394,7 +394,7 @@
 				"burner"
 			],
 			"kind": "WAIT",
-			"instruction": "Prvú stranu vyprážaj orientačne 100 sekúnd na strednom výkone. Sleduj okraje: ak tmavnú dočierna skôr, než stred spevnie, okamžite stiahni výkon a pri ďalšej placke rozotri cesto rovnomernejšie. Pri otočení rozhoduje zlatohnedá farba a spevnený stred, nie len časovač."
+			"instruction": "Vyprážaj prvú stranu približne 100 sekúnd na strednom až miernejšom výkone. Ak okraje tmavnú dočierna, ale stred vyzerá surový, hneď uber výkon: nesnaž sa to dohnať vyššou teplotou. Hrubý nahrnutý okraj nabudúce rozotri rovnomerne. Časovač je pomôcka, rozhoduje prepečenie."
 		},
 		{
 			"id": "flip-3",
@@ -412,7 +412,7 @@
 			"actionLabel": "OTOČENÁ",
 			"retryActionLabel": "EŠTE BLEDÁ",
 			"retryAfterSeconds": 30,
-			"instruction": "Nadvihni placku širokou obracačkou. Ak je spodok zlatohnedý, stred drží tvar a nie je tekutý, otoč placku a AŽ POTOM stlač OTOČENÁ; tým začne ďalších 100 sekúnd. Ak je spodok ešte bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a stred je surový, stiahni výkon hneď; pri ďalšej placke vyrovnaj hrúbku."
+			"instruction": "Skontroluj spodok a pevnosť placky širokou obracačkou. Keď je zlatohnedý a placka drží pokope, otoč ju. AŽ POTOM stlač OTOČENÁ; tým začne 100-sekundový časovač druhej strany. Ak je spodok bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a vnútro je surové, zníž výkon; pri ďalšej placke rozotri najmä hrubý okraj."
 		},
 		{
 			"id": "side-3b",
@@ -444,7 +444,7 @@
 			"actionLabel": "VYBRATÁ",
 			"retryActionLabel": "EŠTE NIE",
 			"retryAfterSeconds": 30,
-			"instruction": "Nadvihni placku a skontroluj nielen zlatohnedý povrch, ale aj stred. Ak si nie si istý, jemne ho otvor obracačkou: vnútro má byť prepečené, nie surové či kašovité. Ak je stred nedopečený, stiahni výkon a zvoľ EŠTE NIE – skontroluj znova o 30 sekúnd. Ak sú okraje už čierne, panvica bola príliš horúca alebo boli okraje pritenké; pri ďalšej placke zníž výkon a rozotieraj rovnomerne. Hotovú placku vyber na papierovú utierku. Až potom stlač VYBRATÁ."
+			"instruction": "Vyber placku, až keď je zlatohnedá a stred aj hrubšie časti sú prepečené; pri neistote kúsok v strede otvor a skontroluj. Ak je vnútri surová, zníž výkon a zvoľ EŠTE NIE – skontroluj po ďalších 30 sekundách. Ak už okraj černie, ďalšie prudké smaženie nepomôže; pri ďalšej placke zníž teplotu a zarovnaj hrúbku okraja. Hotovú placku polož na papierovú utierku. Až potom stlač VYBRATÁ."
 		},
 		{
 			"id": "prepare-4",
@@ -489,7 +489,7 @@
 				"pan",
 				"burner"
 			],
-			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ju rovnomerne rozotri na jednu placku s priemerom približne 14–15 cm a hrúbkou asi 3–4 mm. Zvlášť skontroluj stred: nesmie zostať ako hrubá kopa. Okraje nerozotieraj do priesvitna — majú mať približne rovnakú hrúbku ako zvyšok. Keď je placka na panvici a rozotretá, hneď stlač Hotovo: tým začne prvých 100 sekúnd."
+			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ho rozotri do rovnomerne tenkej placky (orientačne 3–4 mm). Pri roztieraní skontroluj hlavne okraj: ak sa tam cesto nahrnulo do hrubého prstenca, rozotri ho smerom dovnútra, aby nebol hrubší než stred. Nerob ani priesvitné okraje. Priemer prispôsob množstvu cesta. Keď je placka na panvici a má rovnomernú hrúbku, stlač Hotovo; až tým začne 100-sekundový časovač."
 		},
 		{
 			"id": "side-4a",
@@ -503,7 +503,7 @@
 				"burner"
 			],
 			"kind": "WAIT",
-			"instruction": "Prvú stranu vyprážaj orientačne 100 sekúnd na strednom výkone. Sleduj okraje: ak tmavnú dočierna skôr, než stred spevnie, okamžite stiahni výkon a pri ďalšej placke rozotri cesto rovnomernejšie. Pri otočení rozhoduje zlatohnedá farba a spevnený stred, nie len časovač."
+			"instruction": "Vyprážaj prvú stranu približne 100 sekúnd na strednom až miernejšom výkone. Ak okraje tmavnú dočierna, ale stred vyzerá surový, hneď uber výkon: nesnaž sa to dohnať vyššou teplotou. Hrubý nahrnutý okraj nabudúce rozotri rovnomerne. Časovač je pomôcka, rozhoduje prepečenie."
 		},
 		{
 			"id": "flip-4",
@@ -521,7 +521,7 @@
 			"actionLabel": "OTOČENÁ",
 			"retryActionLabel": "EŠTE BLEDÁ",
 			"retryAfterSeconds": 30,
-			"instruction": "Nadvihni placku širokou obracačkou. Ak je spodok zlatohnedý, stred drží tvar a nie je tekutý, otoč placku a AŽ POTOM stlač OTOČENÁ; tým začne ďalších 100 sekúnd. Ak je spodok ešte bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a stred je surový, stiahni výkon hneď; pri ďalšej placke vyrovnaj hrúbku."
+			"instruction": "Skontroluj spodok a pevnosť placky širokou obracačkou. Keď je zlatohnedý a placka drží pokope, otoč ju. AŽ POTOM stlač OTOČENÁ; tým začne 100-sekundový časovač druhej strany. Ak je spodok bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a vnútro je surové, zníž výkon; pri ďalšej placke rozotri najmä hrubý okraj."
 		},
 		{
 			"id": "side-4b",
@@ -553,7 +553,7 @@
 			"actionLabel": "VYBRATÁ",
 			"retryActionLabel": "EŠTE NIE",
 			"retryAfterSeconds": 30,
-			"instruction": "Nadvihni placku a skontroluj nielen zlatohnedý povrch, ale aj stred. Ak si nie si istý, jemne ho otvor obracačkou: vnútro má byť prepečené, nie surové či kašovité. Ak je stred nedopečený, stiahni výkon a zvoľ EŠTE NIE – skontroluj znova o 30 sekúnd. Ak sú okraje už čierne, panvica bola príliš horúca alebo boli okraje pritenké; pri ďalšej placke zníž výkon a rozotieraj rovnomerne. Hotovú placku vyber na papierovú utierku. Až potom stlač VYBRATÁ."
+			"instruction": "Vyber placku, až keď je zlatohnedá a stred aj hrubšie časti sú prepečené; pri neistote kúsok v strede otvor a skontroluj. Ak je vnútri surová, zníž výkon a zvoľ EŠTE NIE – skontroluj po ďalších 30 sekundách. Ak už okraj černie, ďalšie prudké smaženie nepomôže; pri ďalšej placke zníž teplotu a zarovnaj hrúbku okraja. Hotovú placku polož na papierovú utierku. Až potom stlač VYBRATÁ."
 		},
 		{
 			"id": "prepare-5",
@@ -598,7 +598,7 @@
 				"pan",
 				"burner"
 			],
-			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ju rovnomerne rozotri na jednu placku s priemerom približne 14–15 cm a hrúbkou asi 3–4 mm. Zvlášť skontroluj stred: nesmie zostať ako hrubá kopa. Okraje nerozotieraj do priesvitna — majú mať približne rovnakú hrúbku ako zvyšok. Keď je placka na panvici a rozotretá, hneď stlač Hotovo: tým začne prvých 100 sekúnd."
+			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ho rozotri do rovnomerne tenkej placky (orientačne 3–4 mm). Pri roztieraní skontroluj hlavne okraj: ak sa tam cesto nahrnulo do hrubého prstenca, rozotri ho smerom dovnútra, aby nebol hrubší než stred. Nerob ani priesvitné okraje. Priemer prispôsob množstvu cesta. Keď je placka na panvici a má rovnomernú hrúbku, stlač Hotovo; až tým začne 100-sekundový časovač."
 		},
 		{
 			"id": "side-5a",
@@ -612,7 +612,7 @@
 				"burner"
 			],
 			"kind": "WAIT",
-			"instruction": "Prvú stranu vyprážaj orientačne 100 sekúnd na strednom výkone. Sleduj okraje: ak tmavnú dočierna skôr, než stred spevnie, okamžite stiahni výkon a pri ďalšej placke rozotri cesto rovnomernejšie. Pri otočení rozhoduje zlatohnedá farba a spevnený stred, nie len časovač."
+			"instruction": "Vyprážaj prvú stranu približne 100 sekúnd na strednom až miernejšom výkone. Ak okraje tmavnú dočierna, ale stred vyzerá surový, hneď uber výkon: nesnaž sa to dohnať vyššou teplotou. Hrubý nahrnutý okraj nabudúce rozotri rovnomerne. Časovač je pomôcka, rozhoduje prepečenie."
 		},
 		{
 			"id": "flip-5",
@@ -630,7 +630,7 @@
 			"actionLabel": "OTOČENÁ",
 			"retryActionLabel": "EŠTE BLEDÁ",
 			"retryAfterSeconds": 30,
-			"instruction": "Nadvihni placku širokou obracačkou. Ak je spodok zlatohnedý, stred drží tvar a nie je tekutý, otoč placku a AŽ POTOM stlač OTOČENÁ; tým začne ďalších 100 sekúnd. Ak je spodok ešte bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a stred je surový, stiahni výkon hneď; pri ďalšej placke vyrovnaj hrúbku."
+			"instruction": "Skontroluj spodok a pevnosť placky širokou obracačkou. Keď je zlatohnedý a placka drží pokope, otoč ju. AŽ POTOM stlač OTOČENÁ; tým začne 100-sekundový časovač druhej strany. Ak je spodok bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a vnútro je surové, zníž výkon; pri ďalšej placke rozotri najmä hrubý okraj."
 		},
 		{
 			"id": "side-5b",
@@ -662,7 +662,7 @@
 			"actionLabel": "VYBRATÁ",
 			"retryActionLabel": "EŠTE NIE",
 			"retryAfterSeconds": 30,
-			"instruction": "Nadvihni placku a skontroluj nielen zlatohnedý povrch, ale aj stred. Ak si nie si istý, jemne ho otvor obracačkou: vnútro má byť prepečené, nie surové či kašovité. Ak je stred nedopečený, stiahni výkon a zvoľ EŠTE NIE – skontroluj znova o 30 sekúnd. Ak sú okraje už čierne, panvica bola príliš horúca alebo boli okraje pritenké; pri ďalšej placke zníž výkon a rozotieraj rovnomerne. Hotovú placku vyber na papierovú utierku. Až potom stlač VYBRATÁ."
+			"instruction": "Vyber placku, až keď je zlatohnedá a stred aj hrubšie časti sú prepečené; pri neistote kúsok v strede otvor a skontroluj. Ak je vnútri surová, zníž výkon a zvoľ EŠTE NIE – skontroluj po ďalších 30 sekundách. Ak už okraj černie, ďalšie prudké smaženie nepomôže; pri ďalšej placke zníž teplotu a zarovnaj hrúbku okraja. Hotovú placku polož na papierovú utierku. Až potom stlač VYBRATÁ."
 		},
 		{
 			"id": "prepare-6",
@@ -707,7 +707,7 @@
 				"pan",
 				"burner"
 			],
-			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ju rovnomerne rozotri na jednu placku s priemerom približne 14–15 cm a hrúbkou asi 3–4 mm. Zvlášť skontroluj stred: nesmie zostať ako hrubá kopa. Okraje nerozotieraj do priesvitna — majú mať približne rovnakú hrúbku ako zvyšok. Keď je placka na panvici a rozotretá, hneď stlač Hotovo: tým začne prvých 100 sekúnd."
+			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ho rozotri do rovnomerne tenkej placky (orientačne 3–4 mm). Pri roztieraní skontroluj hlavne okraj: ak sa tam cesto nahrnulo do hrubého prstenca, rozotri ho smerom dovnútra, aby nebol hrubší než stred. Nerob ani priesvitné okraje. Priemer prispôsob množstvu cesta. Keď je placka na panvici a má rovnomernú hrúbku, stlač Hotovo; až tým začne 100-sekundový časovač."
 		},
 		{
 			"id": "side-6a",
@@ -721,7 +721,7 @@
 				"burner"
 			],
 			"kind": "WAIT",
-			"instruction": "Prvú stranu vyprážaj orientačne 100 sekúnd na strednom výkone. Sleduj okraje: ak tmavnú dočierna skôr, než stred spevnie, okamžite stiahni výkon a pri ďalšej placke rozotri cesto rovnomernejšie. Pri otočení rozhoduje zlatohnedá farba a spevnený stred, nie len časovač."
+			"instruction": "Vyprážaj prvú stranu približne 100 sekúnd na strednom až miernejšom výkone. Ak okraje tmavnú dočierna, ale stred vyzerá surový, hneď uber výkon: nesnaž sa to dohnať vyššou teplotou. Hrubý nahrnutý okraj nabudúce rozotri rovnomerne. Časovač je pomôcka, rozhoduje prepečenie."
 		},
 		{
 			"id": "flip-6",
@@ -739,7 +739,7 @@
 			"actionLabel": "OTOČENÁ",
 			"retryActionLabel": "EŠTE BLEDÁ",
 			"retryAfterSeconds": 30,
-			"instruction": "Nadvihni placku širokou obracačkou. Ak je spodok zlatohnedý, stred drží tvar a nie je tekutý, otoč placku a AŽ POTOM stlač OTOČENÁ; tým začne ďalších 100 sekúnd. Ak je spodok ešte bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a stred je surový, stiahni výkon hneď; pri ďalšej placke vyrovnaj hrúbku."
+			"instruction": "Skontroluj spodok a pevnosť placky širokou obracačkou. Keď je zlatohnedý a placka drží pokope, otoč ju. AŽ POTOM stlač OTOČENÁ; tým začne 100-sekundový časovač druhej strany. Ak je spodok bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a vnútro je surové, zníž výkon; pri ďalšej placke rozotri najmä hrubý okraj."
 		},
 		{
 			"id": "side-6b",
@@ -771,7 +771,7 @@
 			"actionLabel": "VYBRATÁ",
 			"retryActionLabel": "EŠTE NIE",
 			"retryAfterSeconds": 30,
-			"instruction": "Nadvihni placku a skontroluj nielen zlatohnedý povrch, ale aj stred. Ak si nie si istý, jemne ho otvor obracačkou: vnútro má byť prepečené, nie surové či kašovité. Ak je stred nedopečený, stiahni výkon a zvoľ EŠTE NIE – skontroluj znova o 30 sekúnd. Ak sú okraje už čierne, panvica bola príliš horúca alebo boli okraje pritenké; pri ďalšej placke zníž výkon a rozotieraj rovnomerne. Hotovú placku vyber na papierovú utierku. Až potom stlač VYBRATÁ."
+			"instruction": "Vyber placku, až keď je zlatohnedá a stred aj hrubšie časti sú prepečené; pri neistote kúsok v strede otvor a skontroluj. Ak je vnútri surová, zníž výkon a zvoľ EŠTE NIE – skontroluj po ďalších 30 sekundách. Ak už okraj černie, ďalšie prudké smaženie nepomôže; pri ďalšej placke zníž teplotu a zarovnaj hrúbku okraja. Hotovú placku polož na papierovú utierku. Až potom stlač VYBRATÁ."
 		},
 		{
 			"id": "prepare-7",
@@ -816,7 +816,7 @@
 				"pan",
 				"burner"
 			],
-			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ju rovnomerne rozotri na jednu placku s priemerom približne 14–15 cm a hrúbkou asi 3–4 mm. Zvlášť skontroluj stred: nesmie zostať ako hrubá kopa. Okraje nerozotieraj do priesvitna — majú mať približne rovnakú hrúbku ako zvyšok. Keď je placka na panvici a rozotretá, hneď stlač Hotovo: tým začne prvých 100 sekúnd."
+			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ho rozotri do rovnomerne tenkej placky (orientačne 3–4 mm). Pri roztieraní skontroluj hlavne okraj: ak sa tam cesto nahrnulo do hrubého prstenca, rozotri ho smerom dovnútra, aby nebol hrubší než stred. Nerob ani priesvitné okraje. Priemer prispôsob množstvu cesta. Keď je placka na panvici a má rovnomernú hrúbku, stlač Hotovo; až tým začne 100-sekundový časovač."
 		},
 		{
 			"id": "side-7a",
@@ -830,7 +830,7 @@
 				"burner"
 			],
 			"kind": "WAIT",
-			"instruction": "Prvú stranu vyprážaj orientačne 100 sekúnd na strednom výkone. Sleduj okraje: ak tmavnú dočierna skôr, než stred spevnie, okamžite stiahni výkon a pri ďalšej placke rozotri cesto rovnomernejšie. Pri otočení rozhoduje zlatohnedá farba a spevnený stred, nie len časovač."
+			"instruction": "Vyprážaj prvú stranu približne 100 sekúnd na strednom až miernejšom výkone. Ak okraje tmavnú dočierna, ale stred vyzerá surový, hneď uber výkon: nesnaž sa to dohnať vyššou teplotou. Hrubý nahrnutý okraj nabudúce rozotri rovnomerne. Časovač je pomôcka, rozhoduje prepečenie."
 		},
 		{
 			"id": "flip-7",
@@ -848,7 +848,7 @@
 			"actionLabel": "OTOČENÁ",
 			"retryActionLabel": "EŠTE BLEDÁ",
 			"retryAfterSeconds": 30,
-			"instruction": "Nadvihni placku širokou obracačkou. Ak je spodok zlatohnedý, stred drží tvar a nie je tekutý, otoč placku a AŽ POTOM stlač OTOČENÁ; tým začne ďalších 100 sekúnd. Ak je spodok ešte bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a stred je surový, stiahni výkon hneď; pri ďalšej placke vyrovnaj hrúbku."
+			"instruction": "Skontroluj spodok a pevnosť placky širokou obracačkou. Keď je zlatohnedý a placka drží pokope, otoč ju. AŽ POTOM stlač OTOČENÁ; tým začne 100-sekundový časovač druhej strany. Ak je spodok bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a vnútro je surové, zníž výkon; pri ďalšej placke rozotri najmä hrubý okraj."
 		},
 		{
 			"id": "side-7b",
@@ -880,7 +880,7 @@
 			"actionLabel": "VYBRATÁ",
 			"retryActionLabel": "EŠTE NIE",
 			"retryAfterSeconds": 30,
-			"instruction": "Nadvihni placku a skontroluj nielen zlatohnedý povrch, ale aj stred. Ak si nie si istý, jemne ho otvor obracačkou: vnútro má byť prepečené, nie surové či kašovité. Ak je stred nedopečený, stiahni výkon a zvoľ EŠTE NIE – skontroluj znova o 30 sekúnd. Ak sú okraje už čierne, panvica bola príliš horúca alebo boli okraje pritenké; pri ďalšej placke zníž výkon a rozotieraj rovnomerne. Hotovú placku vyber na papierovú utierku. Vypni sporák. Až potom stlač VYBRATÁ."
+			"instruction": "Vyber placku, až keď je zlatohnedá a stred aj hrubšie časti sú prepečené; pri neistote kúsok v strede otvor a skontroluj. Ak je vnútri surová, zníž výkon a zvoľ EŠTE NIE – skontroluj po ďalších 30 sekundách. Ak už okraj černie, ďalšie prudké smaženie nepomôže; pri ďalšej placke zníž teplotu a zarovnaj hrúbku okraja. Hotovú placku polož na papierovú utierku. Vypni sporák. Až potom stlač VYBRATÁ."
 		},
 		{
 			"id": "serve",
@@ -906,7 +906,7 @@
 		},
 		{
 			"problem": "Okraje sú čierne, ale stred je surový",
-			"advice": "Najčastejšie je panvica príliš horúca alebo je stred placky priveľmi hrubý a okraje pritenké. Zníž výkon na stredný až stredne nízky, placku rozotri rovnomerne asi na 3–4 mm a priemer 14–15 cm. Nedopečený stred ešte nechaj na miernejšom výkone; čierny okraj ďalším prudkým smažením nezachrániš."
+			"advice": "Aj hrubý okraj sa môže zvonka pripáliť a zvnútra zostať nedopečený. Najprv stiahni výkon (olej nemá dymiť). Ak sa pri rozotieraní na obvode vytvorí hrubý prstenec cesta, lyžicou ho vyrovnaj približne na hrúbku stredu (asi 3–4 mm). Placku smaž radšej miernejšie, kým sa prepečie; čierny povrch už ďalším prudkým smažením nezachrániš. Samotná farba okraja neznamená, že je prepečený stred."
 		},
 		{
 			"problem": "Placky nie sú chrumkavé",
