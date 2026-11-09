@@ -1,0 +1,378 @@
+{
+	"schemaVersion": 1,
+	"id": "potato-pancakes",
+	"title": "Zemiakové placky",
+	"description": "Polovičná dávka · 400 g zemiakov · približne 4 tenké placky v 2 várkach",
+	"servings": 2,
+	"ingredients": [
+		{
+			"name": "zemiaky",
+			"amount": "400 g"
+		},
+		{
+			"name": "vajce",
+			"amount": "1 ks"
+		},
+		{
+			"name": "hladká múka",
+			"amount": "1½–2 PL (pridávaj postupne)"
+		},
+		{
+			"name": "cesnak",
+			"amount": "2 strúčiky"
+		},
+		{
+			"name": "majorán",
+			"amount": "½ ČL"
+		},
+		{
+			"name": "soľ",
+			"amount": "približne ½ ČL, potom podľa chuti"
+		},
+		{
+			"name": "mleté čierne korenie",
+			"amount": "štipka"
+		},
+		{
+			"name": "olej na vyprážanie",
+			"amount": "približne 3–5 PL, podľa panvice"
+		}
+	],
+	"resourceCapacities": {
+		"cook": 1,
+		"pan": 1,
+		"burner": 1
+	},
+	"preCookingNote": "Počítame s panvicou približne 26–28 cm, na ktorú sa zmestia naraz 2 tenké placky (spolu približne 4 placky v 2 várkach). Prípravné časy sú orientačné: ďalší krok sa spustí až po tvojom potvrdení Hotovo. Časovač vyprážania každej strany sa spustí až po skutočnom vložení alebo otočení placiek. Farba rozhoduje viac ako čas. Pracuj pri panvici; počas vyprážania ju nenechávaj bez dozoru.",
+	"tasks": [
+		{
+			"id": "gather",
+			"title": "Nachystaj suroviny a pomôcky",
+			"durationSeconds": 180,
+			"resources": [
+				"cook"
+			],
+			"instruction": "Nachystaj 400 g zemiakov, vajce, múku, cesnak, majorán, soľ, korenie a olej. Priprav strúhadlo, misku, lyžicu, väčšiu panvicu, obracačku a tanier s papierovou utierkou. Sporák zatiaľ nezapínaj."
+		},
+		{
+			"id": "peel",
+			"title": "Ošúp 400 g zemiakov",
+			"durationSeconds": 420,
+			"dependsOn": [
+				"gather"
+			],
+			"resources": [
+				"cook"
+			],
+			"skill": "PEELING",
+			"instruction": "Ošúp 400 g zemiakov, poškodené miesta vykroj a krátko ich opláchni. Pracuj svojím tempom; čas je len odhad."
+		},
+		{
+			"id": "grate",
+			"title": "Nastrúhaj zemiaky najemno",
+			"durationSeconds": 360,
+			"dependsOn": [
+				"peel"
+			],
+			"resources": [
+				"cook"
+			],
+			"instruction": "Zemiaky nastrúhaj najemno do misky. Dávaj pozor na prsty pri poslednom kúsku. Jemné strúhanie pomáha, aby tenké placky držali pokope."
+		},
+		{
+			"id": "drain",
+			"title": "Zlej prebytočnú vodu",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"grate"
+			],
+			"resources": [
+				"cook"
+			],
+			"instruction": "Misku mierne nakloň a zlej voľnú tekutinu zo zemiakov, prípadne ich jemne vytlač cez sitko. Nesuš ich úplne; cesto má zostať vláčne. Ak sa na dne usadil škrob, môžeš ho vrátiť k zemiakom."
+		},
+		{
+			"id": "garlic",
+			"title": "Ošúp a pretlač 2 strúčiky cesnaku",
+			"durationSeconds": 150,
+			"dependsOn": [
+				"drain"
+			],
+			"resources": [
+				"cook"
+			],
+			"instruction": "Ošúp 2 strúčiky cesnaku a pretlač ich priamo k nastrúhaným zemiakom. Ak nemáš lis, nasekaj ich úplne najemno."
+		},
+		{
+			"id": "mix",
+			"title": "Zamiešaj cesto",
+			"durationSeconds": 180,
+			"dependsOn": [
+				"garlic"
+			],
+			"resources": [
+				"cook"
+			],
+			"instruction": "Pridaj 1 vajce, ½ ČL majoránu, štipku čierneho korenia a asi ½ ČL soli. Prisyp najprv 1½ PL hladkej múky a dôkladne premiešaj. Ak je cesto príliš riedke, pridaj ešte ½ PL múky. Má sa dať rozotierať, nie byť tuhé.",
+			"tips": [
+				"Priveľa múky robí placky hutnými a gumovými.",
+				"Ak cesto počas vyprážania pustí ďalšiu vodu, pred druhou várkou ho premiešaj."
+			]
+		},
+		{
+			"id": "start-heat",
+			"title": "Rozohrej panvicu s olejom",
+			"durationSeconds": 90,
+			"dependsOn": [
+				"mix"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Daj panvicu na sporák, nastav stredný až stredne vyšší výkon a pridaj tenkú vrstvu oleja (asi 1–2 PL podľa veľkosti panvice). Panvicu zatiaľ stráž; nenechávaj olej dymiť. Stlač Hotovo, keď je olej na panvici a zohrieva sa."
+		},
+		{
+			"id": "pan-ready",
+			"title": "Je olej dostatočne horúci?",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"start-heat"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "EVENT",
+			"actionLabel": "PANVICA PRIPRAVENÁ",
+			"retryActionLabel": "EŠTE NIE",
+			"retryAfterSeconds": 30,
+			"instruction": "Vlož do oleja maličkú kvapku cesta. Ak hneď jemne syčí, je pripravený. Ak zostáva ticho, zvoľ EŠTE NIE a skontroluj znovu o 30 sekúnd. Ak olej dymí, stiahni výkon. Prvú várku vlož až po potvrdení."
+		},
+		{
+			"id": "load-1",
+			"title": "Rozotri prvé 2 tenké placky",
+			"durationSeconds": 90,
+			"dependsOn": [
+				"pan-ready"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Do horúceho oleja vlož 2 menšie naberačky cesta a zadnou stranou lyžice ich rozotri do tenkých placiek (približne 12 cm, čo najtenšie). Nechaj medzi nimi miesto na obracanie. Keď sú OBE placky na panvici, hneď stlač Hotovo – až potom sa spustí časovač prvej strany.",
+			"tips": [
+				"Ak by sa dve placky na panvicu nezmestili, radšej použi väčšiu panvicu alebo prispôsob počet várok."
+			]
+		},
+		{
+			"id": "side-1a",
+			"title": "1. várka · prvá strana 2:30",
+			"durationSeconds": 150,
+			"dependsOn": [
+				"load-1"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "WAIT",
+			"instruction": "Placky vyprážaj 2 minúty 30 sekúnd. Sleduj okraje a farbu; ak sa pália, ihneď zníž výkon alebo otoč skôr. Po časovači skontroluj spodok a otoč ich až vtedy, keď sú zlaté."
+		},
+		{
+			"id": "flip-1",
+			"title": "Otoč placky z prvej várky",
+			"durationSeconds": 45,
+			"dependsOn": [
+				"side-1a"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"kind": "EVENT",
+			"actionLabel": "OTOČENÉ",
+			"retryActionLabel": "EŠTE BLEDÉ",
+			"retryAfterSeconds": 30,
+			"instruction": "Obracačkou nadvihni okraj. Ak je spodná strana zlatohnedá, opatrne OTOČ OBE placky a až potom stlač OTOČENÉ. Tým sa spustí presný časovač druhej strany. Ak sú ešte bledé, zvoľ EŠTE BLEDÉ a pozri ich znovu o 30 sekúnd."
+		},
+		{
+			"id": "side-1b",
+			"title": "1. várka · druhá strana 2:30",
+			"durationSeconds": 150,
+			"dependsOn": [
+				"flip-1"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "WAIT",
+			"instruction": "Vyprážaj druhú stranu 2 minúty 30 sekúnd. Sleduj zlatú farbu; podľa výkonu sporáka môžu byť hotové aj skôr."
+		},
+		{
+			"id": "remove-1",
+			"title": "Vyber prvú várku",
+			"durationSeconds": 45,
+			"dependsOn": [
+				"side-1b"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"kind": "EVENT",
+			"actionLabel": "VYBRATÉ",
+			"retryActionLabel": "EŠTE NIE",
+			"retryAfterSeconds": 30,
+			"instruction": "Skontroluj, či sú placky z oboch strán zlaté a chrumkavé. Hotové vyber na tanier s papierovou utierkou a až potom stlač VYBRATÉ. Ak treba dopiecť, zvoľ EŠTE NIE a skontroluj o 30 sekúnd."
+		},
+		{
+			"id": "prepare-2",
+			"title": "Priprav panvicu na druhú várku",
+			"durationSeconds": 60,
+			"dependsOn": [
+				"remove-1"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Stiahni výkon, ak sa olej príliš prehrial. Premiešaj zvyšné cesto a ak treba, pridaj na panvicu trochu oleja. Nechaj ho znova rozhorúčiť. Až potom potvrď Hotovo."
+		},
+		{
+			"id": "pan-ready-2",
+			"title": "Je panvica pripravená na druhú várku?",
+			"durationSeconds": 45,
+			"dependsOn": [
+				"prepare-2"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "EVENT",
+			"actionLabel": "ÁNO",
+			"retryActionLabel": "EŠTE NIE",
+			"retryAfterSeconds": 30,
+			"instruction": "Olej jemne syčí pri malej kvapke cesta, ale nedymí? Ak áno, potvrď. Ak nie, skontroluj znova o 30 sekúnd."
+		},
+		{
+			"id": "load-2",
+			"title": "Rozotri posledné 2 tenké placky",
+			"durationSeconds": 90,
+			"dependsOn": [
+				"pan-ready-2"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Zvyšné cesto rozdeľ na 2 tenké placky a rozotri na panvici. Keď sú obe na panvici, hneď stlač Hotovo; až tým sa začne odpočítavať prvá strana."
+		},
+		{
+			"id": "side-2a",
+			"title": "2. várka · prvá strana 2:30",
+			"durationSeconds": 150,
+			"dependsOn": [
+				"load-2"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "WAIT",
+			"instruction": "Druhú várku vyprážaj 2 minúty 30 sekúnd. Sleduj farbu a pri nadmernom hnednutí stiahni výkon."
+		},
+		{
+			"id": "flip-2",
+			"title": "Otoč placky z druhej várky",
+			"durationSeconds": 45,
+			"dependsOn": [
+				"side-2a"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"kind": "EVENT",
+			"actionLabel": "OTOČENÉ",
+			"retryActionLabel": "EŠTE BLEDÉ",
+			"retryAfterSeconds": 30,
+			"instruction": "Keď je prvá strana zlatá, otoč obe placky. Až po otočení stlač OTOČENÉ – tým začne časovač druhej strany. Ak sú bledé, zvoľ EŠTE BLEDÉ a skontroluj o 30 sekúnd."
+		},
+		{
+			"id": "side-2b",
+			"title": "2. várka · druhá strana 2:30",
+			"durationSeconds": 150,
+			"dependsOn": [
+				"flip-2"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "WAIT",
+			"instruction": "Vyprážaj druhú stranu 2 minúty 30 sekúnd a sleduj farbu. Ak sa pripaľujú, vyber ich skôr."
+		},
+		{
+			"id": "remove-2",
+			"title": "Vyber druhú várku a vypni sporák",
+			"durationSeconds": 45,
+			"dependsOn": [
+				"side-2b"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"kind": "EVENT",
+			"actionLabel": "VYBRATÉ",
+			"retryActionLabel": "EŠTE NIE",
+			"retryAfterSeconds": 30,
+			"instruction": "Keď sú placky z oboch strán zlaté, vyber ich na papierovú utierku, vypni sporák a stlač VYBRATÉ. Ak ešte potrebujú čas, zvoľ EŠTE NIE a skontroluj o 30 sekúnd."
+		},
+		{
+			"id": "serve",
+			"title": "Podávaj chrumkavé placky",
+			"durationSeconds": 60,
+			"dependsOn": [
+				"remove-2"
+			],
+			"resources": [
+				"cook"
+			],
+			"instruction": "Hotové placky nechaj krátko odkvapkať od oleja a podávaj ešte horúce. Výborne chutia samotné alebo s kyslou smotanou."
+		}
+	],
+	"troubleshooting": [
+		{
+			"problem": "Cesto je príliš riedke",
+			"advice": "Zlej ďalšiu uvoľnenú vodu a prípadne prisyp trošku múky, ale nie príliš veľa."
+		},
+		{
+			"problem": "Placky sa trhajú pri otáčaní",
+			"advice": "Rozotri ich trochu menšie, nechaj prvú stranu viac spevnieť a podober ich širokou obracačkou."
+		},
+		{
+			"problem": "Placky sa pripaľujú",
+			"advice": "Hneď stiahni výkon, prípadne panvicu krátko odstav z ohňa. Čas na displeji je orientačný; rozhoduje farba."
+		},
+		{
+			"problem": "Placky nie sú chrumkavé",
+			"advice": "Rob ich tenšie, dobre rozohrej olej a nepreplň panvicu. Nepridávaj priveľa múky."
+		},
+		{
+			"problem": "Sú mastné",
+			"advice": "Olej pravdepodobne nebol dosť horúci alebo boli placky príliš hrubé. Nechaj ich krátko odkvapkať na papieri."
+		}
+	]
+}
