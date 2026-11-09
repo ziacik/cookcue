@@ -135,6 +135,7 @@ private fun CookCueScreen() {
 	val skippedTaskIds = CookingSessionController.skippedTaskIds
 	val deferredTaskIds = CookingSessionController.deferredTaskIds
 	val paused = CookingSessionController.paused
+	val completedEarly = CookingSessionController.completedEarly
 	val activeTaskOverrideId = CookingSessionController.activeTaskOverrideId
 	val activeTaskOverrideStartedAtSeconds =
 		CookingSessionController.activeTaskOverrideStartedAtSeconds
@@ -192,6 +193,7 @@ private fun CookCueScreen() {
 		skippedTaskIds,
 		deferredTaskIds,
 		paused,
+		completedEarly,
 		activeTaskOverrideId,
 		activeTaskOverrideStartedAtSeconds,
 		eventDeferredUntil,
@@ -598,7 +600,27 @@ private fun CookCueScreen() {
 					}
 				}
 
-				if (secondaryBackground.isNotEmpty()) {
+				if (CookingSessionController.canFinishEarly(snapshot)) {
+				item {
+					Column(
+						modifier = Modifier.padding(horizontal = 16.dp),
+					) {
+						Spacer(Modifier.height(12.dp))
+						OutlinedButton(
+							onClick = {
+								CookingSessionController.finishEarly()
+								persistAndSync()
+							},
+							modifier = Modifier.fillMaxWidth(),
+							shape = RoundedCornerShape(12.dp),
+						) {
+							Text(recipe.earlyFinishActionLabel ?: "DOKONČIŤ VARENIE")
+						}
+					}
+				}
+			}
+
+			if (secondaryBackground.isNotEmpty()) {
 					item {
 						Column(
 							modifier = Modifier.padding(horizontal = 20.dp),
