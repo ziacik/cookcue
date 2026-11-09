@@ -33,7 +33,7 @@
 		},
 		{
 			"id": "potato-pancakes",
-			"version": 6,
+			"version": 7,
 			"file": "potato-pancakes.json",
 			"minAppVersion": 1
 		}
