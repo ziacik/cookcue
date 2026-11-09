@@ -16,6 +16,7 @@ object MobileSessionPersistence {
 	private const val KEY_MANUALLY_COMPLETED_TASK_IDS = "manually-completed-task-ids"
 	private const val KEY_DEFERRED_TASK_IDS = "deferred-task-ids"
 	private const val KEY_PAUSED = "paused"
+	private const val KEY_COMPLETED_EARLY = "completed-early"
 	private const val KEY_ACTIVE_TASK_OVERRIDE_ID = "active-task-override-id"
 	private const val KEY_ACTIVE_TASK_OVERRIDE_STARTED_AT = "active-task-override-started-at"
 	private const val KEY_NEARBY_SNOOZE_TASK_ID = "nearby-snooze-task-id"
@@ -91,6 +92,7 @@ object MobileSessionPersistence {
 				prefs.getString(KEY_DEFERRED_TASK_IDS, null).orEmpty()
 			).validTasks()
 			val paused = canRestoreSession && prefs.getBoolean(KEY_PAUSED, false)
+			val completedEarly = canRestoreSession && prefs.getBoolean(KEY_COMPLETED_EARLY, false)
 
 			val activeTaskOverrideId = prefs
 				.getString(KEY_ACTIVE_TASK_OVERRIDE_ID, null)
@@ -122,6 +124,7 @@ object MobileSessionPersistence {
 				manuallyCompletedTaskIds = manuallyCompletedTaskIds,
 				deferredTaskIds = deferredTaskIds,
 				paused = paused,
+				completedEarly = completedEarly,
 				activeTaskOverrideId = activeTaskOverrideId,
 				activeTaskOverrideStartedAtSeconds = activeTaskOverrideStartedAtSeconds,
 				nearbySuggestionSnoozeTaskId = nearbySuggestionSnoozeTaskId,
@@ -158,6 +161,7 @@ object MobileSessionPersistence {
 				putString(KEY_MANUALLY_COMPLETED_TASK_IDS, manuallyCompletedTaskIds)
 				putString(KEY_DEFERRED_TASK_IDS, deferredTaskIds)
 				putBoolean(KEY_PAUSED, CookingSessionController.paused)
+				putBoolean(KEY_COMPLETED_EARLY, CookingSessionController.completedEarly)
 				putString(
 					KEY_ACTIVE_TASK_OVERRIDE_ID,
 					CookingSessionController.activeTaskOverrideId,
