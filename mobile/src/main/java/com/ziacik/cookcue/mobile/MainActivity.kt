@@ -560,6 +560,7 @@ private fun CookCueScreen() {
 							snapshot.completed -> {
 								CompletionCard(
 									isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY,
+									completedEarly = completedEarly,
 									onFinish = {
 										CookingSessionController.stop()
 										persistAndSync()
@@ -1268,6 +1269,7 @@ private fun TimerDial(
 @Composable
 private fun CompletionCard(
 	isItinerary: Boolean,
+	completedEarly: Boolean,
 	onFinish: () -> Unit,
 ) {
 	Surface(
@@ -1294,7 +1296,7 @@ private fun CompletionCard(
 			)
 			Spacer(Modifier.height(5.dp))
 			Text(
-				text = "Všetky kroky sú dokončené.",
+				text = if (completedEarly) "Cesto sa minulo. Zvyšné placky boli preskočené." else "Všetky kroky sú dokončené.",
 				style = MaterialTheme.typography.bodyMedium,
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
 			)
