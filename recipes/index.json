@@ -30,6 +30,12 @@
 			"version": 2,
 			"file": "aeropress-inverted.json",
 			"minAppVersion": 1
+		},
+		{
+			"id": "potato-pancakes",
+			"version": 1,
+			"file": "potato-pancakes.json",
+			"minAppVersion": 1
 		}
 	]
 }
