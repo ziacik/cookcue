@@ -175,8 +175,16 @@ data class Recipe(
 	val scheduleMode: ScheduleMode = ScheduleMode.COOKING,
 	val scheduleStartEpochSeconds: Long? = null,
 	val scheduleTimeZoneId: String? = null,
+	val earlyFinishActionLabel: String? = null,
+	val earlyFinishTaskIds: Set<String> = emptySet(),
 ) {
 	init {
+		require(earlyFinishTaskIds.isEmpty() || !earlyFinishActionLabel.isNullOrBlank()) {
+			"Early finish task ids require an action label."
+		}
+		require(earlyFinishTaskIds.all { id -> tasks.any { it.id == id } }) {
+			"Early finish task ids must reference existing recipe tasks."
+		}
 		if (scheduleMode == ScheduleMode.ITINERARY) {
 			require(scheduleStartEpochSeconds != null) {
 				"Itinerary recipe '$id' must define scheduleStartEpochSeconds."
