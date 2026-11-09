@@ -58,6 +58,8 @@ internal object RecipeJsonCodec {
 			scheduleStartEpochSeconds = root.optionalString("scheduleStart")
 				?.let(::parseEpochSeconds),
 			scheduleTimeZoneId = root.optionalString("scheduleTimeZoneId"),
+			earlyFinishActionLabel = root.optionalString("earlyFinishActionLabel"),
+			earlyFinishTaskIds = root.optJSONArray("earlyFinishTaskIds")?.toStringSet().orEmpty(),
 		)
 
 		validate(recipe)
