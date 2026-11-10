@@ -9,7 +9,7 @@ import com.ziacik.cookcue.core.model.TaskKind
 import com.ziacik.cookcue.core.model.TroubleshootingTip
 
 data class FryerTimingProfile(
-	val coldTo155Seconds: Long = 5 * 60,
+	val coldTo155Seconds: Long = 8 * 60,
 	val from155To180Seconds: Long = 5 * 60,
 ) {
 	init {
@@ -150,8 +150,9 @@ object ParboiledFriesRecipe {
 					durationSeconds = fryerTiming.coldTo155Seconds,
 					dependsOn = setOf("drain-spread"),
 					resources = uses(FRYER),
-					kind = TaskKind.WAIT,
-					instruction = "Počas schnutia zapni fritézu a nastav 155 °C. Recept počíta s časom nahrievania ${fryerTiming.coldTo155Seconds / 60} min.",
+					kind = TaskKind.EVENT,
+					instruction = "Odhad nahrievania je 8 minút. Keď fritéza skutočne dosiahne 155 °C (podľa kontrolky alebo termostatu), stlač UŽ JE NAHRIATA. Aj keď odhad uplynie, počkaj na potvrdenie teploty.",
+					actionLabel = "UŽ JE NAHRIATA",
 				),
 				CookingTask(
 					id = "load-first-basket",
@@ -192,8 +193,9 @@ object ParboiledFriesRecipe {
 					durationSeconds = fryerTiming.from155To180Seconds,
 					dependsOn = setOf("lift-first-basket"),
 					resources = uses(FRYER),
-					kind = TaskKind.WAIT,
-					instruction = "Hneď nastav fritézu na 180 °C. Ohrieva sa počas toho, ako hranolky odpočívajú. Recept počíta s časom ${fryerTiming.from155To180Seconds / 60} min.",
+					kind = TaskKind.EVENT,
+					instruction = "Odhad nahrievania je 5 minút. Keď fritéza skutočne dosiahne 180 °C (podľa kontrolky alebo termostatu), stlač UŽ JE NAHRIATA. Aj keď odhad uplynie, počkaj na potvrdenie teploty.",
+					actionLabel = "UŽ JE NAHRIATA",
 				),
 				CookingTask(
 					id = "lower-second-basket",
