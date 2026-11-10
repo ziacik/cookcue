@@ -57,6 +57,8 @@ object CookingSessionController {
 		remoteRecipesInitialized = true
 
 		installRemoteRecipes(RemoteRecipeRepository.loadCached(context))
+		// Restore cached sessions before the network callback can replace the catalog.
+		MobileSessionPersistence.ensureLoaded(context)
 		refreshCatalog(context)
 	}
 
@@ -619,6 +621,24 @@ object CookingSessionController {
 	}
 
 	fun snapshot(now: Long = SystemClock.elapsedRealtime()): MobileSessionSnapshot {
+		if (recipeOrNull == null) {
+			return MobileSessionSnapshot(
+				started = false,
+				paused = false,
+				completed = false,
+				elapsedSeconds = 0,
+				schedule = emptyList(),
+				activeActions = emptyList(),
+				currentAction = null,
+				background = emptyList(),
+				pendingEvents = emptyList(),
+				previousAction = null,
+				nextAction = null,
+				nextScheduled = null,
+				taskProgress = emptyMap(),
+			)
+		}
+
 		val start = startedAt
 		val elapsedSeconds = when {
 			start == null -> 0
