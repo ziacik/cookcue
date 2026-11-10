@@ -128,7 +128,7 @@ private fun CookCueScreen() {
 			CookingSessionService.syncRunningState(context)
 		}
 	}
-	val recipe = CookingSessionController.recipe
+	val recipe = CookingSessionController.recipeOrNull
 	val selectedRecipeId = CookingSessionController.selectedRecipeId
 	val startedAt = CookingSessionController.startedAt
 	val durationOverrides = CookingSessionController.durationOverrides
@@ -186,6 +186,36 @@ private fun CookCueScreen() {
 		CookingSessionService.syncRunningState(context)
 	}
 
+	if (recipe == null) {
+		Scaffold(containerColor = MaterialTheme.colorScheme.background) { padding ->
+			Column(
+				modifier = Modifier
+					.fillMaxSize()
+					.padding(padding)
+					.padding(20.dp),
+			) {
+				SectionTitle("Recepty")
+				Spacer(Modifier.height(18.dp))
+				Text(
+					if (CookingSessionController.catalogLoading) {
+						"Načítavam online katalóg receptov…"
+					} else if (CookingSessionController.catalogError) {
+						"Nepodarilo sa načítať katalóg. Skontroluj pripojenie a skús to znova."
+					} else {
+						"Online katalóg zatiaľ neobsahuje žiadne dostupné recepty."
+					}
+				)
+				if (!CookingSessionController.catalogLoading) {
+					Spacer(Modifier.height(16.dp))
+					Button(onClick = { CookingSessionController.refreshCatalog(context) }) {
+						Text("SKÚSIŤ ZNOVA")
+					}
+				}
+			}
+		}
+		return
+	}
+
 	val snapshot = remember(
 		now,
 		startedAt,
@@ -198,6 +228,7 @@ private fun CookCueScreen() {
 		activeTaskOverrideStartedAtSeconds,
 		eventDeferredUntil,
 		selectedRecipeId,
+		recipe,
 	) {
 		CookingSessionController.snapshot(now)
 	}
