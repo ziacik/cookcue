@@ -57,14 +57,14 @@ internal object RemoteRecipeRepository {
 
 	fun refresh(
 		context: Context,
-		onUpdated: (List<Recipe>) -> Unit,
+		onUpdated: (List<Recipe>?) -> Unit,
 	) {
 		val appContext = context.applicationContext
 		Thread(
 			{
 				val recipes = runCatching {
 					refreshBlocking(appContext)
-				}.getOrNull() ?: return@Thread
+				}.getOrNull()
 
 				Handler(Looper.getMainLooper()).post {
 					onUpdated(recipes)
