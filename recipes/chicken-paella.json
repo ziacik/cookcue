@@ -86,7 +86,7 @@
 		},
 		{
 			"id": "prep-chicken",
-			"title": "Nakrájaj, osuší a osoľ kura",
+			"title": "Nakrájaj, osuš a osoľ kura",
 			"durationSeconds": 300,
 			"dependsOn": [
 				"prep-vegetables"
