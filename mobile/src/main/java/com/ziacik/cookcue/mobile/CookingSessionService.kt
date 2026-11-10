@@ -52,6 +52,7 @@ class CookingSessionService : Service() {
 
 		if (
 			CookingSessionController.startedAt == null ||
+			CookingSessionController.recipeOrNull == null ||
 			CookingSessionController.paused
 		) {
 			stopSelf()
@@ -408,6 +409,7 @@ class CookingSessionService : Service() {
 
 			if (
 				CookingSessionController.startedAt != null &&
+				CookingSessionController.recipeOrNull != null &&
 				!CookingSessionController.paused
 			) {
 				try {
