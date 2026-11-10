@@ -1,0 +1,131 @@
+{
+	"schemaVersion": 1,
+	"id": "scrambled-eggs-onion-toast",
+	"title": "Praženica s cibuľou + maslové toasty",
+	"description": "Pre 1 osobu · praženica a toasty ako dve skutočne paralelné vetvy",
+	"servings": 1,
+	"ingredients": [
+		{
+			"name": "vajcia",
+			"amount": "2 ks"
+		},
+		{
+			"name": "malá cibuľa",
+			"amount": "1/2 ks"
+		},
+		{
+			"name": "maslo alebo olej na panvicu",
+			"amount": "1 ČL"
+		},
+		{
+			"name": "toastový chlieb",
+			"amount": "2 krajce"
+		},
+		{
+			"name": "maslo na toasty",
+			"amount": "podľa chuti"
+		},
+		{
+			"name": "soľ",
+			"amount": "podľa chuti"
+		},
+		{
+			"name": "čierne korenie",
+			"amount": "podľa chuti"
+		}
+	],
+	"resourceCapacities": {
+		"cook": 2,
+		"pan": 1,
+		"burner": 1,
+		"toaster": 1
+	},
+	"tasks": [
+		{
+			"id": "prep-onion",
+			"title": "Nakrájaj cibuľu",
+			"durationSeconds": 240,
+			"resources": [
+				"cook"
+			],
+			"skill": "KNIFE",
+			"instruction": "Ošúp 1/2 malej cibule a nakrájaj ju nadrobno."
+		},
+		{
+			"id": "cook-onion",
+			"title": "Rozohrej panvicu a orestuj cibuľu",
+			"durationSeconds": 300,
+			"dependsOn": [
+				"prep-onion"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Rozohrej tuk, pridaj cibuľu a restuj ju, kým zmäkne. Občas premiešaj. HOTOVO daj až keď je pripravená na vajcia."
+		},
+		{
+			"id": "make-toasts",
+			"title": "Opeč a natri toasty",
+			"durationSeconds": 240,
+			"dependsOn": [
+				"prep-onion"
+			],
+			"resources": [
+				"cook",
+				"toaster"
+			],
+			"instruction": "Daj 2 krajce do toastovača. Keď vyskočia, natri ich maslom. HOTOVO daj až keď sú oba natreté."
+		},
+		{
+			"id": "cook-eggs",
+			"title": "Pridaj vajcia a miešaj",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"cook-onion"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Pridaj 2 vajcia, hneď ich osol a miešaj na stredne nízkom výkone. Keď už nie sú tekuté, ale stále sú mäkké a lesklé, daj panvicu zo sporáka a potvrď HOTOVO.",
+			"tips": [
+				"Ak toasty ešte nie sú hotové, vajcia kvôli nim nenechávaj na panvici dlhšie."
+			]
+		},
+		{
+			"id": "finish",
+			"title": "Dochuť a podávaj",
+			"durationSeconds": 90,
+			"dependsOn": [
+				"cook-eggs",
+				"make-toasts"
+			],
+			"resources": [
+				"cook",
+				"pan"
+			],
+			"instruction": "Keď sú hotové praženica aj toasty, dochuť praženicu a hneď podávaj."
+		}
+	],
+	"troubleshooting": [
+		{
+			"problem": "Praženica je príliš suchá",
+			"advice": "Hneď ju daj z panvice na tanier. Nabudúce ju odstav skôr."
+		},
+		{
+			"problem": "Praženica je ešte príliš tekutá",
+			"advice": "Vráť ju na nízky výkon a miešaj ešte 20–30 sekúnd."
+		},
+		{
+			"problem": "Cibuľa sa pripaľuje",
+			"advice": "Stiahni výkon a pridaj malú kvapku oleja alebo kúsok masla."
+		},
+		{
+			"problem": "Toasty sú príliš tmavé",
+			"advice": "Nabudúce nastav toastovač o stupeň nižšie."
+		}
+	]
+}
