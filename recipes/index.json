@@ -36,6 +36,12 @@
 			"version": 7,
 			"file": "potato-pancakes.json",
 			"minAppVersion": 1
+		},
+		{
+			"id": "chicken-paella",
+			"version": 1,
+			"file": "chicken-paella.json",
+			"minAppVersion": 1
 		}
 	]
 }
