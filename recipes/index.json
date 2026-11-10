@@ -42,6 +42,12 @@
 			"version": 1,
 			"file": "chicken-paella.json",
 			"minAppVersion": 1
+		},
+		{
+			"id": "parboiled-fries",
+			"version": 1,
+			"file": "parboiled-fries.json",
+			"minAppVersion": 1
 		}
 	]
 }
