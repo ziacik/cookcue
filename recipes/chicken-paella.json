@@ -1,0 +1,384 @@
+{
+	"schemaVersion": 1,
+	"id": "chicken-paella",
+	"title": "Kuracia paella",
+	"description": "2–3 porcie · ryža Bomba, kuracie stehná, zelené fazuľky a vývar z bujónu · cca 50–60 min aj s prípravou",
+	"servings": 3,
+	"ingredients": [
+		{
+			"name": "vykostené kuracie stehná (bez kože)",
+			"amount": "300 g, kúsky cca 2–3 cm"
+		},
+		{
+			"name": "španielska ryža Bomba (na paellu)",
+			"amount": "200 g, suchá; nepreplachovať"
+		},
+		{
+			"name": "zelené fazuľové struky",
+			"amount": "150 g, čerstvé alebo rozmrazené"
+		},
+		{
+			"name": "zrelá paradajka",
+			"amount": "1 väčšia (cca 150 g), nastrúhať"
+		},
+		{
+			"name": "cesnak",
+			"amount": "2 strúčiky"
+		},
+		{
+			"name": "kurací bujón",
+			"amount": "množstvo podľa obalu na 600 ml vývaru; radšej slabší"
+		},
+		{
+			"name": "voda",
+			"amount": "700 ml: 600 ml na vývar + približne 100 ml rezerva"
+		},
+		{
+			"name": "šafran",
+			"amount": "malá štipka (voliteľne; nepridávaj veľa)"
+		},
+		{
+			"name": "sladká mletá paprika",
+			"amount": "1/2 ČL"
+		},
+		{
+			"name": "olivový olej",
+			"amount": "2–3 PL"
+		},
+		{
+			"name": "soľ",
+			"amount": "na kura, zvyšok opatrne podľa slanosti bujónu"
+		},
+		{
+			"name": "citrón",
+			"amount": "1/2 ks na podávanie"
+		}
+	],
+	"resourceCapacities": {
+		"cook": 1,
+		"pan": 1,
+		"burner": 1,
+		"kettle": 1
+	},
+	"preCookingNote": "Recept je načasovaný pre 200 g ryže Bomba, približne 600 ml horúceho vývaru a širokú panvicu (ideálne 28–30 cm). Pri inej ryži sa potrebné množstvo tekutiny a čas môžu líšiť; Arborio nie je úplne rovnocenná náhrada. Prípravné/opekacie kroky (Hotovo) majú iba plánovaný čas a posúvajú sa podľa skutočného dokončenia. Presné časovače ryže začnú až po potvrdení VRIE, keď vývar naozaj začne rovnomerne bublať. Od zaliatia ryžu NEMIEŠAJ a panvicu NEZAKRÝVAJ. Pri zvukovom upozornení po 7 minútach treba osobne znížiť výkon; appka nevie ovládať sporák. Pred pridaním ryže si prečítaj aj záverečné kroky.",
+	"tasks": [
+		{
+			"id": "gather",
+			"title": "Priprav náradie a suroviny",
+			"durationSeconds": 180,
+			"resources": [
+				"cook"
+			],
+			"instruction": "Priprav širokú panvicu ideálne 28–30 cm, varešku, dosku, nôž, strúhadlo, váhu, odmerku a žiaruvzdornú nádobu na 600 ml vývaru. K dispozícii maj rýchlovarnú kanvicu. Prečítaj si časovanie ryže: od začiatku varu 7 minút silnejšie, potom 11 minút mierne a následne kontrola. Nič na sporáku zatiaľ nezapínaj."
+		},
+		{
+			"id": "prep-vegetables",
+			"title": "Priprav fazuľky, paradajku a cesnak",
+			"durationSeconds": 420,
+			"dependsOn": [
+				"gather"
+			],
+			"resources": [
+				"cook"
+			],
+			"skill": "KNIFE",
+			"instruction": "Opláchni a odkroj konce 150 g zelených fazuliek; dlhé prekroj na 3–4 cm kúsky. Paradajku nastrúhaj nahrubo (šupku nemusíš použiť), 2 strúčiky cesnaku ošúp a nasekaj nadrobno. Daj ich oddelene do misiek. Všetko nachystaj pred zapnutím panvice, neskôr nebudeš musieť utekať od sporáka."
+		},
+		{
+			"id": "prep-chicken",
+			"title": "Nakrájaj, osuší a osoľ kura",
+			"durationSeconds": 300,
+			"dependsOn": [
+				"prep-vegetables"
+			],
+			"resources": [
+				"cook"
+			],
+			"skill": "KNIFE",
+			"instruction": "300 g vykostených kuracích stehien pokrájaj na približne 2–3 cm kúsky. Osuš kuchynskou utierkou a jemne osoľ. Po surovom mäse umy nôž, dosku aj ruky; zeleninu už máš pripravenú."
+		},
+		{
+			"id": "measure",
+			"title": "Odváž ryžu a odmeraj vodu",
+			"durationSeconds": 150,
+			"dependsOn": [
+				"prep-chicken"
+			],
+			"resources": [
+				"cook"
+			],
+			"instruction": "Odváž 200 g suchej ryže Bomba. Neumývaj ju. Odmeraj 700 ml vody do vypnutej kanvice; neskôr použiješ 600 ml do vývaru a cca 100 ml necháš ako horúcu rezervu. Priprav kocku bujónu (dávka podľa obalu na 600 ml) a štipku šafranu do žiaruvzdornej nádoby. Zatiaľ nevar vodu."
+		},
+		{
+			"id": "preheat-pan",
+			"title": "Rozohrej širokú panvicu",
+			"durationSeconds": 90,
+			"dependsOn": [
+				"measure"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Daj na panvicu 2–3 PL olivového oleja a zohrievaj na stredne silnom výkone. Keď sa olej ľahko leskne a je horúci, ale ešte nedymí, klikni Hotovo. Toto je iba odhad trvania; nenechávaj panvicu ďalej zohrievať len kvôli časovaču."
+		},
+		{
+			"id": "brown-chicken",
+			"title": "Opeč kura dozlata",
+			"durationSeconds": 540,
+			"dependsOn": [
+				"preheat-pan"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Pridaj kura do rozpálenej panvice, rozlož kúsky do jednej vrstvy. Opekaj približne 8–10 minút za občasného otočenia, kým je na viacerých stranách pekne zlatohnedé. Ak sa pripaľuje, mierne stiahni výkon. Úplne sa dovarí neskôr s ryžou. Klikni Hotovo, keď je skutočne opečené, nie len podľa odhadovaného času."
+		},
+		{
+			"id": "saute-beans",
+			"title": "Opeč zelené fazuľky",
+			"durationSeconds": 240,
+			"dependsOn": [
+				"brown-chicken"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Ku kuraciemu mäsu pridaj pripravené fazuľky. Opekaj približne 3–4 minúty a občas premiešaj, kým sa rozohrejú a mierne zmäknú. Kura aj fazuľky nechaj v panvici."
+		},
+		{
+			"id": "start-kettle",
+			"title": "Zapni kanvicu s vodou",
+			"durationSeconds": 40,
+			"dependsOn": [
+				"saute-beans"
+			],
+			"resources": [
+				"cook",
+				"kettle"
+			],
+			"instruction": "Zapni kanvicu so 700 ml odmeranej vody. Bujón ani šafran nedávaj do kanvice — už čakajú v žiaruvzdornej nádobe. Voda sa teraz bude ohrievať paralelne s paradajkovým základom. Klikni Hotovo hneď po zapnutí."
+		},
+		{
+			"id": "kettle-ready",
+			"title": "Je voda v kanvici horúca?",
+			"durationSeconds": 180,
+			"dependsOn": [
+				"start-kettle"
+			],
+			"resources": [
+				"kettle"
+			],
+			"kind": "EVENT",
+			"actionLabel": "VODA JE HORÚCA",
+			"retryActionLabel": "EŠTE NIE",
+			"retryAfterSeconds": 30,
+			"instruction": "Počkaj, kým kanvica zovrie a vypne sa. Ak ešte nie je hotová, zvoľ EŠTE NIE a appka sa pripomenie o 30 sekúnd. Potvrdzuj len skutočne horúcu vodu. Paradajkový základ môžeš medzitým pripravovať na panvici."
+		},
+		{
+			"id": "sofrito",
+			"title": "Urob paradajkový základ",
+			"durationSeconds": 240,
+			"dependsOn": [
+				"start-kettle"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "K mäsu a fazuľkám pridaj nastrúhanú paradajku a nechaj ju za občasného miešania asi 3 minúty odpariť, aby nebola vodnatá. Pridaj nasekaný cesnak a 1/2 ČL sladkej papriky, premiešaj len asi posledných 20–30 sekúnd a hneď pokračuj. Papriku nenechaj na suchom rozpálenom dne, môže zhorknúť. Na kanvicu čakáš paralelne; ak voda už zovrela, potvrď udalosť."
+		},
+		{
+			"id": "make-stock",
+			"title": "Rozmiešaj horúci bujón a šafran",
+			"durationSeconds": 100,
+			"dependsOn": [
+				"sofrito",
+				"kettle-ready"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Stiahni výkon panvice na minimum (prípadne ju na chvíľu odstav). Z kanvice opatrne nalej PRESNE 600 ml horúcej vody do žiaruvzdornej nádoby s bujónom a šafranom. Miešaj, kým sa bujón rozpustí. Zvyšnú horúcu vodu nechaj na prípadné dolievanie. Vývar by mal byť jemne slaný, nie presolený. Teraz maj všetko potrebné na ryžu pripravené."
+		},
+		{
+			"id": "coat-rice",
+			"title": "Prisyp ryžu a obaľ ju v základe",
+			"durationSeconds": 70,
+			"dependsOn": [
+				"make-stock"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Vráť panvicu na stredný výkon. Prisyp všetkých 200 g suchej ryže Bomba a asi minútu ju premiešavaj s paradajkovým základom, kuracím mäsom a fazuľkami, aby sa rovnomerne obalila. Ešte sa nezačalo presné časovanie varu. Pred zaliatím sa uisti, že máš po ruke horúci vývar a poznáš ďalšie kroky."
+		},
+		{
+			"id": "pour-stock",
+			"title": "Zalej vývarom a rozlož ryžu",
+			"durationSeconds": 80,
+			"dependsOn": [
+				"coat-rice"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Nalej na panvicu všetkých 600 ml horúceho vývaru. Raz opatrne premiešaj a rozlož ryžu rovnomerne do tenkej vrstvy, aby neostala kopa uprostred. Od tejto chvíle ryžu už NEMIEŠAJ. Panvicu nezakrývaj. Zvýš výkon, aby vývar začal viditeľne a rovnomerne vrieť. Klikni Hotovo po zaliatí a rozložení, nie až po dovarení."
+		},
+		{
+			"id": "boil-confirm",
+			"title": "Začal vývar rovnomerne vrieť?",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"pour-stock"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "EVENT",
+			"actionLabel": "VRIE · ŠTART 18 MIN",
+			"retryActionLabel": "EŠTE NIE",
+			"retryAfterSeconds": 30,
+			"instruction": "Pozri sa na panvicu. Keď vývar s ryžou skutočne rovnomerne vrie po celej ploche, stlač VRIE. AŽ TÝM začne presné časovanie 7 + 11 minút. Ak ešte nevarí, zvoľ EŠTE NIE. Výkon uprav tak, aby vývar vrieť začal, ale prudko nestriekal."
+		},
+		{
+			"id": "boil-first-seven",
+			"title": "Presne 7 minút: živší var",
+			"durationSeconds": 420,
+			"dependsOn": [
+				"boil-confirm"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "WAIT",
+			"instruction": "7 minút od potvrdenia VRIE nechaj vývar zreteľne, ale kontrolovane bublať na stredne silnom výkone. Ryžu nemiešaj a panvicu nezakrývaj. Ak sa voda stráca priveľmi rýchlo, stiahni výkon; nenechaj dno pripaľovať. Toto je presný sedemminútový časovač bez rezervy. Po jeho skončení bude potrebné ihneď znížiť výkon."
+		},
+		{
+			"id": "turn-down",
+			"title": "Zníž výkon na mierny var",
+			"durationSeconds": 1,
+			"dependsOn": [
+				"boil-first-seven"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "EVENT",
+			"actionLabel": "VÝKON ZNÍŽENÝ",
+			"instruction": "HNEĎ po upozornení zníž výkon na nízky až stredne nízky: ryža sa má len mierne variť. Potvrď až po stiahnutí výkonu. Od potvrdenia sa spustí presne 11 minút druhej fázy; ak sa s potvrdením oneskoríš, čas druhej fázy sa neskráti. Appka sporák nevypne sama."
+		},
+		{
+			"id": "boil-next-eleven",
+			"title": "Presne 11 minút: mierny var",
+			"durationSeconds": 660,
+			"dependsOn": [
+				"turn-down"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "WAIT",
+			"instruction": "Ďalších 11 minút nechaj paellu nezakrytú mierne variť. Ryžu stále NEMIEŠAJ. Sleduj tekutinu; ak je panvica predčasne suchá a ryža ešte tvrdá, prilej po okraji 30–50 ml rezervnej horúcej vody. Ak horák ohrieva len stred, môžeš občas jemne pootočiť celú panvicu, nie však miešať ryžu. Po odpočítaní bude nasledovať kontrola mäkkosti."
+		},
+		{
+			"id": "rice-ready",
+			"title": "Je ryža hotová a tekutina vsiaknutá?",
+			"durationSeconds": 30,
+			"dependsOn": [
+				"boil-next-eleven"
+			],
+			"resources": [
+				"pan",
+				"burner"
+			],
+			"kind": "EVENT",
+			"actionLabel": "RYŽA JE HOTOVÁ",
+			"retryActionLabel": "EŠTE TVRDÁ",
+			"retryAfterSeconds": 120,
+			"instruction": "Ochutnaj niekoľko zrniek pri okraji a v strede. Ryža má byť uvarená, no nie rozvarená, a väčšina tekutiny vsiaknutá. Ak je stále tvrdá, nechaj ju ďalšie 2 minúty na slabom výkone a stlač EŠTE TVRDÁ; appka pripomenie ďalšiu kontrolu. Ak už dno vysychá, prilej 30–50 ml rezervnej horúcej vody po okraji, nemiešaj. Keď je ryža dobrá, potvrď RYŽA JE HOTOVÁ. Ak nechceš chrumkavé dno, hneď vypni horák a v nasledujúcom voliteľnom kroku daj Preskočiť."
+		},
+		{
+			"id": "socarrat",
+			"title": "Voliteľne: vytvor chrumkavé dno",
+			"durationSeconds": 30,
+			"dependsOn": [
+				"rice-ready"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"optional": true,
+			"instruction": "Len ak je ryža hotová a vývar vsiaknutý: na krátkych 20–30 sekúnd mierne zvýš výkon a počúvaj jemné praskanie. Keď cítiš príjemnú opečenú vôňu, HNEĎ vypni horák a stlač Hotovo, aj ak je to skôr. Ak máš nepriľnavú panvicu, obávaš sa pripálenia alebo je dno už suché, VYPNI horák a tento krok preskoč. NIKDY nečakaj na koniec odhadu, ak sa jedlo začína páliť.",
+			"tips": [
+				"Cieľom je jemne opečená vrstva ryže, nie čierne spálené dno."
+			]
+		},
+		{
+			"id": "rest",
+			"title": "Odpočívaj 5 minút mimo ohňa",
+			"durationSeconds": 300,
+			"dependsOn": [
+				"socarrat"
+			],
+			"resources": [
+				"pan"
+			],
+			"kind": "WAIT",
+			"instruction": "Skontroluj, že horák je naozaj VYPNUTÝ. Paellu nechaj 5 minút postáť mimo ohňa; môžeš ju voľne prekryť utierkou alebo alobalom tak, aby unikala para (bez kontaktu s horákom). Počas odpočinku ryžu nemiešaj. Časovač je presných 5 minút."
+		},
+		{
+			"id": "serve",
+			"title": "Podávaj s citrónom",
+			"durationSeconds": 90,
+			"dependsOn": [
+				"rest"
+			],
+			"resources": [
+				"cook",
+				"pan"
+			],
+			"instruction": "Paellu podávaj priamo z panvice alebo opatrne nalož na taniere. Pokvapkaj citrónom podľa chuti. Ak sa podaril socarrat, jemne ho naber zo dna. Skontroluj, či je kura úplne prepečené; vo vnútri nesmie byť surové."
+		}
+	],
+	"troubleshooting": [
+		{
+			"problem": "Ryža je tvrdá a vývar sa minul",
+			"advice": "Dolej po okraji 30–50 ml horúcej vody z rezervy, pokračuj na slabom výkone po 2 minútach a znovu ochutnaj. Ryžu nemiešaj."
+		},
+		{
+			"problem": "Ryža je rozvarená alebo príliš mokrá",
+			"advice": "Ak je mäkká, ďalšiu vodu nepridávaj. Pri zvyšku tekutiny krátko zvýš odparovanie bez miešania; nabudúce skráť var alebo použi menej vývaru podľa ryže a panvice."
+		},
+		{
+			"problem": "Dno sa pripaľuje",
+			"advice": "Okamžite stiahni alebo vypni výkon. Ak ryža ešte nie je hotová, pridaj trochu horúcej vody po okraji. Čierne prihorené dno nezoškrabuj do jedla."
+		},
+		{
+			"problem": "Vývar je príliš slaný",
+			"advice": "S bujónom sa dá ľahko presoliť; radšej začni slabším vývarom. V hotovej paelle sa soľ zle odstraňuje, preto nedosáľaj bez ochutnania."
+		},
+		{
+			"problem": "Používam inú ryžu než Bomba",
+			"advice": "Čas 7 + 11 minút a 600 ml vývaru sú orientované na Bomba. Arborio či iná guľatozrnná ryža môže potrebovať menej vody a kratší čas; sleduj obal a varenie ukonči podľa skutočnej mäkkosti."
+		}
+	]
+}
