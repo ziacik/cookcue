@@ -1,0 +1,107 @@
+{
+	"schemaVersion": 1,
+	"id": "scrambled-eggs-onion",
+	"title": "Praženica s cibuľou",
+	"description": "Pre 1 osobu · jednoduchá klasická praženica",
+	"servings": 1,
+	"ingredients": [
+		{
+			"name": "vajcia",
+			"amount": "2 ks"
+		},
+		{
+			"name": "malá cibuľa",
+			"amount": "1/2 ks"
+		},
+		{
+			"name": "maslo alebo olej",
+			"amount": "1 ČL"
+		},
+		{
+			"name": "soľ",
+			"amount": "podľa chuti"
+		},
+		{
+			"name": "čierne korenie",
+			"amount": "podľa chuti"
+		}
+	],
+	"resourceCapacities": {
+		"cook": 1,
+		"pan": 1,
+		"burner": 1
+	},
+	"tasks": [
+		{
+			"id": "prep-onion",
+			"title": "Nakrájaj cibuľu",
+			"durationSeconds": 240,
+			"resources": [
+				"cook"
+			],
+			"skill": "KNIFE",
+			"instruction": "Ošúp 1/2 malej cibule a nakrájaj ju nadrobno."
+		},
+		{
+			"id": "cook-onion",
+			"title": "Rozohrej panvicu a orestuj cibuľu",
+			"durationSeconds": 300,
+			"dependsOn": [
+				"prep-onion"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Daj panvicu na stredný výkon, pridaj 1 ČL masla alebo oleja a nechaj tuk zohriať. Pridaj cibuľu a restuj ju, kým zmäkne a prestane voňať surovo. Občas premiešaj. HOTOVO daj až keď je cibuľa naozaj pripravená na vajcia.",
+			"tips": [
+				"Ak začne cibuľa rýchlo hnednúť, stiahni výkon."
+			]
+		},
+		{
+			"id": "cook-eggs",
+			"title": "Pridaj vajcia a miešaj",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"cook-onion"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Rozbi 2 vajcia priamo do panvice k cibuli, hneď ich osol malou štipkou soli a začni miešať. Stiahni na stredne nízky výkon. Keď už vajcia nie sú tekuté, ale stále sú mäkké a trochu lesklé, daj panvicu zo sporáka a až vtedy potvrď HOTOVO.",
+			"tips": [
+				"Nečakaj, kým bude praženica na panvici úplne suchá. Vajcia ešte chvíľu dôjdu zvyškovým teplom."
+			]
+		},
+		{
+			"id": "finish",
+			"title": "Dochuť a podávaj",
+			"durationSeconds": 90,
+			"dependsOn": [
+				"cook-eggs"
+			],
+			"resources": [
+				"cook",
+				"pan"
+			],
+			"instruction": "Ochutnaj. Ak treba, už len jemne dosoľ a pridaj čierne korenie. Hneď podávaj."
+		}
+	],
+	"troubleshooting": [
+		{
+			"problem": "Praženica je príliš suchá",
+			"advice": "Hneď ju daj z panvice na tanier. Nabudúce ju odstav o trochu skôr; na horúcej panvici ďalej tuhne."
+		},
+		{
+			"problem": "Praženica je ešte príliš tekutá",
+			"advice": "Vráť ju na nízky výkon a miešaj ešte 20–30 sekúnd."
+		},
+		{
+			"problem": "Cibuľa sa pripaľuje",
+			"advice": "Stiahni výkon a pridaj malú kvapku oleja alebo kúsok masla."
+		}
+	]
+}

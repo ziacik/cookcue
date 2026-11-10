@@ -2,6 +2,30 @@
 	"schemaVersion": 1,
 	"recipes": [
 		{
+			"id": "bean-soup",
+			"version": 1,
+			"file": "bean-soup.json",
+			"minAppVersion": 1
+		},
+		{
+			"id": "scrambled-eggs-onion",
+			"version": 1,
+			"file": "scrambled-eggs-onion.json",
+			"minAppVersion": 1
+		},
+		{
+			"id": "scrambled-eggs-onion-toast",
+			"version": 1,
+			"file": "scrambled-eggs-onion-toast.json",
+			"minAppVersion": 1
+		},
+		{
+			"id": "fried-cheese-boiled-potatoes",
+			"version": 1,
+			"file": "fried-cheese-boiled-potatoes.json",
+			"minAppVersion": 1
+		},
+		{
 			"id": "frankfurter-soup",
 			"version": 1,
 			"file": "frankfurter-soup.json",
@@ -41,6 +65,12 @@
 			"id": "chicken-paella",
 			"version": 1,
 			"file": "chicken-paella.json",
+			"minAppVersion": 1
+		},
+		{
+			"id": "parboiled-fries",
+			"version": 1,
+			"file": "parboiled-fries.json",
 			"minAppVersion": 1
 		}
 	]

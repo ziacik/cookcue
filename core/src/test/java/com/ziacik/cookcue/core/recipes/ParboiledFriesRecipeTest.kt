@@ -33,6 +33,24 @@ class ParboiledFriesRecipeTest {
 		assertTrue(heat.endSeconds <= dry.endSeconds)
 	}
 
+
+	@Test
+	fun fryerHeatingRequiresActualTemperatureConfirmation() {
+		val firstHeat = recipe.tasks.single { it.id == "heat-fryer-155" }
+		val secondHeat = recipe.tasks.single { it.id == "heat-fryer-180" }
+		val loadFirstBasket = recipe.tasks.single { it.id == "load-first-basket" }
+		val lowerSecondBasket = recipe.tasks.single { it.id == "lower-second-basket" }
+
+		assertEquals(8 * 60L, firstHeat.durationSeconds)
+		assertEquals(5 * 60L, secondHeat.durationSeconds)
+		assertEquals(TaskKind.EVENT, firstHeat.kind)
+		assertEquals(TaskKind.EVENT, secondHeat.kind)
+		assertEquals("UŽ JE NAHRIATA", firstHeat.actionLabel)
+		assertEquals("UŽ JE NAHRIATA", secondHeat.actionLabel)
+		assertTrue("heat-fryer-155" in loadFirstBasket.dependsOn)
+		assertTrue("heat-fryer-180" in lowerSecondBasket.dependsOn)
+	}
+
 	@Test
 	fun firstFryStartsOnlyAfterBasketLoading() {
 		val load = recipe.tasks.single { it.id == "load-first-basket" }

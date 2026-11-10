@@ -28,7 +28,7 @@ object MobileSessionSync {
 			putBoolean(DataLayerProtocol.KEY_STARTED, snapshot.started)
 			putBoolean(DataLayerProtocol.KEY_PAUSED, snapshot.paused)
 			putBoolean(DataLayerProtocol.KEY_COMPLETED, snapshot.completed)
-			putString(DataLayerProtocol.KEY_RECIPE_TITLE, CookingSessionController.recipe.title)
+			putString(DataLayerProtocol.KEY_RECIPE_TITLE, CookingSessionController.recipeOrNull?.title.orEmpty())
 
 			putString(DataLayerProtocol.KEY_CURRENT_TASK_ID, current?.task?.id.orEmpty())
 			putString(DataLayerProtocol.KEY_CURRENT_TITLE, current?.task?.title.orEmpty())

@@ -26,12 +26,13 @@ object MobileSessionPersistence {
 	private var loaded = false
 
 	fun ensureLoaded(context: Context) {
-		if (loaded) {
+		if (loaded || CookingSessionController.availableRecipes.isEmpty()) {
+			// The first network fetch may still be running; keep persisted state intact.
 			return
 		}
 
 		synchronized(this) {
-			if (loaded) {
+			if (loaded || CookingSessionController.availableRecipes.isEmpty()) {
 				return
 			}
 

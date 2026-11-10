@@ -9,12 +9,6 @@ import com.ziacik.cookcue.core.model.Recipe
 import com.ziacik.cookcue.core.model.ScheduleMode
 import com.ziacik.cookcue.core.model.ScheduledTask
 import com.ziacik.cookcue.core.model.TaskKind
-import com.ziacik.cookcue.core.recipes.BeanSoupRecipe
-import com.ziacik.cookcue.core.recipes.FriedCheeseWithBoiledPotatoesRecipe
-import com.ziacik.cookcue.core.recipes.FrankfurterSoupRecipe
-import com.ziacik.cookcue.core.recipes.ParboiledFriesRecipe
-import com.ziacik.cookcue.core.recipes.ScrambledEggsWithOnionAndToastRecipe
-import com.ziacik.cookcue.core.recipes.ScrambledEggsWithOnionRecipe
 import com.ziacik.cookcue.core.scheduler.ItineraryScheduler
 import com.ziacik.cookcue.core.scheduler.Scheduler
 
@@ -43,16 +37,14 @@ data class MobileSessionSnapshot(
 )
 
 object CookingSessionController {
-	private val bundledRecipes: List<Recipe> = listOf(
-		BeanSoupRecipe.recipe,
-		ScrambledEggsWithOnionRecipe.recipe,
-		ScrambledEggsWithOnionAndToastRecipe.recipe,
-		FriedCheeseWithBoiledPotatoesRecipe.recipe,
-		FrankfurterSoupRecipe.recipe,
-		ParboiledFriesRecipe.recipe,
-	)
+	// The online catalog (or its local cache) is the only source of recipes.
+	var availableRecipes by mutableStateOf<List<Recipe>>(emptyList())
+		private set
 
-	var availableRecipes by mutableStateOf(bundledRecipes)
+	var catalogLoading by mutableStateOf(true)
+		private set
+
+	var catalogError by mutableStateOf(false)
 		private set
 
 	private var remoteRecipesInitialized = false
@@ -65,31 +57,55 @@ object CookingSessionController {
 		remoteRecipesInitialized = true
 
 		installRemoteRecipes(RemoteRecipeRepository.loadCached(context))
+		// Restore cached sessions before the network callback can replace the catalog.
+		MobileSessionPersistence.ensureLoaded(context)
+		refreshCatalog(context)
+	}
+
+	fun refreshCatalog(context: Context) {
+		if (catalogLoading && remoteRecipesInitialized && refreshInProgress) {
+			return
+		}
+		catalogLoading = true
+		catalogError = false
+		refreshInProgress = true
 		RemoteRecipeRepository.refresh(context) { recipes ->
+			refreshInProgress = false
+			catalogLoading = false
+			if (recipes == null) {
+				catalogError = true
+				return@refresh
+			}
 			if (startedAt == null) {
 				installRemoteRecipes(recipes)
+				if (availableRecipes.isNotEmpty()) {
+					MobileSessionPersistence.ensureLoaded(context)
+					MobileSessionSync.publish(context)
+					CookingSessionService.syncRunningState(context)
+				}
 			} else {
 				pendingRemoteRecipes = recipes
 			}
 		}
 	}
 
-	private fun installRemoteRecipes(remoteRecipes: List<Recipe>) {
-		val merged = linkedMapOf<String, Recipe>()
-		bundledRecipes.forEach { merged[it.id] = it }
-		remoteRecipes.forEach { merged[it.id] = it }
-		availableRecipes = merged.values.toList()
+	private var refreshInProgress = false
 
+	private fun installRemoteRecipes(remoteRecipes: List<Recipe>) {
+		availableRecipes = remoteRecipes
 		if (availableRecipes.none { it.id == selectedRecipeId }) {
-			selectedRecipeId = bundledRecipes.first().id
+			selectedRecipeId = availableRecipes.firstOrNull()?.id.orEmpty()
 		}
 	}
 
-	var selectedRecipeId by mutableStateOf(BeanSoupRecipe.recipe.id)
+	var selectedRecipeId by mutableStateOf("")
 		private set
 
+	val recipeOrNull: Recipe?
+		get() = availableRecipes.firstOrNull { it.id == selectedRecipeId }
+
 	val recipe: Recipe
-		get() = availableRecipes.first { it.id == selectedRecipeId }
+		get() = requireNotNull(recipeOrNull) { "No recipe loaded from the online catalog." }
 
 	private val scheduler = Scheduler()
 	private val itineraryScheduler = ItineraryScheduler()
@@ -180,6 +196,7 @@ object CookingSessionController {
 	}
 
 	fun start() {
+		if (recipeOrNull == null) return
 		durationOverrides = emptyMap()
 		taskStartOverrides = emptyMap()
 		skippedTaskIds = emptySet()
@@ -239,10 +256,11 @@ object CookingSessionController {
 		eventDeferredUntil: Map<String, Long> = emptyMap(),
 		completedEarly: Boolean = false,
 	) {
+		if (availableRecipes.isEmpty()) return
 		selectedRecipeId = availableRecipes
 			.firstOrNull { it.id == recipeId }
 			?.id
-			?: BeanSoupRecipe.recipe.id
+			?: availableRecipes.first().id
 
 		val itineraryCanResume =
 			recipe.scheduleMode == ScheduleMode.ITINERARY &&
@@ -603,6 +621,24 @@ object CookingSessionController {
 	}
 
 	fun snapshot(now: Long = SystemClock.elapsedRealtime()): MobileSessionSnapshot {
+		if (recipeOrNull == null) {
+			return MobileSessionSnapshot(
+				started = false,
+				paused = false,
+				completed = false,
+				elapsedSeconds = 0,
+				schedule = emptyList(),
+				activeActions = emptyList(),
+				currentAction = null,
+				background = emptyList(),
+				pendingEvents = emptyList(),
+				previousAction = null,
+				nextAction = null,
+				nextScheduled = null,
+				taskProgress = emptyMap(),
+			)
+		}
+
 		val start = startedAt
 		val elapsedSeconds = when {
 			start == null -> 0

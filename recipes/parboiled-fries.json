@@ -1,0 +1,312 @@
+{
+	"schemaVersion": 1,
+	"id": "parboiled-fries",
+	"title": "Hranolky s predvarením",
+	"description": "Pre 1 osobu · predvarené a dvakrát vyprážané vo fritéze",
+	"servings": 1,
+	"ingredients": [
+		{
+			"name": "zemiaky typu C",
+			"amount": "300 g"
+		},
+		{
+			"name": "ocot 5 %",
+			"amount": "1 ČL na 1 l vody"
+		},
+		{
+			"name": "olej na vyprážanie",
+			"amount": "podľa fritézy"
+		},
+		{
+			"name": "soľ",
+			"amount": "podľa chuti"
+		}
+	],
+	"resourceCapacities": {
+		"cook": 1,
+		"pot": 1,
+		"burner": 1,
+		"sink": 1,
+		"fryer": 1
+	},
+	"preCookingNote": "Najlepšie fungujú múčnaté zemiaky typu C. Krájaj ich približne na 8–10 mm. Recept počíta s klasickou olejovou fritézou.",
+	"tasks": [
+		{
+			"id": "prep-potatoes",
+			"title": "Ošúp a nakrájaj zemiaky",
+			"durationSeconds": 720,
+			"resources": [
+				"cook",
+				"sink"
+			],
+			"skill": "PEELING",
+			"instruction": "Ošúp 300 g zemiakov a nakrájaj ich na hranolky hrubé približne 8–10 mm. Snaž sa, aby boli podobne hrubé."
+		},
+		{
+			"id": "start-water",
+			"title": "Daj variť vodu s octom",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"prep-potatoes"
+			],
+			"resources": [
+				"cook",
+				"pot",
+				"burner"
+			],
+			"instruction": "Do hrnca daj dosť vody, aby boli hranolky ponorené. Na každý 1 l vody pridaj 1 ČL 5 % octu a približne 1/2 ČL soli. Zapni vysoký výkon."
+		},
+		{
+			"id": "water-boiling",
+			"title": "Voda sa zohrieva",
+			"durationSeconds": 300,
+			"dependsOn": [
+				"start-water"
+			],
+			"resources": [
+				"pot",
+				"burner"
+			],
+			"kind": "EVENT",
+			"instruction": "Voda sa zohrieva. Medzitým pokračuj s hranolkami. Keď začne výrazne vrieť, potvrď to.",
+			"actionLabel": "VODA VRIE"
+		},
+		{
+			"id": "rinse-potatoes",
+			"title": "Opláchni hranolky",
+			"durationSeconds": 180,
+			"dependsOn": [
+				"start-water"
+			],
+			"resources": [
+				"cook",
+				"sink"
+			],
+			"instruction": "Kým sa voda zohrieva, hranolky dôkladne opláchni v studenej vode, aby sa z povrchu zmyla voľná vrstva škrobu. Nechaj ich odkvapkať."
+		},
+		{
+			"id": "add-potatoes",
+			"title": "Pridaj hranolky",
+			"durationSeconds": 60,
+			"dependsOn": [
+				"water-boiling",
+				"rinse-potatoes"
+			],
+			"resources": [
+				"cook",
+				"pot",
+				"burner"
+			],
+			"instruction": "Opatrne vlož opláchnuté hranolky do vriacej vody. Jemne premiešaj. Po pridaní voda na chvíľu prestane vrieť."
+		},
+		{
+			"id": "water-reboiling",
+			"title": "Počkaj na opätovný var",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"add-potatoes"
+			],
+			"resources": [
+				"pot",
+				"burner"
+			],
+			"kind": "EVENT",
+			"instruction": "Keď voda s hranolkami znovu začne poriadne vrieť, potvrď to. Až od tohto momentu počítame predvarenie.",
+			"actionLabel": "ZNOVU VRIE"
+		},
+		{
+			"id": "parboil",
+			"title": "Predvar hranolky 4 minúty",
+			"durationSeconds": 240,
+			"dependsOn": [
+				"water-reboiling"
+			],
+			"resources": [
+				"pot",
+				"burner"
+			],
+			"kind": "WAIT",
+			"instruction": "Var ich odkryté približne 4 minúty. Povrch má zmäknúť, ale hranolky sa nesmú rozpadávať."
+		},
+		{
+			"id": "parboil-check",
+			"title": "Skontroluj predvarenie",
+			"durationSeconds": 60,
+			"dependsOn": [
+				"parboil"
+			],
+			"resources": [
+				"pot",
+				"burner"
+			],
+			"kind": "EVENT",
+			"instruction": "Vyber jeden hranolček. Povrch má byť mäkký a trochu krehký, stred ešte pevný a hranolček musí držať tvar. Sedí to?",
+			"actionLabel": "ÁNO",
+			"retryActionLabel": "EŠTE NIE",
+			"retryAfterSeconds": 60
+		},
+		{
+			"id": "drain-spread",
+			"title": "Zlej a rozlož hranolky",
+			"durationSeconds": 60,
+			"dependsOn": [
+				"parboil-check"
+			],
+			"resources": [
+				"cook",
+				"pot",
+				"sink"
+			],
+			"instruction": "Hranolky opatrne zlej a rozlož ich v jednej vrstve na čistú utierku alebo papierové utierky. Jemne odsaj viditeľnú vodu.",
+			"tips": [
+				"Pred vložením do oleja musia byť na povrchu suché."
+			]
+		},
+		{
+			"id": "dry-fries",
+			"title": "Nechaj hranolky schnúť",
+			"durationSeconds": 540,
+			"dependsOn": [
+				"drain-spread"
+			],
+			"kind": "WAIT",
+			"instruction": "Nechaj hranolky rozložené schnúť. Spolu so zlievaním a rozkladaním počítame približne 10 minút od vytiahnutia z vody."
+		},
+		{
+			"id": "heat-fryer-155",
+			"title": "Nahrej fritézu na 155 °C",
+			"durationSeconds": 480,
+			"dependsOn": [
+				"drain-spread"
+			],
+			"resources": [
+				"fryer"
+			],
+			"kind": "EVENT",
+			"instruction": "Odhad nahrievania je 8 minút. Keď fritéza skutočne dosiahne 155 °C (podľa kontrolky alebo termostatu), stlač UŽ JE NAHRIATA. Aj keď odhad uplynie, počkaj na potvrdenie teploty.",
+			"actionLabel": "UŽ JE NAHRIATA"
+		},
+		{
+			"id": "load-first-basket",
+			"title": "Naplň kôš fritézy",
+			"durationSeconds": 60,
+			"dependsOn": [
+				"dry-fries",
+				"heat-fryer-155"
+			],
+			"resources": [
+				"cook",
+				"fryer"
+			],
+			"instruction": "Suché hranolky vlož do koša fritézy. Nepreplň ho; hranolky potrebujú priestor. Keď je kôš naplnený a pripravený, spusti prvé smaženie."
+		},
+		{
+			"id": "first-fry",
+			"title": "Prvé smaženie – 155 °C",
+			"durationSeconds": 360,
+			"dependsOn": [
+				"load-first-basket"
+			],
+			"resources": [
+				"fryer"
+			],
+			"kind": "WAIT",
+			"instruction": "Spusť kôš do oleja a smaž 6 minút pri 155 °C. Čas sa počíta až od momentu, keď je naplnený kôš vo fritéze."
+		},
+		{
+			"id": "lift-first-basket",
+			"title": "Zdvihni kôš",
+			"durationSeconds": 60,
+			"dependsOn": [
+				"first-fry"
+			],
+			"resources": [
+				"cook",
+				"fryer"
+			],
+			"instruction": "Zdvihni kôš nad olej a nechaj hranolky krátko odkvapkať. Zatiaľ ich nechaj v koši."
+		},
+		{
+			"id": "cool-fries",
+			"title": "Nechaj hranolky 5 minút odpočívať",
+			"durationSeconds": 300,
+			"dependsOn": [
+				"lift-first-basket"
+			],
+			"kind": "WAIT",
+			"instruction": "Hranolky nechaj približne 5 minút odpočívať v zdvihnutom koši."
+		},
+		{
+			"id": "heat-fryer-180",
+			"title": "Dohrej fritézu na 180 °C",
+			"durationSeconds": 300,
+			"dependsOn": [
+				"lift-first-basket"
+			],
+			"resources": [
+				"fryer"
+			],
+			"kind": "EVENT",
+			"instruction": "Odhad nahrievania je 5 minút. Keď fritéza skutočne dosiahne 180 °C (podľa kontrolky alebo termostatu), stlač UŽ JE NAHRIATA. Aj keď odhad uplynie, počkaj na potvrdenie teploty.",
+			"actionLabel": "UŽ JE NAHRIATA"
+		},
+		{
+			"id": "lower-second-basket",
+			"title": "Spusť kôš na druhé smaženie",
+			"durationSeconds": 30,
+			"dependsOn": [
+				"cool-fries",
+				"heat-fryer-180"
+			],
+			"resources": [
+				"cook",
+				"fryer"
+			],
+			"instruction": "Keď sú hranolky odpočinuté a fritéza má 180 °C, spusti kôš späť do oleja."
+		},
+		{
+			"id": "second-fry",
+			"title": "Druhé smaženie – 180 °C",
+			"durationSeconds": 180,
+			"dependsOn": [
+				"lower-second-basket"
+			],
+			"resources": [
+				"fryer"
+			],
+			"kind": "WAIT",
+			"instruction": "Smaž približne 2–3 minúty pri 180 °C, kým sú hranolky zlaté a chrumkavé. Sleduj farbu, ku koncu sa mení rýchlo."
+		},
+		{
+			"id": "salt-serve",
+			"title": "Vyber, osoľ a podávaj",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"second-fry"
+			],
+			"resources": [
+				"cook",
+				"fryer"
+			],
+			"instruction": "Zdvihni kôš, nechaj hranolky krátko odkvapkať, vysyp ich a ešte horúce osoľ. Hneď podávaj."
+		}
+	],
+	"troubleshooting": [
+		{
+			"problem": "Hranolky sa pri predvarení rozpadajú",
+			"advice": "Hneď ich zlej. Nabudúce ich var kratšie alebo nakrájaj o trochu hrubšie. Ocot vo vode pomáha povrchu držať tvar."
+		},
+		{
+			"problem": "Po prvom smažení už hnednú",
+			"advice": "Prvá fáza ich má hlavne dovariť vnútri, nie zafarbiť. Skontroluj, že fritéza je nastavená približne na 155 °C."
+		},
+		{
+			"problem": "Hranolky sú mastné a mäkké",
+			"advice": "Kôš mohol byť príliš plný alebo bola teplota nízka. Pri druhom smažení použi 180 °C a nechaj oleju priestor obtekať hranolky."
+		},
+		{
+			"problem": "Hranolky tmavnú príliš rýchlo",
+			"advice": "Druhé smaženie ukonči skôr. Rozhoduje farba a chrumkavosť, nie nutne celé 3 minúty."
+		}
+	]
+}
