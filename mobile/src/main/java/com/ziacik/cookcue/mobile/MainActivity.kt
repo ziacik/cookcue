@@ -237,7 +237,12 @@ private fun CookCueScreen() {
 	val primaryWait = snapshot.background.minByOrNull { it.endSeconds }
 	val displayedWait = if (activeActions.isEmpty()) primaryWait else null
 	val activeTaskId = current?.task?.id ?: displayedWait?.task?.id
-	val activeStepIndex = snapshot.schedule.indexOfFirst { it.task.id == activeTaskId }
+	val planItems = snapshot.schedule.distinctBy { it.task.repeatInfo?.id ?: it.task.id }
+	val currentPlanId = snapshot.schedule.firstOrNull { it.task.id == activeTaskId }
+		?.task?.let { it.repeatInfo?.id ?: it.id }
+	val activeStepIndex = planItems.indexOfFirst {
+		(it.task.repeatInfo?.id ?: it.task.id) == currentPlanId
+	}
 	val secondaryBackground = snapshot.background.filterNot {
 		it.task.id == displayedWait?.task?.id
 	}
@@ -531,8 +536,10 @@ private fun CookCueScreen() {
 									activeActions.forEach { action ->
 										val elapsed =
 											(snapshot.elapsedSeconds - action.startSeconds).coerceAtLeast(0)
-										val stepIndex =
-											snapshot.schedule.indexOfFirst { it.task.id == action.task.id }
+										val actionPlanId = action.task.repeatInfo?.id ?: action.task.id
+										val stepIndex = planItems.indexOfFirst {
+											(it.task.repeatInfo?.id ?: it.task.id) == actionPlanId
+										}
 										CurrentStepCard(
 											title = action.task.title,
 											image = action.task.image,
@@ -542,7 +549,7 @@ private fun CookCueScreen() {
 											estimateSeconds = action.task.durationSeconds,
 											elapsedSeconds = elapsed,
 											stepNumber = stepIndex.takeIf { it >= 0 }?.plus(1),
-											stepCount = snapshot.schedule.size,
+											stepCount = planItems.size,
 											actionLabel = "HOTOVO",
 											optional = action.task.optional,
 											isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY,
@@ -578,7 +585,7 @@ private fun CookCueScreen() {
 									estimateSeconds = duration,
 									elapsedSeconds = elapsed,
 									stepNumber = activeStepIndex.takeIf { it >= 0 }?.plus(1),
-									stepCount = snapshot.schedule.size,
+									stepCount = planItems.size,
 									actionLabel = null,
 									optional = false,
 									isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY,
@@ -744,17 +751,48 @@ private fun CookCueScreen() {
 			}
 
 			itemsIndexed(
-				items = snapshot.schedule,
-				key = { _, item -> "plan-" + item.task.id },
+				items = planItems,
+				key = { _, item -> "plan-" + (item.task.repeatInfo?.id ?: item.task.id) },
 			) { index, item ->
+				val repeat = item.task.repeatInfo
+				val children = if (repeat == null) listOf(item) else snapshot.schedule.filter {
+					it.task.repeatInfo?.id == repeat.id
+				}
+				val repetitionsCompleted = if (repeat == null) 0 else (1..repeat.count).count { round ->
+					children.filter { it.task.repeatInfo?.repetition == round }.all { step ->
+						snapshot.taskProgress[step.task.id] == TaskProgress.COMPLETED
+					}
+				}
+				val groupActive = children.any { step ->
+					step.task.id == activeTaskId ||
+						snapshot.pendingEvents.any { it.task.id == step.task.id }
+				}
+				val groupProgress = if (repeat == null) {
+					snapshot.taskProgress[item.task.id] ?: TaskProgress.PENDING
+				} else if (repetitionsCompleted == repeat.count) {
+					TaskProgress.COMPLETED
+				} else if (groupActive || children.any {
+						snapshot.taskProgress[it.task.id] == TaskProgress.COMPLETED
+					}) {
+					TaskProgress.ACTIVE
+				} else {
+					TaskProgress.PENDING
+				}
+				val displayedItem = if (repeat == null) item else item.copy(
+					task = item.task.copy(title = repeat.title),
+					endSeconds = children.maxOf { it.endSeconds },
+				)
 				PlanRow(
 					index = index,
-					item = item,
+					item = displayedItem,
 					recipe = recipe,
-					progress = snapshot.taskProgress[item.task.id] ?: TaskProgress.PENDING,
-					active = item.task.id == activeTaskId,
-					isLast = index == snapshot.schedule.lastIndex,
+					progress = groupProgress,
+					active = groupActive,
+					isLast = index == planItems.lastIndex,
 					canActivate = !snapshot.paused,
+					repeatLabel = repeat?.let {
+						"Opakovania: " + repetitionsCompleted + "/" + it.count + " · výdrž 5 s"
+					},
 					onOpenDetail = { selectedTaskDetailId = item.task.id },
 					onActivate = {
 						CookingSessionController.activateTask(item.task.id)
@@ -1708,6 +1746,7 @@ private fun PlanRow(
 	active: Boolean,
 	isLast: Boolean,
 	canActivate: Boolean,
+	repeatLabel: String? = null,
 	onOpenDetail: () -> Unit,
 	onActivate: () -> Unit,
 ) {
@@ -1771,6 +1810,7 @@ private fun PlanRow(
 					progress,
 					active = true,
 					canActivate = canActivate,
+					repeatLabel = repeatLabel,
 					onActivate = onActivate,
 				)
 			}
@@ -1800,6 +1840,7 @@ private fun PlanRowContent(
 	progress: TaskProgress,
 	active: Boolean,
 	canActivate: Boolean,
+	repeatLabel: String? = null,
 	onActivate: () -> Unit,
 ) {
 	Row(
@@ -1854,7 +1895,9 @@ private fun PlanRowContent(
 			}
 			Spacer(Modifier.height(2.dp))
 			Text(
-				text = if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
+				text = if (repeatLabel != null) {
+					repeatLabel
+				} else if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
 					formatScheduledStart(recipe, item) + " · ~" +
 						formatRemaining(item.endSeconds - item.startSeconds) +
 						if (item.task.optional) " · voliteľné" else ""
