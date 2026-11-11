@@ -72,6 +72,12 @@
 			"version": 1,
 			"file": "parboiled-fries.json",
 			"minAppVersion": 1
+		},
+		{
+			"id": "lumbar-back-exercises",
+			"version": 1,
+			"file": "lumbar-back-exercises.json",
+			"minAppVersion": 1
 		}
 	]
 }
