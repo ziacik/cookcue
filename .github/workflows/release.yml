@@ -32,8 +32,8 @@ jobs:
           fi
 
           major="${BASH_REMATCH[1]}"
-          minor="${BASH_REMATCH[3]}"
-          patch="${BASH_REMATCH[5]}"
+          minor="${BASH_REMATCH[2]}"
+          patch="${BASH_REMATCH[3]}"
           if (( major > 2000 || minor > 999 || patch > 999 )); then
             echo "::error::Version exceeds supported versionCode range"
             exit 1
