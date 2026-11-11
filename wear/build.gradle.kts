@@ -5,6 +5,13 @@ plugins {
 	id("org.jetbrains.kotlin.plugin.compose")
 }
 
+val releaseKeystorePath = providers.environmentVariable("ANDROID_RELEASE_KEYSTORE_PATH").orNull
+val releaseStorePassword = providers.environmentVariable("ANDROID_RELEASE_STORE_PASSWORD").orNull
+val releaseKeyAlias = providers.environmentVariable("ANDROID_RELEASE_KEY_ALIAS").orNull
+val releaseKeyPassword = providers.environmentVariable("ANDROID_RELEASE_KEY_PASSWORD").orNull
+val hasReleaseSigning = listOf(releaseKeystorePath, releaseStorePassword, releaseKeyAlias, releaseKeyPassword)
+	.all { !it.isNullOrBlank() }
+
 android {
 	namespace = "com.ziacik.cookcue.wear"
 	compileSdk = 37
@@ -13,8 +20,24 @@ android {
 		applicationId = "com.ziacik.cookcue"
 		minSdk = 30
 		targetSdk = 37
-		versionCode = 2
-		versionName = "0.1.0"
+		versionCode = providers.gradleProperty("releaseVersionCode").orNull?.toInt() ?: 2
+		versionName = providers.gradleProperty("releaseVersionName").orNull ?: "0.1.0"
+	}
+
+	if (hasReleaseSigning) {
+		signingConfigs {
+			create("release") {
+				storeFile = file(requireNotNull(releaseKeystorePath))
+				storePassword = requireNotNull(releaseStorePassword)
+				keyAlias = requireNotNull(releaseKeyAlias)
+				keyPassword = requireNotNull(releaseKeyPassword)
+			}
+		}
+		buildTypes {
+			getByName("release") {
+				signingConfig = signingConfigs.getByName("release")
+			}
+		}
 	}
 
 	buildFeatures {
