@@ -1830,6 +1830,7 @@ private fun PlanRow(
 					progress,
 					active = false,
 					canActivate = canActivate,
+					repeatLabel = repeatLabel,
 					onActivate = onActivate,
 				)
 			}
