@@ -45,6 +45,7 @@ class RepeatCycleExpanderTest {
 		val scheduled = Scheduler().schedule(
 			Recipe(
 				id = "exercise",
+				title = "Cvik",
 				servings = 1,
 				ingredients = emptyList(),
 				resourceCapacities = emptyMap(),
