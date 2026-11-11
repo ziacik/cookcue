@@ -33,7 +33,7 @@ object RepeatCycleExpander {
 						step.copy(
 							id = expandedId,
 							title = id.uppercase() + " · " + step.title + " · " + round + "/" + count,
-							dependsOn = previousId?.let(::setOf) ?: dependsOn,
+							dependsOn = previousId?.let { setOf(it) } ?: dependsOn,
 							repeatInfo = RepeatInfo(id, title, round, count),
 						)
 					)
