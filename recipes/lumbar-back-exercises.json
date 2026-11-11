@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"id": "lumbar-back-exercises",
 	"title": "Cviky na driekovú chrbticu",
-	"description": "Rehabilitačné cvičenie podľa lekárskeho obrázkového návodu · 16 cvikov · 3× na každú stranu · približne 20–30 minút",
+	"description": "16 cvikov podľa lekárskeho návodu · 3 opakovania na každú stranu · 5-sekundové výdrže",
 	"servings": 1,
 	"ingredients": [
 		{
@@ -11,7 +11,7 @@
 		}
 	],
 	"resourceCapacities": {},
-	"preCookingNote": "Zdroj: stránka „Cviky na rozvíjanie driekovej chrbtice a spevnenie svalového korzetu“ v osobnom lekárskom PDF (4. strana). Pôvodný návod uvádza 3–5 opakovaní každého cviku a 5-sekundové výdrže. Tento scenár volí 3 opakovania (pri striedavých pohyboch 3 na každú stranu). Najprv si prečítaj opis každého cviku; až potom ho spusti. Každé opakovanie má 10 sekúnd na presun/návrat a 5 sekúnd na výdrž. Medzi cvikmi čaká scenár na tvoje potvrdenie. Pri nepríjemnej či zhoršujúcej sa bolesti cvik prerušiť; nevynucuj pohyb cez bolesť. V aplikácii môžeš použiť Pauzu. Obrázky jednotlivých polôh sú na 4. strane pôvodného PDF.",
+	"preCookingNote": "Zdroj: „Cviky na rozvíjanie driekovej chrbtice a spevnenie svalového korzetu“, 4. strana lekárskeho PDF. Návod uvádza 3–5 opakovaní cvikov a 5-sekundové výdrže; scenár používa 3 opakovania (pri striedavých cvikoch 3 na každú stranu). Pri každom opakovaní si najprv v pokoji prečítaj pokyn a dosiahni koncovú polohu. Až potvrdením POLOHA PRIPRAVENÁ sa spustí presný 5-sekundový časovač. Medzi opakovaniami nie je časový limit. Cvič plynulo bez nútenia cez bolesť, pokojne dýchaj. Obrázky polôh sú na 4. strane pôvodného PDF.",
 	"tasks": [
 		{
 			"id": "group-a",
@@ -19,613 +19,215 @@
 			"kind": "EVENT",
 			"actionLabel": "SOM PRIPRAVENÝ",
 			"durationSeconds": 45,
-			"instruction": "Ľahni si na chrbát, dolné končatiny mierne pokrč v kolenách a chodidlá oprite o podložku. Nasleduje 6 cvikov. Každý cvik sa spustí až po tvojom potvrdení. Cvič plynulo a v bezbolestnom rozsahu; ak sa bolesť výrazne zhorší, cvičenie ukonči."
+			"instruction": "Ľahni si na chrbát, dolné končatiny mierne pokrč v kolenách a chodidlá oprite o podložku. Nasleduje 6 cvikov. Každý cvik sa spustí až po tvojom potvrdení. Cvič plynulo a v bezbolestnom rozsahu; ak sa bolesť výrazne zhorší, cvičenie ukonči.",
+			"dependsOn": []
 		},
 		{
-			"id": "a1-start",
+			"id": "a1",
 			"title": "A1 · Striedavo vyťahuj ruky nahor",
-			"kind": "EVENT",
-			"actionLabel": "SPUSTIŤ CVIK",
-			"durationSeconds": 60,
-			"instruction": "Lež na chrbte, kolená mierne pokrčené, chodidlá na podložke. Ruky predpaž kolmo nahor. Striedavo vyťahuj jednu ruku nahor pri súčasnom predklone hlavy, nie jej predsúvaní. Nasledujú 3 opakovania na každú stranu (striedavo pravá/ľavá). Po stlačení SPUSTIŤ CVIK bude pri každom opakovaní 10 sekúnd na plynulý pohyb a potom presne 5 sekúnd výdrže. Ďalšie opakovania sa spúšťajú automaticky. Ak tempo nestíhaš, použi Pauzu.",
 			"dependsOn": [
 				"group-a"
-			]
+			],
+			"repeat": {
+				"count": 3,
+				"steps": [
+					{
+						"id": "right-ready",
+						"title": "pravá ruka 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "Lež na chrbte, kolená mierne pokrčené, chodidlá na podložke. Ruky predpaž kolmo nahor. Striedavo vyťahuj jednu ruku nahor pri súčasnom predklone hlavy, nie jej predsúvaní. Predpaženú pravú ruku vytiahni smerom nahor. Súčasne jemne predkloň hlavu, nevysúvaj ju dopredu. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "right-hold",
+						"title": "pravá ruka 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Pravá ruka vytiahnutá, hlava jemne predklonená; hlavu nepredsúvaj. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					},
+					{
+						"id": "left-ready",
+						"title": "ľavá ruka 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "Lež na chrbte, kolená mierne pokrčené, chodidlá na podložke. Ruky predpaž kolmo nahor. Striedavo vyťahuj jednu ruku nahor pri súčasnom predklone hlavy, nie jej predsúvaní. Uvoľni predošlú výdrž a vráť sa do základnej polohy. Predpaženú ľavú ruku vytiahni smerom nahor. Súčasne jemne predkloň hlavu, nevysúvaj ju dopredu. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "left-hold",
+						"title": "ľavá ruka 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Ľavá ruka vytiahnutá, hlava jemne predklonená; hlavu nepredsúvaj. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					}
+				]
+			}
 		},
 		{
-			"id": "a1-right-r1-move",
-			"title": "A1 · pravá ruka 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Zaujmi základnú polohu. Predpaženú pravú ruku vytiahni smerom nahor. Súčasne jemne predkloň hlavu, nevysúvaj ju dopredu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a1-start"
-			]
-		},
-		{
-			"id": "a1-right-r1-hold",
-			"title": "A1 · pravá ruka 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravá ruka vytiahnutá, hlava jemne predklonená; hlavu nepredsúvaj. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a1-right-r1-move"
-			]
-		},
-		{
-			"id": "a1-left-r1-move",
-			"title": "A1 · ľavá ruka 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Predpaženú ľavú ruku vytiahni smerom nahor. Súčasne jemne predkloň hlavu, nevysúvaj ju dopredu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a1-right-r1-hold"
-			]
-		},
-		{
-			"id": "a1-left-r1-hold",
-			"title": "A1 · ľavá ruka 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavá ruka vytiahnutá, hlava jemne predklonená; hlavu nepredsúvaj. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a1-left-r1-move"
-			]
-		},
-		{
-			"id": "a1-right-r2-move",
-			"title": "A1 · pravá ruka 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Predpaženú pravú ruku vytiahni smerom nahor. Súčasne jemne predkloň hlavu, nevysúvaj ju dopredu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a1-left-r1-hold"
-			]
-		},
-		{
-			"id": "a1-right-r2-hold",
-			"title": "A1 · pravá ruka 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravá ruka vytiahnutá, hlava jemne predklonená; hlavu nepredsúvaj. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a1-right-r2-move"
-			]
-		},
-		{
-			"id": "a1-left-r2-move",
-			"title": "A1 · ľavá ruka 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Predpaženú ľavú ruku vytiahni smerom nahor. Súčasne jemne predkloň hlavu, nevysúvaj ju dopredu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a1-right-r2-hold"
-			]
-		},
-		{
-			"id": "a1-left-r2-hold",
-			"title": "A1 · ľavá ruka 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavá ruka vytiahnutá, hlava jemne predklonená; hlavu nepredsúvaj. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a1-left-r2-move"
-			]
-		},
-		{
-			"id": "a1-right-r3-move",
-			"title": "A1 · pravá ruka 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Predpaženú pravú ruku vytiahni smerom nahor. Súčasne jemne predkloň hlavu, nevysúvaj ju dopredu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a1-left-r2-hold"
-			]
-		},
-		{
-			"id": "a1-right-r3-hold",
-			"title": "A1 · pravá ruka 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravá ruka vytiahnutá, hlava jemne predklonená; hlavu nepredsúvaj. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a1-right-r3-move"
-			]
-		},
-		{
-			"id": "a1-left-r3-move",
-			"title": "A1 · ľavá ruka 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Predpaženú ľavú ruku vytiahni smerom nahor. Súčasne jemne predkloň hlavu, nevysúvaj ju dopredu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a1-right-r3-hold"
-			]
-		},
-		{
-			"id": "a1-left-r3-hold",
-			"title": "A1 · ľavá ruka 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavá ruka vytiahnutá, hlava jemne predklonená; hlavu nepredsúvaj. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a1-left-r3-move"
-			]
-		},
-		{
-			"id": "a2-start",
+			"id": "a2",
 			"title": "A2 · Čelo ku kolenu",
-			"kind": "EVENT",
-			"actionLabel": "SPUSTIŤ CVIK",
-			"durationSeconds": 60,
-			"instruction": "Rukami objím koleno ohnuté do 90° a priťahuj k nemu čelo so súčasným odlepením hornej časti trupu od podložky. Striedaj nohy. Nasledujú 3 opakovania na každú stranu (striedavo pravá/ľavá). Po stlačení SPUSTIŤ CVIK bude pri každom opakovaní 10 sekúnd na plynulý pohyb a potom presne 5 sekúnd výdrže. Ďalšie opakovania sa spúšťajú automaticky. Ak tempo nestíhaš, použi Pauzu.",
 			"dependsOn": [
-				"a1-left-r3-hold"
-			]
+				"a1"
+			],
+			"repeat": {
+				"count": 3,
+				"steps": [
+					{
+						"id": "right-ready",
+						"title": "pravé koleno 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "Rukami objím koleno ohnuté do 90° a priťahuj k nemu čelo so súčasným odlepením hornej časti trupu od podložky. Striedaj nohy. Obopni rukami pravé koleno ohnuté približne do 90°. Pritiahni k nemu čelo a zdvihni hornú časť trupu z podložky. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "right-hold",
+						"title": "pravé koleno 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Čelo smeruje k pravému kolenu; horná časť trupu je mierne zdvihnutá. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					},
+					{
+						"id": "left-ready",
+						"title": "ľavé koleno 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "Rukami objím koleno ohnuté do 90° a priťahuj k nemu čelo so súčasným odlepením hornej časti trupu od podložky. Striedaj nohy. Uvoľni predošlú výdrž a vráť sa do základnej polohy. Obopni rukami ľavé koleno ohnuté približne do 90°. Pritiahni k nemu čelo a zdvihni hornú časť trupu z podložky. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "left-hold",
+						"title": "ľavé koleno 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Čelo smeruje k ľavému kolenu; horná časť trupu je mierne zdvihnutá. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					}
+				]
+			}
 		},
 		{
-			"id": "a2-right-r1-move",
-			"title": "A2 · pravé koleno 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Zaujmi základnú polohu. Obopni rukami pravé koleno ohnuté približne do 90°. Pritiahni k nemu čelo a zdvihni hornú časť trupu z podložky. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a2-start"
-			]
-		},
-		{
-			"id": "a2-right-r1-hold",
-			"title": "A2 · pravé koleno 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Čelo smeruje k pravému kolenu; horná časť trupu je mierne zdvihnutá. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a2-right-r1-move"
-			]
-		},
-		{
-			"id": "a2-left-r1-move",
-			"title": "A2 · ľavé koleno 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Obopni rukami ľavé koleno ohnuté približne do 90°. Pritiahni k nemu čelo a zdvihni hornú časť trupu z podložky. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a2-right-r1-hold"
-			]
-		},
-		{
-			"id": "a2-left-r1-hold",
-			"title": "A2 · ľavé koleno 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Čelo smeruje k ľavému kolenu; horná časť trupu je mierne zdvihnutá. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a2-left-r1-move"
-			]
-		},
-		{
-			"id": "a2-right-r2-move",
-			"title": "A2 · pravé koleno 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Obopni rukami pravé koleno ohnuté približne do 90°. Pritiahni k nemu čelo a zdvihni hornú časť trupu z podložky. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a2-left-r1-hold"
-			]
-		},
-		{
-			"id": "a2-right-r2-hold",
-			"title": "A2 · pravé koleno 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Čelo smeruje k pravému kolenu; horná časť trupu je mierne zdvihnutá. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a2-right-r2-move"
-			]
-		},
-		{
-			"id": "a2-left-r2-move",
-			"title": "A2 · ľavé koleno 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Obopni rukami ľavé koleno ohnuté približne do 90°. Pritiahni k nemu čelo a zdvihni hornú časť trupu z podložky. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a2-right-r2-hold"
-			]
-		},
-		{
-			"id": "a2-left-r2-hold",
-			"title": "A2 · ľavé koleno 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Čelo smeruje k ľavému kolenu; horná časť trupu je mierne zdvihnutá. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a2-left-r2-move"
-			]
-		},
-		{
-			"id": "a2-right-r3-move",
-			"title": "A2 · pravé koleno 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Obopni rukami pravé koleno ohnuté približne do 90°. Pritiahni k nemu čelo a zdvihni hornú časť trupu z podložky. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a2-left-r2-hold"
-			]
-		},
-		{
-			"id": "a2-right-r3-hold",
-			"title": "A2 · pravé koleno 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Čelo smeruje k pravému kolenu; horná časť trupu je mierne zdvihnutá. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a2-right-r3-move"
-			]
-		},
-		{
-			"id": "a2-left-r3-move",
-			"title": "A2 · ľavé koleno 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Obopni rukami ľavé koleno ohnuté približne do 90°. Pritiahni k nemu čelo a zdvihni hornú časť trupu z podložky. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a2-right-r3-hold"
-			]
-		},
-		{
-			"id": "a2-left-r3-hold",
-			"title": "A2 · ľavé koleno 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Čelo smeruje k ľavému kolenu; horná časť trupu je mierne zdvihnutá. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a2-left-r3-move"
-			]
-		},
-		{
-			"id": "a3-start",
+			"id": "a3",
 			"title": "A3 · Zdvihni panvu",
-			"kind": "EVENT",
-			"actionLabel": "SPUSTIŤ CVIK",
-			"durationSeconds": 60,
-			"instruction": "Ruky maj pozdĺž tela s dlaňami na podložke. Stiahni sedacie svaly a zdvihni panvu. Pri návrate ukladaj trup postupne zhora nadol až po panvu. Nasledujú 3 opakovania tohto cviku. Po stlačení SPUSTIŤ CVIK bude pri každom opakovaní 10 sekúnd na plynulý pohyb a potom presne 5 sekúnd výdrže. Ďalšie opakovania sa spúšťajú automaticky. Ak tempo nestíhaš, použi Pauzu.",
 			"dependsOn": [
-				"a2-left-r3-hold"
-			]
+				"a2"
+			],
+			"repeat": {
+				"count": 3,
+				"steps": [
+					{
+						"id": "both-ready",
+						"title": "panva 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "Ruky maj pozdĺž tela s dlaňami na podložke. Stiahni sedacie svaly a zdvihni panvu. Pri návrate ukladaj trup postupne zhora nadol až po panvu. Ruky nechaj pri tele, dlane na podložke. Stiahni sedacie svaly a plynulo nadvihni panvu nad podložku. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "both-hold",
+						"title": "panva 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Panva je nad podložkou, sedacie svaly sú zatnuté. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					}
+				]
+			}
 		},
 		{
-			"id": "a3-both-r1-move",
-			"title": "A3 · panva 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Zaujmi základnú polohu. Ruky nechaj pri tele, dlane na podložke. Stiahni sedacie svaly a plynulo nadvihni panvu nad podložku. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a3-start"
-			]
-		},
-		{
-			"id": "a3-both-r1-hold",
-			"title": "A3 · panva 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Panva je nad podložkou, sedacie svaly sú zatnuté. Po signále ukladaj trup postupne od hornej časti až po panvu. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a3-both-r1-move"
-			]
-		},
-		{
-			"id": "a3-both-r2-move",
-			"title": "A3 · panva 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Ruky nechaj pri tele, dlane na podložke. Stiahni sedacie svaly a plynulo nadvihni panvu nad podložku. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a3-both-r1-hold"
-			]
-		},
-		{
-			"id": "a3-both-r2-hold",
-			"title": "A3 · panva 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Panva je nad podložkou, sedacie svaly sú zatnuté. Po signále ukladaj trup postupne od hornej časti až po panvu. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a3-both-r2-move"
-			]
-		},
-		{
-			"id": "a3-both-r3-move",
-			"title": "A3 · panva 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Ruky nechaj pri tele, dlane na podložke. Stiahni sedacie svaly a plynulo nadvihni panvu nad podložku. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a3-both-r2-hold"
-			]
-		},
-		{
-			"id": "a3-both-r3-hold",
-			"title": "A3 · panva 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Panva je nad podložkou, sedacie svaly sú zatnuté. Po signále ukladaj trup postupne od hornej časti až po panvu. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a3-both-r3-move"
-			]
-		},
-		{
-			"id": "a4-start",
+			"id": "a4",
 			"title": "A4 · Čelo k obom kolenám",
-			"kind": "EVENT",
-			"actionLabel": "SPUSTIŤ CVIK",
-			"durationSeconds": 60,
-			"instruction": "Objím obe kolená ohnuté približne do 90°. Pritiahni k nim čelo a odlep hornú časť trupu od podložky. Nasledujú 3 opakovania tohto cviku. Po stlačení SPUSTIŤ CVIK bude pri každom opakovaní 10 sekúnd na plynulý pohyb a potom presne 5 sekúnd výdrže. Ďalšie opakovania sa spúšťajú automaticky. Ak tempo nestíhaš, použi Pauzu.",
 			"dependsOn": [
-				"a3-both-r3-hold"
-			]
+				"a3"
+			],
+			"repeat": {
+				"count": 3,
+				"steps": [
+					{
+						"id": "both-ready",
+						"title": "obe kolená 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "Objím obe kolená ohnuté približne do 90°. Pritiahni k nim čelo a odlep hornú časť trupu od podložky. Zopni ruky okolo oboch kolien ohnutých približne do 90°. Pritiahni čelo ku kolenám so zdvihnutím hornej časti trupu. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "both-hold",
+						"title": "obe kolená 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Čelo smeruje k obom kolenám; horná časť trupu je odlepená od podložky. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					}
+				]
+			}
 		},
 		{
-			"id": "a4-both-r1-move",
-			"title": "A4 · obe kolená 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Zaujmi základnú polohu. Zopni ruky okolo oboch kolien ohnutých približne do 90°. Pritiahni čelo ku kolenám so zdvihnutím hornej časti trupu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a4-start"
-			]
-		},
-		{
-			"id": "a4-both-r1-hold",
-			"title": "A4 · obe kolená 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Čelo smeruje k obom kolenám; horná časť trupu je odlepená od podložky. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a4-both-r1-move"
-			]
-		},
-		{
-			"id": "a4-both-r2-move",
-			"title": "A4 · obe kolená 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Zopni ruky okolo oboch kolien ohnutých približne do 90°. Pritiahni čelo ku kolenám so zdvihnutím hornej časti trupu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a4-both-r1-hold"
-			]
-		},
-		{
-			"id": "a4-both-r2-hold",
-			"title": "A4 · obe kolená 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Čelo smeruje k obom kolenám; horná časť trupu je odlepená od podložky. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a4-both-r2-move"
-			]
-		},
-		{
-			"id": "a4-both-r3-move",
-			"title": "A4 · obe kolená 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Zopni ruky okolo oboch kolien ohnutých približne do 90°. Pritiahni čelo ku kolenám so zdvihnutím hornej časti trupu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a4-both-r2-hold"
-			]
-		},
-		{
-			"id": "a4-both-r3-hold",
-			"title": "A4 · obe kolená 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Čelo smeruje k obom kolenám; horná časť trupu je odlepená od podložky. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a4-both-r3-move"
-			]
-		},
-		{
-			"id": "a5-start",
+			"id": "a5",
 			"title": "A5 · Šikmé dosahovanie ku kolenu",
-			"kind": "EVENT",
-			"actionLabel": "SPUSTIŤ CVIK",
-			"durationSeconds": 60,
-			"instruction": "Ruky sú mierne upažené. Striedavo siahaj rukou k opačnému kolenu; trup sa odlepí iba po dolný okraj lopatiek (len náznak šikmého sedu). Nasledujú 3 opakovania na každú stranu (striedavo pravá/ľavá). Po stlačení SPUSTIŤ CVIK bude pri každom opakovaní 10 sekúnd na plynulý pohyb a potom presne 5 sekúnd výdrže. Ďalšie opakovania sa spúšťajú automaticky. Ak tempo nestíhaš, použi Pauzu.",
 			"dependsOn": [
-				"a4-both-r3-hold"
-			]
+				"a4"
+			],
+			"repeat": {
+				"count": 3,
+				"steps": [
+					{
+						"id": "right-ready",
+						"title": "pravá ruka 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "Ruky sú mierne upažené. Striedavo siahaj rukou k opačnému kolenu; trup sa odlepí iba po dolný okraj lopatiek (len náznak šikmého sedu). Pravou rukou siahaj k ľavému kolenu. Hornú časť trupu odlep len po dolný okraj lopatiek, nejde o úplný sed. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "right-hold",
+						"title": "pravá ruka 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Pravou rukou dosahuješ k ľavému kolenu, trup je zdvihnutý iba po dolný okraj lopatiek. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					},
+					{
+						"id": "left-ready",
+						"title": "ľavá ruka 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "Ruky sú mierne upažené. Striedavo siahaj rukou k opačnému kolenu; trup sa odlepí iba po dolný okraj lopatiek (len náznak šikmého sedu). Uvoľni predošlú výdrž a vráť sa do základnej polohy. Ľavou rukou siahaj k pravému kolenu. Hornú časť trupu odlep len po dolný okraj lopatiek, nejde o úplný sed. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "left-hold",
+						"title": "ľavá ruka 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Ľavou rukou dosahuješ k pravému kolenu, trup je zdvihnutý iba po dolný okraj lopatiek. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					}
+				]
+			}
 		},
 		{
-			"id": "a5-right-r1-move",
-			"title": "A5 · pravá ruka 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Zaujmi základnú polohu. Pravou rukou siahaj k ľavému kolenu. Hornú časť trupu odlep len po dolný okraj lopatiek, nejde o úplný sed. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a5-start"
-			]
-		},
-		{
-			"id": "a5-right-r1-hold",
-			"title": "A5 · pravá ruka 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravou rukou dosahuješ k ľavému kolenu, trup je zdvihnutý iba po dolný okraj lopatiek. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a5-right-r1-move"
-			]
-		},
-		{
-			"id": "a5-left-r1-move",
-			"title": "A5 · ľavá ruka 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Ľavou rukou siahaj k pravému kolenu. Hornú časť trupu odlep len po dolný okraj lopatiek, nejde o úplný sed. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a5-right-r1-hold"
-			]
-		},
-		{
-			"id": "a5-left-r1-hold",
-			"title": "A5 · ľavá ruka 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavou rukou dosahuješ k pravému kolenu, trup je zdvihnutý iba po dolný okraj lopatiek. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a5-left-r1-move"
-			]
-		},
-		{
-			"id": "a5-right-r2-move",
-			"title": "A5 · pravá ruka 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Pravou rukou siahaj k ľavému kolenu. Hornú časť trupu odlep len po dolný okraj lopatiek, nejde o úplný sed. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a5-left-r1-hold"
-			]
-		},
-		{
-			"id": "a5-right-r2-hold",
-			"title": "A5 · pravá ruka 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravou rukou dosahuješ k ľavému kolenu, trup je zdvihnutý iba po dolný okraj lopatiek. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a5-right-r2-move"
-			]
-		},
-		{
-			"id": "a5-left-r2-move",
-			"title": "A5 · ľavá ruka 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Ľavou rukou siahaj k pravému kolenu. Hornú časť trupu odlep len po dolný okraj lopatiek, nejde o úplný sed. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a5-right-r2-hold"
-			]
-		},
-		{
-			"id": "a5-left-r2-hold",
-			"title": "A5 · ľavá ruka 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavou rukou dosahuješ k pravému kolenu, trup je zdvihnutý iba po dolný okraj lopatiek. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a5-left-r2-move"
-			]
-		},
-		{
-			"id": "a5-right-r3-move",
-			"title": "A5 · pravá ruka 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Pravou rukou siahaj k ľavému kolenu. Hornú časť trupu odlep len po dolný okraj lopatiek, nejde o úplný sed. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a5-left-r2-hold"
-			]
-		},
-		{
-			"id": "a5-right-r3-hold",
-			"title": "A5 · pravá ruka 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravou rukou dosahuješ k ľavému kolenu, trup je zdvihnutý iba po dolný okraj lopatiek. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a5-right-r3-move"
-			]
-		},
-		{
-			"id": "a5-left-r3-move",
-			"title": "A5 · ľavá ruka 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Ľavou rukou siahaj k pravému kolenu. Hornú časť trupu odlep len po dolný okraj lopatiek, nejde o úplný sed. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a5-right-r3-hold"
-			]
-		},
-		{
-			"id": "a5-left-r3-hold",
-			"title": "A5 · ľavá ruka 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavou rukou dosahuješ k pravému kolenu, trup je zdvihnutý iba po dolný okraj lopatiek. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a5-left-r3-move"
-			]
-		},
-		{
-			"id": "a6-start",
+			"id": "a6",
 			"title": "A6 · Priame dosahovanie ku kolenám",
-			"kind": "EVENT",
-			"actionLabel": "SPUSTIŤ CVIK",
-			"durationSeconds": 60,
-			"instruction": "Ruky mierne upaž. Oboma rukami siahaj ku kolenám tak, aby sa trup odlepil od podložky len po dolný okraj lopatiek (náznak priameho sedu). Nasledujú 3 opakovania tohto cviku. Po stlačení SPUSTIŤ CVIK bude pri každom opakovaní 10 sekúnd na plynulý pohyb a potom presne 5 sekúnd výdrže. Ďalšie opakovania sa spúšťajú automaticky. Ak tempo nestíhaš, použi Pauzu.",
 			"dependsOn": [
-				"a5-left-r3-hold"
-			]
-		},
-		{
-			"id": "a6-both-r1-move",
-			"title": "A6 · obe ruky 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Zaujmi základnú polohu. Oboma rukami dosahuj ku kolenám. Zdvihni len hornú časť trupu po dolný okraj lopatiek, nie do úplného sedu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a6-start"
-			]
-		},
-		{
-			"id": "a6-both-r1-hold",
-			"title": "A6 · obe ruky 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Obe ruky dosahujú ku kolenám; trup je zdvihnutý iba po dolný okraj lopatiek. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a6-both-r1-move"
-			]
-		},
-		{
-			"id": "a6-both-r2-move",
-			"title": "A6 · obe ruky 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Oboma rukami dosahuj ku kolenám. Zdvihni len hornú časť trupu po dolný okraj lopatiek, nie do úplného sedu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a6-both-r1-hold"
-			]
-		},
-		{
-			"id": "a6-both-r2-hold",
-			"title": "A6 · obe ruky 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Obe ruky dosahujú ku kolenám; trup je zdvihnutý iba po dolný okraj lopatiek. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a6-both-r2-move"
-			]
-		},
-		{
-			"id": "a6-both-r3-move",
-			"title": "A6 · obe ruky 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Oboma rukami dosahuj ku kolenám. Zdvihni len hornú časť trupu po dolný okraj lopatiek, nie do úplného sedu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"a6-both-r2-hold"
-			]
-		},
-		{
-			"id": "a6-both-r3-hold",
-			"title": "A6 · obe ruky 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Obe ruky dosahujú ku kolenám; trup je zdvihnutý iba po dolný okraj lopatiek. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"a6-both-r3-move"
-			]
+				"a5"
+			],
+			"repeat": {
+				"count": 3,
+				"steps": [
+					{
+						"id": "both-ready",
+						"title": "obe ruky 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "Ruky mierne upaž. Oboma rukami siahaj ku kolenám tak, aby sa trup odlepil od podložky len po dolný okraj lopatiek (náznak priameho sedu). Oboma rukami dosahuj ku kolenám. Zdvihni len hornú časť trupu po dolný okraj lopatiek, nie do úplného sedu. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "both-hold",
+						"title": "obe ruky 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Obe ruky dosahujú ku kolenám; trup je zdvihnutý iba po dolný okraj lopatiek. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					}
+				]
+			}
 		},
 		{
 			"id": "group-b",
@@ -635,543 +237,188 @@
 			"durationSeconds": 45,
 			"instruction": "Prejdi na štyri (podpor kľačmo), s oporou o dlane a kolená. Nasleduje 5 cvikov. Každý cvik začne až po tvojom potvrdení. Cvič plynulo a v bezbolestnom rozsahu; ak sa bolesť výrazne zhorší, cvičenie ukonči.",
 			"dependsOn": [
-				"a6-both-r3-hold"
+				"a6"
 			]
 		},
 		{
-			"id": "b1-start",
+			"id": "b1",
 			"title": "B1 · Vytiahnutie ruky šikmo vpred",
-			"kind": "EVENT",
-			"actionLabel": "SPUSTIŤ CVIK",
-			"durationSeconds": 60,
-			"instruction": "Na štyroch striedavo predpaž jednu ruku do výšky hlavy a vytiahni ju šikmo dopredu k opačnej strane. Nasledujú 3 opakovania na každú stranu (striedavo pravá/ľavá). Po stlačení SPUSTIŤ CVIK bude pri každom opakovaní 10 sekúnd na plynulý pohyb a potom presne 5 sekúnd výdrže. Ďalšie opakovania sa spúšťajú automaticky. Ak tempo nestíhaš, použi Pauzu.",
 			"dependsOn": [
 				"group-b"
-			]
+			],
+			"repeat": {
+				"count": 3,
+				"steps": [
+					{
+						"id": "right-ready",
+						"title": "pravá ruka 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "Na štyroch striedavo predpaž jednu ruku do výšky hlavy a vytiahni ju šikmo dopredu k opačnej strane. Z polohy na štyroch vystri pravú ruku do výšky hlavy a vytiahni ju šikmo dopredu smerom k ľavej strane. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "right-hold",
+						"title": "pravá ruka 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Pravá ruka je vystretá šikmo dopredu približne vo výške hlavy. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					},
+					{
+						"id": "left-ready",
+						"title": "ľavá ruka 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "Na štyroch striedavo predpaž jednu ruku do výšky hlavy a vytiahni ju šikmo dopredu k opačnej strane. Uvoľni predošlú výdrž a vráť sa do základnej polohy. Z polohy na štyroch vystri ľavú ruku do výšky hlavy a vytiahni ju šikmo dopredu smerom k pravej strane. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "left-hold",
+						"title": "ľavá ruka 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Ľavá ruka je vystretá šikmo dopredu približne vo výške hlavy. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					}
+				]
+			}
 		},
 		{
-			"id": "b1-right-r1-move",
-			"title": "B1 · pravá ruka 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Zaujmi základnú polohu. Z polohy na štyroch vystri pravú ruku do výšky hlavy a vytiahni ju šikmo dopredu smerom k ľavej strane. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b1-start"
-			]
-		},
-		{
-			"id": "b1-right-r1-hold",
-			"title": "B1 · pravá ruka 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravá ruka je vystretá šikmo dopredu približne vo výške hlavy. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b1-right-r1-move"
-			]
-		},
-		{
-			"id": "b1-left-r1-move",
-			"title": "B1 · ľavá ruka 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Z polohy na štyroch vystri ľavú ruku do výšky hlavy a vytiahni ju šikmo dopredu smerom k pravej strane. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b1-right-r1-hold"
-			]
-		},
-		{
-			"id": "b1-left-r1-hold",
-			"title": "B1 · ľavá ruka 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavá ruka je vystretá šikmo dopredu približne vo výške hlavy. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b1-left-r1-move"
-			]
-		},
-		{
-			"id": "b1-right-r2-move",
-			"title": "B1 · pravá ruka 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Z polohy na štyroch vystri pravú ruku do výšky hlavy a vytiahni ju šikmo dopredu smerom k ľavej strane. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b1-left-r1-hold"
-			]
-		},
-		{
-			"id": "b1-right-r2-hold",
-			"title": "B1 · pravá ruka 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravá ruka je vystretá šikmo dopredu približne vo výške hlavy. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b1-right-r2-move"
-			]
-		},
-		{
-			"id": "b1-left-r2-move",
-			"title": "B1 · ľavá ruka 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Z polohy na štyroch vystri ľavú ruku do výšky hlavy a vytiahni ju šikmo dopredu smerom k pravej strane. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b1-right-r2-hold"
-			]
-		},
-		{
-			"id": "b1-left-r2-hold",
-			"title": "B1 · ľavá ruka 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavá ruka je vystretá šikmo dopredu približne vo výške hlavy. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b1-left-r2-move"
-			]
-		},
-		{
-			"id": "b1-right-r3-move",
-			"title": "B1 · pravá ruka 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Z polohy na štyroch vystri pravú ruku do výšky hlavy a vytiahni ju šikmo dopredu smerom k ľavej strane. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b1-left-r2-hold"
-			]
-		},
-		{
-			"id": "b1-right-r3-hold",
-			"title": "B1 · pravá ruka 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravá ruka je vystretá šikmo dopredu približne vo výške hlavy. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b1-right-r3-move"
-			]
-		},
-		{
-			"id": "b1-left-r3-move",
-			"title": "B1 · ľavá ruka 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Z polohy na štyroch vystri ľavú ruku do výšky hlavy a vytiahni ju šikmo dopredu smerom k pravej strane. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b1-right-r3-hold"
-			]
-		},
-		{
-			"id": "b1-left-r3-hold",
-			"title": "B1 · ľavá ruka 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavá ruka je vystretá šikmo dopredu približne vo výške hlavy. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b1-left-r3-move"
-			]
-		},
-		{
-			"id": "b2-start",
+			"id": "b2",
 			"title": "B2 · Koleno k opačnému lakťu",
-			"kind": "EVENT",
-			"actionLabel": "SPUSTIŤ CVIK",
-			"durationSeconds": 60,
-			"instruction": "Na štyroch striedavo priťahuj koleno k lakťu opačnej ruky. Pritom predkloň hlavu a ohni chrbát. Nasledujú 3 opakovania na každú stranu (striedavo pravá/ľavá). Po stlačení SPUSTIŤ CVIK bude pri každom opakovaní 10 sekúnd na plynulý pohyb a potom presne 5 sekúnd výdrže. Ďalšie opakovania sa spúšťajú automaticky. Ak tempo nestíhaš, použi Pauzu.",
 			"dependsOn": [
-				"b1-left-r3-hold"
-			]
+				"b1"
+			],
+			"repeat": {
+				"count": 3,
+				"steps": [
+					{
+						"id": "right-ready",
+						"title": "pravé koleno 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "Na štyroch striedavo priťahuj koleno k lakťu opačnej ruky. Pritom predkloň hlavu a ohni chrbát. Pritiahni pravé koleno k lakťu ľavej ruky, súčasne skloň hlavu a vyhrb chrbát. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "right-hold",
+						"title": "pravé koleno 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Pravé koleno smeruje k ľavému lakťu; hlava je sklonená, chrbát zaoblený. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					},
+					{
+						"id": "left-ready",
+						"title": "ľavé koleno 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "Na štyroch striedavo priťahuj koleno k lakťu opačnej ruky. Pritom predkloň hlavu a ohni chrbát. Uvoľni predošlú výdrž a vráť sa do základnej polohy. Pritiahni ľavé koleno k lakťu pravej ruky, súčasne skloň hlavu a vyhrb chrbát. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "left-hold",
+						"title": "ľavé koleno 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Ľavé koleno smeruje k pravému lakťu; hlava je sklonená, chrbát zaoblený. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					}
+				]
+			}
 		},
 		{
-			"id": "b2-right-r1-move",
-			"title": "B2 · pravé koleno 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Zaujmi základnú polohu. Pritiahni pravé koleno k lakťu ľavej ruky, súčasne skloň hlavu a vyhrb chrbát. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b2-start"
-			]
-		},
-		{
-			"id": "b2-right-r1-hold",
-			"title": "B2 · pravé koleno 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravé koleno smeruje k ľavému lakťu; hlava je sklonená, chrbát zaoblený. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b2-right-r1-move"
-			]
-		},
-		{
-			"id": "b2-left-r1-move",
-			"title": "B2 · ľavé koleno 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Pritiahni ľavé koleno k lakťu pravej ruky, súčasne skloň hlavu a vyhrb chrbát. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b2-right-r1-hold"
-			]
-		},
-		{
-			"id": "b2-left-r1-hold",
-			"title": "B2 · ľavé koleno 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavé koleno smeruje k pravému lakťu; hlava je sklonená, chrbát zaoblený. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b2-left-r1-move"
-			]
-		},
-		{
-			"id": "b2-right-r2-move",
-			"title": "B2 · pravé koleno 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Pritiahni pravé koleno k lakťu ľavej ruky, súčasne skloň hlavu a vyhrb chrbát. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b2-left-r1-hold"
-			]
-		},
-		{
-			"id": "b2-right-r2-hold",
-			"title": "B2 · pravé koleno 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravé koleno smeruje k ľavému lakťu; hlava je sklonená, chrbát zaoblený. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b2-right-r2-move"
-			]
-		},
-		{
-			"id": "b2-left-r2-move",
-			"title": "B2 · ľavé koleno 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Pritiahni ľavé koleno k lakťu pravej ruky, súčasne skloň hlavu a vyhrb chrbát. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b2-right-r2-hold"
-			]
-		},
-		{
-			"id": "b2-left-r2-hold",
-			"title": "B2 · ľavé koleno 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavé koleno smeruje k pravému lakťu; hlava je sklonená, chrbát zaoblený. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b2-left-r2-move"
-			]
-		},
-		{
-			"id": "b2-right-r3-move",
-			"title": "B2 · pravé koleno 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Pritiahni pravé koleno k lakťu ľavej ruky, súčasne skloň hlavu a vyhrb chrbát. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b2-left-r2-hold"
-			]
-		},
-		{
-			"id": "b2-right-r3-hold",
-			"title": "B2 · pravé koleno 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravé koleno smeruje k ľavému lakťu; hlava je sklonená, chrbát zaoblený. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b2-right-r3-move"
-			]
-		},
-		{
-			"id": "b2-left-r3-move",
-			"title": "B2 · ľavé koleno 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Pritiahni ľavé koleno k lakťu pravej ruky, súčasne skloň hlavu a vyhrb chrbát. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b2-right-r3-hold"
-			]
-		},
-		{
-			"id": "b2-left-r3-hold",
-			"title": "B2 · ľavé koleno 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavé koleno smeruje k pravému lakťu; hlava je sklonená, chrbát zaoblený. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b2-left-r3-move"
-			]
-		},
-		{
-			"id": "b3-start",
+			"id": "b3",
 			"title": "B3 · Mačací chrbát",
-			"kind": "EVENT",
-			"actionLabel": "SPUSTIŤ CVIK",
-			"durationSeconds": 60,
-			"instruction": "Podľa návodu: s nádychom skloň hlavu a vyhrb chrbát, s výdychom sa vráť do základnej polohy. Nasledujú 3 opakovania tohto cviku. Po stlačení SPUSTIŤ CVIK bude pri každom opakovaní 10 sekúnd na plynulý pohyb a potom presne 5 sekúnd výdrže. Ďalšie opakovania sa spúšťajú automaticky. Ak tempo nestíhaš, použi Pauzu.",
 			"dependsOn": [
-				"b2-left-r3-hold"
-			]
+				"b2"
+			],
+			"repeat": {
+				"count": 3,
+				"steps": [
+					{
+						"id": "both-ready",
+						"title": "mačací chrbát 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "Podľa návodu: s nádychom skloň hlavu a vyhrb chrbát, s výdychom sa vráť do základnej polohy. S nádychom skloň hlavu a vyhrb chrbát do mačacieho chrbta. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "both-hold",
+						"title": "mačací chrbát 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Chrbát je vyhrbený, hlava sklonená. Po zaznení signálu sa s výdychom vráť na štyri. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					}
+				]
+			}
 		},
 		{
-			"id": "b3-both-r1-move",
-			"title": "B3 · mačací chrbát 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Zaujmi základnú polohu. S nádychom skloň hlavu a vyhrb chrbát do mačacieho chrbta. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b3-start"
-			]
-		},
-		{
-			"id": "b3-both-r1-hold",
-			"title": "B3 · mačací chrbát 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Chrbát je vyhrbený, hlava sklonená. Po zaznení signálu sa s výdychom vráť na štyri. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b3-both-r1-move"
-			]
-		},
-		{
-			"id": "b3-both-r2-move",
-			"title": "B3 · mačací chrbát 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. S nádychom skloň hlavu a vyhrb chrbát do mačacieho chrbta. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b3-both-r1-hold"
-			]
-		},
-		{
-			"id": "b3-both-r2-hold",
-			"title": "B3 · mačací chrbát 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Chrbát je vyhrbený, hlava sklonená. Po zaznení signálu sa s výdychom vráť na štyri. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b3-both-r2-move"
-			]
-		},
-		{
-			"id": "b3-both-r3-move",
-			"title": "B3 · mačací chrbát 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. S nádychom skloň hlavu a vyhrb chrbát do mačacieho chrbta. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b3-both-r2-hold"
-			]
-		},
-		{
-			"id": "b3-both-r3-hold",
-			"title": "B3 · mačací chrbát 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Chrbát je vyhrbený, hlava sklonená. Po zaznení signálu sa s výdychom vráť na štyri. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b3-both-r3-move"
-			]
-		},
-		{
-			"id": "b4-start",
+			"id": "b4",
 			"title": "B4 · Posaď sa na päty, ruky vpred",
-			"kind": "EVENT",
-			"actionLabel": "SPUSTIŤ CVIK",
-			"durationSeconds": 60,
-			"instruction": "Z polohy na štyroch postupne sadaj na päty. Ruky kĺžu po podložke dopredu a hlava smeruje medzi ramená. Potom návrat. Nasledujú 3 opakovania tohto cviku. Po stlačení SPUSTIŤ CVIK bude pri každom opakovaní 10 sekúnd na plynulý pohyb a potom presne 5 sekúnd výdrže. Ďalšie opakovania sa spúšťajú automaticky. Ak tempo nestíhaš, použi Pauzu.",
 			"dependsOn": [
-				"b3-both-r3-hold"
-			]
+				"b3"
+			],
+			"repeat": {
+				"count": 3,
+				"steps": [
+					{
+						"id": "both-ready",
+						"title": "sad na päty 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "Z polohy na štyroch postupne sadaj na päty. Ruky kĺžu po podložke dopredu a hlava smeruje medzi ramená. Potom návrat. Postupne sadaj na päty a zároveň posúvaj ruky po podložke ďaleko dopredu, hlava smeruje medzi ramená. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "both-hold",
+						"title": "sad na päty 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Sedíš na pätách, ruky natiahnuté dopredu, hlava medzi ramenami. Potom sa vráť na štyri. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					}
+				]
+			}
 		},
 		{
-			"id": "b4-both-r1-move",
-			"title": "B4 · sad na päty 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Zaujmi základnú polohu. Postupne sadaj na päty a zároveň posúvaj ruky po podložke ďaleko dopredu, hlava smeruje medzi ramená. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b4-start"
-			]
-		},
-		{
-			"id": "b4-both-r1-hold",
-			"title": "B4 · sad na päty 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Sedíš na pätách, ruky natiahnuté dopredu, hlava medzi ramenami. Potom sa vráť na štyri. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b4-both-r1-move"
-			]
-		},
-		{
-			"id": "b4-both-r2-move",
-			"title": "B4 · sad na päty 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Postupne sadaj na päty a zároveň posúvaj ruky po podložke ďaleko dopredu, hlava smeruje medzi ramená. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b4-both-r1-hold"
-			]
-		},
-		{
-			"id": "b4-both-r2-hold",
-			"title": "B4 · sad na päty 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Sedíš na pätách, ruky natiahnuté dopredu, hlava medzi ramenami. Potom sa vráť na štyri. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b4-both-r2-move"
-			]
-		},
-		{
-			"id": "b4-both-r3-move",
-			"title": "B4 · sad na päty 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Postupne sadaj na päty a zároveň posúvaj ruky po podložke ďaleko dopredu, hlava smeruje medzi ramená. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b4-both-r2-hold"
-			]
-		},
-		{
-			"id": "b4-both-r3-hold",
-			"title": "B4 · sad na päty 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Sedíš na pätách, ruky natiahnuté dopredu, hlava medzi ramenami. Potom sa vráť na štyri. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b4-both-r3-move"
-			]
-		},
-		{
-			"id": "b5-start",
+			"id": "b5",
 			"title": "B5 · Zdvihni ruku v sede na pätách",
-			"kind": "EVENT",
-			"actionLabel": "SPUSTIŤ CVIK",
-			"durationSeconds": 60,
-			"instruction": "V sede na pätách s rukami natiahnutými po podložke striedavo nadvihni pravú a ľavú ruku. Hlavu drž v predĺžení chrbtice. Nasledujú 3 opakovania na každú stranu (striedavo pravá/ľavá). Po stlačení SPUSTIŤ CVIK bude pri každom opakovaní 10 sekúnd na plynulý pohyb a potom presne 5 sekúnd výdrže. Ďalšie opakovania sa spúšťajú automaticky. Ak tempo nestíhaš, použi Pauzu.",
 			"dependsOn": [
-				"b4-both-r3-hold"
-			]
-		},
-		{
-			"id": "b5-right-r1-move",
-			"title": "B5 · pravá ruka 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Zaujmi základnú polohu. Zo sedu na pätách s oboma rukami natiahnutými vpred nadvihni pravú ruku nad podložku, hlava zostáva v osi chrbtice. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b5-start"
-			]
-		},
-		{
-			"id": "b5-right-r1-hold",
-			"title": "B5 · pravá ruka 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravá ruka je nad podložkou; hlavu drž v predĺžení chrbtice. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b5-right-r1-move"
-			]
-		},
-		{
-			"id": "b5-left-r1-move",
-			"title": "B5 · ľavá ruka 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Zo sedu na pätách s oboma rukami natiahnutými vpred nadvihni ľavú ruku nad podložku, hlava zostáva v osi chrbtice. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b5-right-r1-hold"
-			]
-		},
-		{
-			"id": "b5-left-r1-hold",
-			"title": "B5 · ľavá ruka 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavá ruka je nad podložkou; hlavu drž v predĺžení chrbtice. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b5-left-r1-move"
-			]
-		},
-		{
-			"id": "b5-right-r2-move",
-			"title": "B5 · pravá ruka 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Zo sedu na pätách s oboma rukami natiahnutými vpred nadvihni pravú ruku nad podložku, hlava zostáva v osi chrbtice. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b5-left-r1-hold"
-			]
-		},
-		{
-			"id": "b5-right-r2-hold",
-			"title": "B5 · pravá ruka 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravá ruka je nad podložkou; hlavu drž v predĺžení chrbtice. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b5-right-r2-move"
-			]
-		},
-		{
-			"id": "b5-left-r2-move",
-			"title": "B5 · ľavá ruka 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Zo sedu na pätách s oboma rukami natiahnutými vpred nadvihni ľavú ruku nad podložku, hlava zostáva v osi chrbtice. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b5-right-r2-hold"
-			]
-		},
-		{
-			"id": "b5-left-r2-hold",
-			"title": "B5 · ľavá ruka 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavá ruka je nad podložkou; hlavu drž v predĺžení chrbtice. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b5-left-r2-move"
-			]
-		},
-		{
-			"id": "b5-right-r3-move",
-			"title": "B5 · pravá ruka 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Zo sedu na pätách s oboma rukami natiahnutými vpred nadvihni pravú ruku nad podložku, hlava zostáva v osi chrbtice. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b5-left-r2-hold"
-			]
-		},
-		{
-			"id": "b5-right-r3-hold",
-			"title": "B5 · pravá ruka 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravá ruka je nad podložkou; hlavu drž v predĺžení chrbtice. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b5-right-r3-move"
-			]
-		},
-		{
-			"id": "b5-left-r3-move",
-			"title": "B5 · ľavá ruka 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Zo sedu na pätách s oboma rukami natiahnutými vpred nadvihni ľavú ruku nad podložku, hlava zostáva v osi chrbtice. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"b5-right-r3-hold"
-			]
-		},
-		{
-			"id": "b5-left-r3-hold",
-			"title": "B5 · ľavá ruka 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavá ruka je nad podložkou; hlavu drž v predĺžení chrbtice. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"b5-left-r3-move"
-			]
+				"b4"
+			],
+			"repeat": {
+				"count": 3,
+				"steps": [
+					{
+						"id": "right-ready",
+						"title": "pravá ruka 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "V sede na pätách s rukami natiahnutými po podložke striedavo nadvihni pravú a ľavú ruku. Hlavu drž v predĺžení chrbtice. Zo sedu na pätách s oboma rukami natiahnutými vpred nadvihni pravú ruku nad podložku, hlava zostáva v osi chrbtice. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "right-hold",
+						"title": "pravá ruka 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Pravá ruka je nad podložkou; hlavu drž v predĺžení chrbtice. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					},
+					{
+						"id": "left-ready",
+						"title": "ľavá ruka 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "V sede na pätách s rukami natiahnutými po podložke striedavo nadvihni pravú a ľavú ruku. Hlavu drž v predĺžení chrbtice. Uvoľni predošlú výdrž a vráť sa do základnej polohy. Zo sedu na pätách s oboma rukami natiahnutými vpred nadvihni ľavú ruku nad podložku, hlava zostáva v osi chrbtice. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "left-hold",
+						"title": "ľavá ruka 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Ľavá ruka je nad podložkou; hlavu drž v predĺžení chrbtice. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					}
+				]
+			}
 		},
 		{
 			"id": "group-c",
@@ -1181,543 +428,188 @@
 			"durationSeconds": 45,
 			"instruction": "Ľahni si na brucho. Nasleduje posledných 5 cvikov. Každý začne až po tvojom potvrdení. Cvič plynulo a v bezbolestnom rozsahu; ak sa bolesť výrazne zhorší, cvičenie ukonči.",
 			"dependsOn": [
-				"b5-left-r3-hold"
+				"b5"
 			]
 		},
 		{
-			"id": "c1-start",
+			"id": "c1",
 			"title": "C1 · Zatni sedacie svaly",
-			"kind": "EVENT",
-			"actionLabel": "SPUSTIŤ CVIK",
-			"durationSeconds": 60,
-			"instruction": "V ľahu na bruchu stiahni zadok, v koncovej polohe vydrž päť sekúnd a uvoľni. Nasledujú 3 opakovania tohto cviku. Po stlačení SPUSTIŤ CVIK bude pri každom opakovaní 10 sekúnd na plynulý pohyb a potom presne 5 sekúnd výdrže. Ďalšie opakovania sa spúšťajú automaticky. Ak tempo nestíhaš, použi Pauzu.",
 			"dependsOn": [
 				"group-c"
-			]
+			],
+			"repeat": {
+				"count": 3,
+				"steps": [
+					{
+						"id": "both-ready",
+						"title": "sedacie svaly 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "V ľahu na bruchu stiahni zadok, v koncovej polohe vydrž päť sekúnd a uvoľni. V ľahu na bruchu stiahni sedacie svaly bez dvíhania trupu. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "both-hold",
+						"title": "sedacie svaly 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Sedacie svaly zostávajú zatnuté. Po piatich sekundách ich uvoľni. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					}
+				]
+			}
 		},
 		{
-			"id": "c1-both-r1-move",
-			"title": "C1 · sedacie svaly 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Zaujmi základnú polohu. V ľahu na bruchu stiahni sedacie svaly bez dvíhania trupu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c1-start"
-			]
-		},
-		{
-			"id": "c1-both-r1-hold",
-			"title": "C1 · sedacie svaly 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Sedacie svaly zostávajú zatnuté. Po piatich sekundách ich uvoľni. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c1-both-r1-move"
-			]
-		},
-		{
-			"id": "c1-both-r2-move",
-			"title": "C1 · sedacie svaly 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. V ľahu na bruchu stiahni sedacie svaly bez dvíhania trupu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c1-both-r1-hold"
-			]
-		},
-		{
-			"id": "c1-both-r2-hold",
-			"title": "C1 · sedacie svaly 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Sedacie svaly zostávajú zatnuté. Po piatich sekundách ich uvoľni. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c1-both-r2-move"
-			]
-		},
-		{
-			"id": "c1-both-r3-move",
-			"title": "C1 · sedacie svaly 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. V ľahu na bruchu stiahni sedacie svaly bez dvíhania trupu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c1-both-r2-hold"
-			]
-		},
-		{
-			"id": "c1-both-r3-hold",
-			"title": "C1 · sedacie svaly 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Sedacie svaly zostávajú zatnuté. Po piatich sekundách ich uvoľni. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c1-both-r3-move"
-			]
-		},
-		{
-			"id": "c2-start",
+			"id": "c2",
 			"title": "C2 · Vytiahni ruku pred seba",
-			"kind": "EVENT",
-			"actionLabel": "SPUSTIŤ CVIK",
-			"durationSeconds": 60,
-			"instruction": "Lež na bruchu s rukami vzpaženými. Striedavo vyťahuj pravú a ľavú ruku dopredu. Hlavu maj mierne nad podložkou v osi trupu, nie v záklone. Nasledujú 3 opakovania na každú stranu (striedavo pravá/ľavá). Po stlačení SPUSTIŤ CVIK bude pri každom opakovaní 10 sekúnd na plynulý pohyb a potom presne 5 sekúnd výdrže. Ďalšie opakovania sa spúšťajú automaticky. Ak tempo nestíhaš, použi Pauzu.",
 			"dependsOn": [
-				"c1-both-r3-hold"
-			]
+				"c1"
+			],
+			"repeat": {
+				"count": 3,
+				"steps": [
+					{
+						"id": "right-ready",
+						"title": "pravá ruka 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "Lež na bruchu s rukami vzpaženými. Striedavo vyťahuj pravú a ľavú ruku dopredu. Hlavu maj mierne nad podložkou v osi trupu, nie v záklone. Vzpaženú pravú ruku vytiahni dopredu. Hlavu mierne zdvihni, drž ju v osi trupu, nie v záklone. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "right-hold",
+						"title": "pravá ruka 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Pravá ruka je vytiahnutá dopredu; hlava mierne nad podložkou, bez záklonu. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					},
+					{
+						"id": "left-ready",
+						"title": "ľavá ruka 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "Lež na bruchu s rukami vzpaženými. Striedavo vyťahuj pravú a ľavú ruku dopredu. Hlavu maj mierne nad podložkou v osi trupu, nie v záklone. Uvoľni predošlú výdrž a vráť sa do základnej polohy. Vzpaženú ľavú ruku vytiahni dopredu. Hlavu mierne zdvihni, drž ju v osi trupu, nie v záklone. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "left-hold",
+						"title": "ľavá ruka 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Ľavá ruka je vytiahnutá dopredu; hlava mierne nad podložkou, bez záklonu. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					}
+				]
+			}
 		},
 		{
-			"id": "c2-right-r1-move",
-			"title": "C2 · pravá ruka 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Zaujmi základnú polohu. Vzpaženú pravú ruku vytiahni dopredu. Hlavu mierne zdvihni, drž ju v osi trupu, nie v záklone. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c2-start"
-			]
-		},
-		{
-			"id": "c2-right-r1-hold",
-			"title": "C2 · pravá ruka 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravá ruka je vytiahnutá dopredu; hlava mierne nad podložkou, bez záklonu. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c2-right-r1-move"
-			]
-		},
-		{
-			"id": "c2-left-r1-move",
-			"title": "C2 · ľavá ruka 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Vzpaženú ľavú ruku vytiahni dopredu. Hlavu mierne zdvihni, drž ju v osi trupu, nie v záklone. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c2-right-r1-hold"
-			]
-		},
-		{
-			"id": "c2-left-r1-hold",
-			"title": "C2 · ľavá ruka 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavá ruka je vytiahnutá dopredu; hlava mierne nad podložkou, bez záklonu. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c2-left-r1-move"
-			]
-		},
-		{
-			"id": "c2-right-r2-move",
-			"title": "C2 · pravá ruka 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Vzpaženú pravú ruku vytiahni dopredu. Hlavu mierne zdvihni, drž ju v osi trupu, nie v záklone. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c2-left-r1-hold"
-			]
-		},
-		{
-			"id": "c2-right-r2-hold",
-			"title": "C2 · pravá ruka 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravá ruka je vytiahnutá dopredu; hlava mierne nad podložkou, bez záklonu. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c2-right-r2-move"
-			]
-		},
-		{
-			"id": "c2-left-r2-move",
-			"title": "C2 · ľavá ruka 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Vzpaženú ľavú ruku vytiahni dopredu. Hlavu mierne zdvihni, drž ju v osi trupu, nie v záklone. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c2-right-r2-hold"
-			]
-		},
-		{
-			"id": "c2-left-r2-hold",
-			"title": "C2 · ľavá ruka 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavá ruka je vytiahnutá dopredu; hlava mierne nad podložkou, bez záklonu. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c2-left-r2-move"
-			]
-		},
-		{
-			"id": "c2-right-r3-move",
-			"title": "C2 · pravá ruka 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Vzpaženú pravú ruku vytiahni dopredu. Hlavu mierne zdvihni, drž ju v osi trupu, nie v záklone. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c2-left-r2-hold"
-			]
-		},
-		{
-			"id": "c2-right-r3-hold",
-			"title": "C2 · pravá ruka 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravá ruka je vytiahnutá dopredu; hlava mierne nad podložkou, bez záklonu. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c2-right-r3-move"
-			]
-		},
-		{
-			"id": "c2-left-r3-move",
-			"title": "C2 · ľavá ruka 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Vzpaženú ľavú ruku vytiahni dopredu. Hlavu mierne zdvihni, drž ju v osi trupu, nie v záklone. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c2-right-r3-hold"
-			]
-		},
-		{
-			"id": "c2-left-r3-hold",
-			"title": "C2 · ľavá ruka 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavá ruka je vytiahnutá dopredu; hlava mierne nad podložkou, bez záklonu. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c2-left-r3-move"
-			]
-		},
-		{
-			"id": "c3-start",
+			"id": "c3",
 			"title": "C3 · Protiľahlá ruka a noha",
-			"kind": "EVENT",
-			"actionLabel": "SPUSTIŤ CVIK",
-			"durationSeconds": 60,
-			"instruction": "V ľahu na bruchu so vzpaženými rukami zdvihni protiľahlú ruku a nohu asi 5 cm nad podložku. Hlava a zvyšné končatiny zostanú v osi trupu. Striedaj strany. Nasledujú 3 opakovania na každú stranu (striedavo pravá/ľavá). Po stlačení SPUSTIŤ CVIK bude pri každom opakovaní 10 sekúnd na plynulý pohyb a potom presne 5 sekúnd výdrže. Ďalšie opakovania sa spúšťajú automaticky. Ak tempo nestíhaš, použi Pauzu.",
 			"dependsOn": [
-				"c2-left-r3-hold"
-			]
+				"c2"
+			],
+			"repeat": {
+				"count": 3,
+				"steps": [
+					{
+						"id": "left-right-ready",
+						"title": "ľavá ruka + pravá noha 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "V ľahu na bruchu so vzpaženými rukami zdvihni protiľahlú ruku a nohu asi 5 cm nad podložku. Hlava a zvyšné končatiny zostanú v osi trupu. Striedaj strany. Nadvihni ľavú ruku a pravú nohu asi 5 cm nad podložku. Hlavu aj pravú ruku a ľavú nohu nechaj v osi trupu. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "left-right-hold",
+						"title": "ľavá ruka + pravá noha 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Ľavá ruka a pravá noha sú asi 5 cm nad podložkou; hlava zostáva v osi trupu. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					},
+					{
+						"id": "right-left-ready",
+						"title": "pravá ruka + ľavá noha 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "V ľahu na bruchu so vzpaženými rukami zdvihni protiľahlú ruku a nohu asi 5 cm nad podložku. Hlava a zvyšné končatiny zostanú v osi trupu. Striedaj strany. Uvoľni predošlú výdrž a vráť sa do základnej polohy. Nadvihni pravú ruku a ľavú nohu asi 5 cm nad podložku. Hlavu aj ľavú ruku a pravú nohu nechaj v osi trupu. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "right-left-hold",
+						"title": "pravá ruka + ľavá noha 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Pravá ruka a ľavá noha sú asi 5 cm nad podložkou; hlava zostáva v osi trupu. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					}
+				]
+			}
 		},
 		{
-			"id": "c3-left-right-r1-move",
-			"title": "C3 · ľavá ruka + pravá noha 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Zaujmi základnú polohu. Nadvihni ľavú ruku a pravú nohu asi 5 cm nad podložku. Hlavu aj pravú ruku a ľavú nohu nechaj v osi trupu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c3-start"
-			]
-		},
-		{
-			"id": "c3-left-right-r1-hold",
-			"title": "C3 · ľavá ruka + pravá noha 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavá ruka a pravá noha sú asi 5 cm nad podložkou; hlava zostáva v osi trupu. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c3-left-right-r1-move"
-			]
-		},
-		{
-			"id": "c3-right-left-r1-move",
-			"title": "C3 · pravá ruka + ľavá noha 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Nadvihni pravú ruku a ľavú nohu asi 5 cm nad podložku. Hlavu aj ľavú ruku a pravú nohu nechaj v osi trupu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c3-left-right-r1-hold"
-			]
-		},
-		{
-			"id": "c3-right-left-r1-hold",
-			"title": "C3 · pravá ruka + ľavá noha 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravá ruka a ľavá noha sú asi 5 cm nad podložkou; hlava zostáva v osi trupu. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c3-right-left-r1-move"
-			]
-		},
-		{
-			"id": "c3-left-right-r2-move",
-			"title": "C3 · ľavá ruka + pravá noha 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Nadvihni ľavú ruku a pravú nohu asi 5 cm nad podložku. Hlavu aj pravú ruku a ľavú nohu nechaj v osi trupu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c3-right-left-r1-hold"
-			]
-		},
-		{
-			"id": "c3-left-right-r2-hold",
-			"title": "C3 · ľavá ruka + pravá noha 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavá ruka a pravá noha sú asi 5 cm nad podložkou; hlava zostáva v osi trupu. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c3-left-right-r2-move"
-			]
-		},
-		{
-			"id": "c3-right-left-r2-move",
-			"title": "C3 · pravá ruka + ľavá noha 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Nadvihni pravú ruku a ľavú nohu asi 5 cm nad podložku. Hlavu aj ľavú ruku a pravú nohu nechaj v osi trupu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c3-left-right-r2-hold"
-			]
-		},
-		{
-			"id": "c3-right-left-r2-hold",
-			"title": "C3 · pravá ruka + ľavá noha 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravá ruka a ľavá noha sú asi 5 cm nad podložkou; hlava zostáva v osi trupu. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c3-right-left-r2-move"
-			]
-		},
-		{
-			"id": "c3-left-right-r3-move",
-			"title": "C3 · ľavá ruka + pravá noha 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Nadvihni ľavú ruku a pravú nohu asi 5 cm nad podložku. Hlavu aj pravú ruku a ľavú nohu nechaj v osi trupu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c3-right-left-r2-hold"
-			]
-		},
-		{
-			"id": "c3-left-right-r3-hold",
-			"title": "C3 · ľavá ruka + pravá noha 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavá ruka a pravá noha sú asi 5 cm nad podložkou; hlava zostáva v osi trupu. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c3-left-right-r3-move"
-			]
-		},
-		{
-			"id": "c3-right-left-r3-move",
-			"title": "C3 · pravá ruka + ľavá noha 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Nadvihni pravú ruku a ľavú nohu asi 5 cm nad podložku. Hlavu aj ľavú ruku a pravú nohu nechaj v osi trupu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c3-left-right-r3-hold"
-			]
-		},
-		{
-			"id": "c3-right-left-r3-hold",
-			"title": "C3 · pravá ruka + ľavá noha 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravá ruka a ľavá noha sú asi 5 cm nad podložkou; hlava zostáva v osi trupu. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c3-right-left-r3-move"
-			]
-		},
-		{
-			"id": "c4-start",
+			"id": "c4",
 			"title": "C4 · Svietnik — lopatky k sebe",
-			"kind": "EVENT",
-			"actionLabel": "SPUSTIŤ CVIK",
-			"durationSeconds": 60,
-			"instruction": "Ruky ohni do pravých uhlov v ramenách a lakťoch (svietnik). Pritiahni lopatky, nadvihni ruky a mierne hlavu a ťahaj lakte smerom k trupu. Hlava zostáva v osi trupu, nie v záklone. Nasledujú 3 opakovania tohto cviku. Po stlačení SPUSTIŤ CVIK bude pri každom opakovaní 10 sekúnd na plynulý pohyb a potom presne 5 sekúnd výdrže. Ďalšie opakovania sa spúšťajú automaticky. Ak tempo nestíhaš, použi Pauzu.",
 			"dependsOn": [
-				"c3-right-left-r3-hold"
-			]
+				"c3"
+			],
+			"repeat": {
+				"count": 3,
+				"steps": [
+					{
+						"id": "both-ready",
+						"title": "svietnik 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "Ruky ohni do pravých uhlov v ramenách a lakťoch (svietnik). Pritiahni lopatky, nadvihni ruky a mierne hlavu a ťahaj lakte smerom k trupu. Hlava zostáva v osi trupu, nie v záklone. V ľahu na bruchu daj ruky do polohy svietnika (90° v ramenách a lakťoch), pritiahnite lopatky, mierne zdvihni ruky a hlavu a ťahaj lakte k trupu. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "both-hold",
+						"title": "svietnik 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Lopatky sú pritiahnuté, ruky mierne nad podložkou a lakte smerujú k trupu. Hlavu nezakláňaj. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					}
+				]
+			}
 		},
 		{
-			"id": "c4-both-r1-move",
-			"title": "C4 · svietnik 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Zaujmi základnú polohu. V ľahu na bruchu daj ruky do polohy svietnika (90° v ramenách a lakťoch), pritiahnite lopatky, mierne zdvihni ruky a hlavu a ťahaj lakte k trupu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c4-start"
-			]
-		},
-		{
-			"id": "c4-both-r1-hold",
-			"title": "C4 · svietnik 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Lopatky sú pritiahnuté, ruky mierne nad podložkou a lakte smerujú k trupu. Hlavu nezakláňaj. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c4-both-r1-move"
-			]
-		},
-		{
-			"id": "c4-both-r2-move",
-			"title": "C4 · svietnik 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. V ľahu na bruchu daj ruky do polohy svietnika (90° v ramenách a lakťoch), pritiahnite lopatky, mierne zdvihni ruky a hlavu a ťahaj lakte k trupu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c4-both-r1-hold"
-			]
-		},
-		{
-			"id": "c4-both-r2-hold",
-			"title": "C4 · svietnik 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Lopatky sú pritiahnuté, ruky mierne nad podložkou a lakte smerujú k trupu. Hlavu nezakláňaj. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c4-both-r2-move"
-			]
-		},
-		{
-			"id": "c4-both-r3-move",
-			"title": "C4 · svietnik 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. V ľahu na bruchu daj ruky do polohy svietnika (90° v ramenách a lakťoch), pritiahnite lopatky, mierne zdvihni ruky a hlavu a ťahaj lakte k trupu. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c4-both-r2-hold"
-			]
-		},
-		{
-			"id": "c4-both-r3-hold",
-			"title": "C4 · svietnik 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Lopatky sú pritiahnuté, ruky mierne nad podložkou a lakte smerujú k trupu. Hlavu nezakláňaj. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c4-both-r3-move"
-			]
-		},
-		{
-			"id": "c5-start",
+			"id": "c5",
 			"title": "C5 · Pokrč a zdvihni nohu",
-			"kind": "EVENT",
-			"actionLabel": "SPUSTIŤ CVIK",
-			"durationSeconds": 60,
-			"instruction": "V ľahu na bruchu s rukami mierne upaženými striedavo pokrč pravú a ľavú nohu v kolene a nadvihni ju približne 5 cm nad podložku. Nasledujú 3 opakovania na každú stranu (striedavo pravá/ľavá). Po stlačení SPUSTIŤ CVIK bude pri každom opakovaní 10 sekúnd na plynulý pohyb a potom presne 5 sekúnd výdrže. Ďalšie opakovania sa spúšťajú automaticky. Ak tempo nestíhaš, použi Pauzu.",
 			"dependsOn": [
-				"c4-both-r3-hold"
-			]
-		},
-		{
-			"id": "c5-right-r1-move",
-			"title": "C5 · pravá noha 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Zaujmi základnú polohu. Pokrč pravú nohu v kolene a mierne ju nadvihni asi 5 cm nad podložku. Trup nechaj na podložke. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c5-start"
-			]
-		},
-		{
-			"id": "c5-right-r1-hold",
-			"title": "C5 · pravá noha 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravá noha je pokrčená v kolene a približne 5 cm nad podložkou. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c5-right-r1-move"
-			]
-		},
-		{
-			"id": "c5-left-r1-move",
-			"title": "C5 · ľavá noha 1/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Pokrč ľavú nohu v kolene a mierne ju nadvihni asi 5 cm nad podložku. Trup nechaj na podložke. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c5-right-r1-hold"
-			]
-		},
-		{
-			"id": "c5-left-r1-hold",
-			"title": "C5 · ľavá noha 1/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavá noha je pokrčená v kolene a približne 5 cm nad podložkou. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c5-left-r1-move"
-			]
-		},
-		{
-			"id": "c5-right-r2-move",
-			"title": "C5 · pravá noha 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Pokrč pravú nohu v kolene a mierne ju nadvihni asi 5 cm nad podložku. Trup nechaj na podložke. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c5-left-r1-hold"
-			]
-		},
-		{
-			"id": "c5-right-r2-hold",
-			"title": "C5 · pravá noha 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravá noha je pokrčená v kolene a približne 5 cm nad podložkou. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c5-right-r2-move"
-			]
-		},
-		{
-			"id": "c5-left-r2-move",
-			"title": "C5 · ľavá noha 2/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Pokrč ľavú nohu v kolene a mierne ju nadvihni asi 5 cm nad podložku. Trup nechaj na podložke. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c5-right-r2-hold"
-			]
-		},
-		{
-			"id": "c5-left-r2-hold",
-			"title": "C5 · ľavá noha 2/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavá noha je pokrčená v kolene a približne 5 cm nad podložkou. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c5-left-r2-move"
-			]
-		},
-		{
-			"id": "c5-right-r3-move",
-			"title": "C5 · pravá noha 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Pokrč pravú nohu v kolene a mierne ju nadvihni asi 5 cm nad podložku. Trup nechaj na podložke. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c5-left-r2-hold"
-			]
-		},
-		{
-			"id": "c5-right-r3-hold",
-			"title": "C5 · pravá noha 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Pravá noha je pokrčená v kolene a približne 5 cm nad podložkou. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c5-right-r3-move"
-			]
-		},
-		{
-			"id": "c5-left-r3-move",
-			"title": "C5 · ľavá noha 3/3 · pohyb",
-			"kind": "WAIT",
-			"durationSeconds": 10,
-			"instruction": "Uvoľni predošlú výdrž a vráť sa do základnej polohy. Pokrč ľavú nohu v kolene a mierne ju nadvihni asi 5 cm nad podložku. Trup nechaj na podložke. Máš 10 sekúnd na plynulý prechod; po signále začne 5-sekundová výdrž. Ak nestíhaš, pozastav časovač.",
-			"dependsOn": [
-				"c5-right-r3-hold"
-			]
-		},
-		{
-			"id": "c5-left-r3-hold",
-			"title": "C5 · ľavá noha 3/3 · výdrž",
-			"kind": "WAIT",
-			"durationSeconds": 5,
-			"instruction": "PRESNE 5 SEKÚND: Ľavá noha je pokrčená v kolene a približne 5 cm nad podložkou. Dýchaj pokojne, nezadržiavaj dych. Po signále uvoľni polohu a prejdi do ďalšieho opakovania podľa pokynu.",
-			"dependsOn": [
-				"c5-left-r3-move"
-			]
+				"c4"
+			],
+			"repeat": {
+				"count": 3,
+				"steps": [
+					{
+						"id": "right-ready",
+						"title": "pravá noha 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "V ľahu na bruchu s rukami mierne upaženými striedavo pokrč pravú a ľavú nohu v kolene a nadvihni ju približne 5 cm nad podložku. Pokrč pravú nohu v kolene a mierne ju nadvihni asi 5 cm nad podložku. Trup nechaj na podložke. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "right-hold",
+						"title": "pravá noha 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Pravá noha je pokrčená v kolene a približne 5 cm nad podložkou. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					},
+					{
+						"id": "left-ready",
+						"title": "ľavá noha 1/3 · poloha",
+						"kind": "EVENT",
+						"durationSeconds": 1,
+						"actionLabel": "POLOHA PRIPRAVENÁ",
+						"instruction": "V ľahu na bruchu s rukami mierne upaženými striedavo pokrč pravú a ľavú nohu v kolene a nadvihni ju približne 5 cm nad podložku. Uvoľni predošlú výdrž a vráť sa do základnej polohy. Pokrč ľavú nohu v kolene a mierne ju nadvihni asi 5 cm nad podložku. Trup nechaj na podložke. Keď dosiahneš koncovú polohu, stlač POLOHA PRIPRAVENÁ. Až tým začne päťsekundová výdrž. Nenáhli sa."
+					},
+					{
+						"id": "left-hold",
+						"title": "ľavá noha 1/3 · výdrž 5 s",
+						"kind": "WAIT",
+						"durationSeconds": 5,
+						"instruction": "Ľavá noha je pokrčená v kolene a približne 5 cm nad podložkou. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
+					}
+				]
+			}
 		},
 		{
 			"id": "finish",
@@ -1727,18 +619,18 @@
 			"durationSeconds": 30,
 			"instruction": "Všetkých 16 cvikov je dokončených: 3 opakovania každého jednostranného cviku a 3 na každú stranu pri striedavých cvikoch. Pomaly sa posaď, podľa potreby si oddýchni a potvrď UKONČIŤ.",
 			"dependsOn": [
-				"c5-left-r3-hold"
+				"c5"
 			]
 		}
 	],
 	"troubleshooting": [
 		{
-			"problem": "Nestíham dosiahnuť polohu pred začiatkom päťsekundovej výdrže",
-			"advice": "Použi Pauzu, zaujmi polohu bez náhlenia. Do výdrže sa nenúť skôr, ako si pripravený. Desaťsekundový presun je len pomôcka tempa."
+			"problem": "Nestíham sa nastaviť do polohy",
+			"advice": "Časovač sa spustí až po potvrdení POLOHA PRIPRAVENÁ. Pokojne si nechaj toľko času, koľko potrebuješ."
 		},
 		{
-			"problem": "Cvik spôsobuje výraznú alebo vystreľujúcu bolesť",
-			"advice": "Tento cvik prerušiť a nepokračovať cez bolesť. Vráť sa k pokynom lekára alebo fyzioterapeuta."
+			"problem": "Cvik zhoršuje bolesť alebo bolesť vystreľuje do nohy",
+			"advice": "Tento cvik prerušiť a nepokračovať cez bolesť. Pokračovanie konzultuj s lekárom alebo fyzioterapeutom."
 		}
 	]
 }
