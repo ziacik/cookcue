@@ -6,3 +6,7 @@ build/
 *.iml
 .DS_Store
 .gradle-bootstrap/
+
+# Release signing keys
+*.jks
+*.keystore
