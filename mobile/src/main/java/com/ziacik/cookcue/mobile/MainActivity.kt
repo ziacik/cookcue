@@ -760,7 +760,11 @@ private fun CookCueScreen() {
 				}
 				val repetitionsCompleted = if (repeat == null) 0 else (1..repeat.count).count { round ->
 					children.filter { it.task.repeatInfo?.repetition == round }.all { step ->
-						snapshot.taskProgress[step.task.id] == TaskProgress.COMPLETED
+						if (step.task.kind == TaskKind.WAIT) {
+							snapshot.elapsedSeconds >= step.endSeconds
+						} else {
+							snapshot.taskProgress[step.task.id] == TaskProgress.COMPLETED
+						}
 					}
 				}
 				val groupActive = children.any { step ->
