@@ -33,7 +33,7 @@
 				"steps": [
 					{
 						"id": "right-ready",
-						"title": "pravá ruka 1/3 · poloha",
+						"title": "pravá ruka · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -41,14 +41,14 @@
 					},
 					{
 						"id": "right-hold",
-						"title": "pravá ruka 1/3 · výdrž 5 s",
+						"title": "pravá ruka · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Pravá ruka vytiahnutá, hlava jemne predklonená; hlavu nepredsúvaj. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
 					},
 					{
 						"id": "left-ready",
-						"title": "ľavá ruka 1/3 · poloha",
+						"title": "ľavá ruka · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -56,7 +56,7 @@
 					},
 					{
 						"id": "left-hold",
-						"title": "ľavá ruka 1/3 · výdrž 5 s",
+						"title": "ľavá ruka · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Ľavá ruka vytiahnutá, hlava jemne predklonená; hlavu nepredsúvaj. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
@@ -75,7 +75,7 @@
 				"steps": [
 					{
 						"id": "right-ready",
-						"title": "pravé koleno 1/3 · poloha",
+						"title": "pravé koleno · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -83,14 +83,14 @@
 					},
 					{
 						"id": "right-hold",
-						"title": "pravé koleno 1/3 · výdrž 5 s",
+						"title": "pravé koleno · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Čelo smeruje k pravému kolenu; horná časť trupu je mierne zdvihnutá. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
 					},
 					{
 						"id": "left-ready",
-						"title": "ľavé koleno 1/3 · poloha",
+						"title": "ľavé koleno · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -98,7 +98,7 @@
 					},
 					{
 						"id": "left-hold",
-						"title": "ľavé koleno 1/3 · výdrž 5 s",
+						"title": "ľavé koleno · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Čelo smeruje k ľavému kolenu; horná časť trupu je mierne zdvihnutá. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
@@ -117,7 +117,7 @@
 				"steps": [
 					{
 						"id": "both-ready",
-						"title": "panva 1/3 · poloha",
+						"title": "panva · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -125,7 +125,7 @@
 					},
 					{
 						"id": "both-hold",
-						"title": "panva 1/3 · výdrž 5 s",
+						"title": "panva · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Panva je nad podložkou, sedacie svaly sú zatnuté. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
@@ -144,7 +144,7 @@
 				"steps": [
 					{
 						"id": "both-ready",
-						"title": "obe kolená 1/3 · poloha",
+						"title": "obe kolená · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -152,7 +152,7 @@
 					},
 					{
 						"id": "both-hold",
-						"title": "obe kolená 1/3 · výdrž 5 s",
+						"title": "obe kolená · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Čelo smeruje k obom kolenám; horná časť trupu je odlepená od podložky. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
@@ -171,7 +171,7 @@
 				"steps": [
 					{
 						"id": "right-ready",
-						"title": "pravá ruka 1/3 · poloha",
+						"title": "pravá ruka · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -179,14 +179,14 @@
 					},
 					{
 						"id": "right-hold",
-						"title": "pravá ruka 1/3 · výdrž 5 s",
+						"title": "pravá ruka · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Pravou rukou dosahuješ k ľavému kolenu, trup je zdvihnutý iba po dolný okraj lopatiek. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
 					},
 					{
 						"id": "left-ready",
-						"title": "ľavá ruka 1/3 · poloha",
+						"title": "ľavá ruka · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -194,7 +194,7 @@
 					},
 					{
 						"id": "left-hold",
-						"title": "ľavá ruka 1/3 · výdrž 5 s",
+						"title": "ľavá ruka · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Ľavou rukou dosahuješ k pravému kolenu, trup je zdvihnutý iba po dolný okraj lopatiek. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
@@ -213,7 +213,7 @@
 				"steps": [
 					{
 						"id": "both-ready",
-						"title": "obe ruky 1/3 · poloha",
+						"title": "obe ruky · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -221,7 +221,7 @@
 					},
 					{
 						"id": "both-hold",
-						"title": "obe ruky 1/3 · výdrž 5 s",
+						"title": "obe ruky · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Obe ruky dosahujú ku kolenám; trup je zdvihnutý iba po dolný okraj lopatiek. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
@@ -251,7 +251,7 @@
 				"steps": [
 					{
 						"id": "right-ready",
-						"title": "pravá ruka 1/3 · poloha",
+						"title": "pravá ruka · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -259,14 +259,14 @@
 					},
 					{
 						"id": "right-hold",
-						"title": "pravá ruka 1/3 · výdrž 5 s",
+						"title": "pravá ruka · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Pravá ruka je vystretá šikmo dopredu približne vo výške hlavy. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
 					},
 					{
 						"id": "left-ready",
-						"title": "ľavá ruka 1/3 · poloha",
+						"title": "ľavá ruka · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -274,7 +274,7 @@
 					},
 					{
 						"id": "left-hold",
-						"title": "ľavá ruka 1/3 · výdrž 5 s",
+						"title": "ľavá ruka · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Ľavá ruka je vystretá šikmo dopredu približne vo výške hlavy. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
@@ -293,7 +293,7 @@
 				"steps": [
 					{
 						"id": "right-ready",
-						"title": "pravé koleno 1/3 · poloha",
+						"title": "pravé koleno · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -301,14 +301,14 @@
 					},
 					{
 						"id": "right-hold",
-						"title": "pravé koleno 1/3 · výdrž 5 s",
+						"title": "pravé koleno · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Pravé koleno smeruje k ľavému lakťu; hlava je sklonená, chrbát zaoblený. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
 					},
 					{
 						"id": "left-ready",
-						"title": "ľavé koleno 1/3 · poloha",
+						"title": "ľavé koleno · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -316,7 +316,7 @@
 					},
 					{
 						"id": "left-hold",
-						"title": "ľavé koleno 1/3 · výdrž 5 s",
+						"title": "ľavé koleno · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Ľavé koleno smeruje k pravému lakťu; hlava je sklonená, chrbát zaoblený. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
@@ -335,7 +335,7 @@
 				"steps": [
 					{
 						"id": "both-ready",
-						"title": "mačací chrbát 1/3 · poloha",
+						"title": "mačací chrbát · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -343,7 +343,7 @@
 					},
 					{
 						"id": "both-hold",
-						"title": "mačací chrbát 1/3 · výdrž 5 s",
+						"title": "mačací chrbát · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Chrbát je vyhrbený, hlava sklonená. Po zaznení signálu sa s výdychom vráť na štyri. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
@@ -362,7 +362,7 @@
 				"steps": [
 					{
 						"id": "both-ready",
-						"title": "sad na päty 1/3 · poloha",
+						"title": "sad na päty · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -370,7 +370,7 @@
 					},
 					{
 						"id": "both-hold",
-						"title": "sad na päty 1/3 · výdrž 5 s",
+						"title": "sad na päty · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Sedíš na pätách, ruky natiahnuté dopredu, hlava medzi ramenami. Potom sa vráť na štyri. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
@@ -389,7 +389,7 @@
 				"steps": [
 					{
 						"id": "right-ready",
-						"title": "pravá ruka 1/3 · poloha",
+						"title": "pravá ruka · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -397,14 +397,14 @@
 					},
 					{
 						"id": "right-hold",
-						"title": "pravá ruka 1/3 · výdrž 5 s",
+						"title": "pravá ruka · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Pravá ruka je nad podložkou; hlavu drž v predĺžení chrbtice. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
 					},
 					{
 						"id": "left-ready",
-						"title": "ľavá ruka 1/3 · poloha",
+						"title": "ľavá ruka · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -412,7 +412,7 @@
 					},
 					{
 						"id": "left-hold",
-						"title": "ľavá ruka 1/3 · výdrž 5 s",
+						"title": "ľavá ruka · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Ľavá ruka je nad podložkou; hlavu drž v predĺžení chrbtice. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
@@ -442,7 +442,7 @@
 				"steps": [
 					{
 						"id": "both-ready",
-						"title": "sedacie svaly 1/3 · poloha",
+						"title": "sedacie svaly · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -450,7 +450,7 @@
 					},
 					{
 						"id": "both-hold",
-						"title": "sedacie svaly 1/3 · výdrž 5 s",
+						"title": "sedacie svaly · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Sedacie svaly zostávajú zatnuté. Po piatich sekundách ich uvoľni. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
@@ -469,7 +469,7 @@
 				"steps": [
 					{
 						"id": "right-ready",
-						"title": "pravá ruka 1/3 · poloha",
+						"title": "pravá ruka · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -477,14 +477,14 @@
 					},
 					{
 						"id": "right-hold",
-						"title": "pravá ruka 1/3 · výdrž 5 s",
+						"title": "pravá ruka · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Pravá ruka je vytiahnutá dopredu; hlava mierne nad podložkou, bez záklonu. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
 					},
 					{
 						"id": "left-ready",
-						"title": "ľavá ruka 1/3 · poloha",
+						"title": "ľavá ruka · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -492,7 +492,7 @@
 					},
 					{
 						"id": "left-hold",
-						"title": "ľavá ruka 1/3 · výdrž 5 s",
+						"title": "ľavá ruka · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Ľavá ruka je vytiahnutá dopredu; hlava mierne nad podložkou, bez záklonu. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
@@ -511,7 +511,7 @@
 				"steps": [
 					{
 						"id": "left-right-ready",
-						"title": "ľavá ruka + pravá noha 1/3 · poloha",
+						"title": "ľavá ruka + pravá noha · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -519,14 +519,14 @@
 					},
 					{
 						"id": "left-right-hold",
-						"title": "ľavá ruka + pravá noha 1/3 · výdrž 5 s",
+						"title": "ľavá ruka + pravá noha · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Ľavá ruka a pravá noha sú asi 5 cm nad podložkou; hlava zostáva v osi trupu. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
 					},
 					{
 						"id": "right-left-ready",
-						"title": "pravá ruka + ľavá noha 1/3 · poloha",
+						"title": "pravá ruka + ľavá noha · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -534,7 +534,7 @@
 					},
 					{
 						"id": "right-left-hold",
-						"title": "pravá ruka + ľavá noha 1/3 · výdrž 5 s",
+						"title": "pravá ruka + ľavá noha · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Pravá ruka a ľavá noha sú asi 5 cm nad podložkou; hlava zostáva v osi trupu. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
@@ -553,7 +553,7 @@
 				"steps": [
 					{
 						"id": "both-ready",
-						"title": "svietnik 1/3 · poloha",
+						"title": "svietnik · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -561,7 +561,7 @@
 					},
 					{
 						"id": "both-hold",
-						"title": "svietnik 1/3 · výdrž 5 s",
+						"title": "svietnik · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Lopatky sú pritiahnuté, ruky mierne nad podložkou a lakte smerujú k trupu. Hlavu nezakláňaj. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
@@ -580,7 +580,7 @@
 				"steps": [
 					{
 						"id": "right-ready",
-						"title": "pravá noha 1/3 · poloha",
+						"title": "pravá noha · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -588,14 +588,14 @@
 					},
 					{
 						"id": "right-hold",
-						"title": "pravá noha 1/3 · výdrž 5 s",
+						"title": "pravá noha · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Pravá noha je pokrčená v kolene a približne 5 cm nad podložkou. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
 					},
 					{
 						"id": "left-ready",
-						"title": "ľavá noha 1/3 · poloha",
+						"title": "ľavá noha · poloha",
 						"kind": "EVENT",
 						"durationSeconds": 1,
 						"actionLabel": "POLOHA PRIPRAVENÁ",
@@ -603,7 +603,7 @@
 					},
 					{
 						"id": "left-hold",
-						"title": "ľavá noha 1/3 · výdrž 5 s",
+						"title": "ľavá noha · výdrž 5 s",
 						"kind": "WAIT",
 						"durationSeconds": 5,
 						"instruction": "Ľavá noha je pokrčená v kolene a približne 5 cm nad podložkou. Dýchaj pokojne, nezadržiavaj dych. Vydrž presne päť sekúnd. Po signále sa plynulo uvoľni; ďalšia poloha počká na tvoje potvrdenie."
