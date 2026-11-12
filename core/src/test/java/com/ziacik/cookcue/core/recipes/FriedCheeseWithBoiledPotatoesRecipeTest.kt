@@ -29,7 +29,11 @@ class FriedCheeseWithBoiledPotatoesRecipeTest {
 
 	@Test
 	fun potatoDonenessIsStateDrivenAndRetryable() {
+		val potatoCook = recipe.tasks.single { it.id == "potatoes-minimum-cook" }
 		val potatoCheck = recipe.tasks.single { it.id == "potatoes-ready" }
+
+		assertEquals(10 * 60L, potatoCook.durationSeconds)
+		assertTrue("wait-for-potato-boil" in potatoCook.dependsOn)
 
 		assertEquals(TaskKind.EVENT, potatoCheck.kind)
 		assertEquals("MÄKKÉ", potatoCheck.actionLabel)
