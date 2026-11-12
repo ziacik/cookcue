@@ -71,12 +71,12 @@ object FriedCheeseWithBoiledPotatoesRecipe {
 			),
 			CookingTask(
 				id = "potatoes-minimum-cook",
-				title = "Var zemiaky 12 minút",
-				durationSeconds = 12 * 60,
+				title = "Var zemiaky 10 minút",
+				durationSeconds = 10 * 60,
 				dependsOn = setOf("wait-for-potato-boil"),
 				resources = uses(POT, BURNER),
 				kind = TaskKind.WAIT,
-				instruction = "Var zemiaky miernym varom. Po 12 minútach ich začneš skúšať vidličkou.",
+				instruction = "Var zemiaky miernym varom. Po 10 minútach ich začneš skúšať vidličkou.",
 			),
 			CookingTask(
 				id = "potatoes-ready",
