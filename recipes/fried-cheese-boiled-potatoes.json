@@ -88,8 +88,8 @@
 		},
 		{
 			"id": "potatoes-minimum-cook",
-			"title": "Var zemiaky 12 minút",
-			"durationSeconds": 720,
+			"title": "Var zemiaky 10 minút",
+			"durationSeconds": 600,
 			"dependsOn": [
 				"wait-for-potato-boil"
 			],
@@ -98,7 +98,7 @@
 				"burner"
 			],
 			"kind": "WAIT",
-			"instruction": "Var zemiaky miernym varom. Po 12 minútach ich začneš skúšať vidličkou."
+			"instruction": "Var zemiaky miernym varom. Po 10 minútach ich začneš skúšať vidličkou."
 		},
 		{
 			"id": "potatoes-ready",
