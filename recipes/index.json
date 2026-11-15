@@ -75,9 +75,9 @@
 		},
 		{
 			"id": "lumbar-back-exercises",
-			"version": 1,
+			"version": 2,
 			"file": "lumbar-back-exercises.json",
-			"minAppVersion": 1
+			"minAppVersion": 10
 		}
 	]
 }

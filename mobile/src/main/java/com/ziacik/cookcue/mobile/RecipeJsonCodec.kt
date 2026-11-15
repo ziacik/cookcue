@@ -5,6 +5,7 @@ import com.ziacik.cookcue.core.model.Ingredient
 import com.ziacik.cookcue.core.model.ItineraryTiming
 import com.ziacik.cookcue.core.model.LocationProximitySensor
 import com.ziacik.cookcue.core.model.Recipe
+import com.ziacik.cookcue.core.model.RepeatCycleExpander
 import com.ziacik.cookcue.core.model.ResourceRequirement
 import com.ziacik.cookcue.core.model.ScheduleMode
 import com.ziacik.cookcue.core.model.SensorActivationMode
@@ -42,7 +43,7 @@ internal object RecipeJsonCodec {
 				)
 			},
 			resourceCapacities = root.getJSONObject("resourceCapacities").toIntMap(),
-			tasks = root.getJSONArray("tasks").mapObjects(::decodeTask),
+			tasks = decodeTasks(root.getJSONArray("tasks")),
 			preCookingNote = root.optionalString("preCookingNote"),
 			troubleshooting = root.optJSONArray("troubleshooting")
 				?.mapObjects { tip ->
@@ -64,6 +65,52 @@ internal object RecipeJsonCodec {
 
 		validate(recipe)
 		return recipe
+	}
+
+	/**
+	 * A repeat task is a reusable template, not a list of manually duplicated JSON steps.
+	 * Existing scheduler/session logic still operates on stable expanded child ids.
+	 * Dependencies on a cycle id resolve to its final phase.
+	 */
+	private fun decodeTasks(array: JSONArray): List<CookingTask> {
+		val source = array.mapObjects { it }
+		val parentIds = source.map { it.getString("id") }
+		require(parentIds.distinct().size == parentIds.size) {
+			"Recipe task/cycle ids must be unique."
+		}
+		val cycleEnds = source
+			.filter { it.has("repeat") }
+			.associate { parent ->
+				val cycle = parent.getJSONObject("repeat")
+				val count = cycle.getInt("count")
+				val phases = cycle.getJSONArray("steps")
+				require(count in 1..100 && phases.length() > 0)
+				parent.getString("id") to (
+					parent.getString("id") + "/r" + count + "/" +
+						phases.getJSONObject(phases.length() - 1).getString("id")
+				)
+			}
+		val expanded = source.flatMap { parent ->
+			if (!parent.has("repeat")) {
+				listOf(decodeTask(parent))
+			} else {
+				val cycle = parent.getJSONObject("repeat")
+				RepeatCycleExpander.expand(
+					id = parent.getString("id"),
+					title = parent.getString("title"),
+					count = cycle.getInt("count"),
+					steps = cycle.getJSONArray("steps").mapObjects(::decodeTask),
+					dependsOn = parent.optJSONArray("dependsOn")?.toStringSet().orEmpty(),
+				)
+			}
+		}
+		return expanded.map { task ->
+			task.copy(
+				dependsOn = task.dependsOn.mapTo(linkedSetOf()) { id ->
+					cycleEnds[id] ?: id
+				},
+			)
+		}
 	}
 
 	private fun decodeTask(task: JSONObject): CookingTask {

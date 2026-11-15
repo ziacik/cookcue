@@ -20,8 +20,8 @@ android {
 		applicationId = "com.ziacik.cookcue"
 		minSdk = 26
 		targetSdk = 37
-		versionCode = providers.gradleProperty("releaseVersionCode").orNull?.toInt() ?: 9
-		versionName = providers.gradleProperty("releaseVersionName").orNull ?: "0.9.0"
+		versionCode = providers.gradleProperty("releaseVersionCode").orNull?.toInt() ?: 10
+		versionName = providers.gradleProperty("releaseVersionName").orNull ?: "0.10.0"
 	}
 
 	if (hasReleaseSigning) {

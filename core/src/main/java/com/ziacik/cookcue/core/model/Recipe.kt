@@ -107,6 +107,20 @@ enum class Skill {
 	PEELING,
 }
 
+data class RepeatInfo(
+	val id: String,
+	val title: String,
+	val repetition: Int,
+	val count: Int,
+) {
+	init {
+		require(id.isNotBlank())
+		require(title.isNotBlank())
+		require(count > 0)
+		require(repetition in 1..count)
+	}
+}
+
 data class CookingTask(
 	val id: String,
 	val title: String,
@@ -127,6 +141,7 @@ data class CookingTask(
 	val links: List<TaskLink> = emptyList(),
 	val sensors: List<TaskSensor> = emptyList(),
 	val itineraryTiming: ItineraryTiming? = null,
+	val repeatInfo: RepeatInfo? = null,
 ) {
 	init {
 		require(id.isNotBlank())
