@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -30,6 +31,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -49,6 +51,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -145,6 +148,9 @@ private fun CookCueScreen() {
 	var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
 	var showStopCookingDialog by remember { mutableStateOf(false) }
 	var selectedTaskDetailId by remember { mutableStateOf<String?>(null) }
+	var showCatalog by rememberSaveable { mutableStateOf(true) }
+	var showPlan by rememberSaveable { mutableStateOf(false) }
+	val screenListState = rememberLazyListState()
 
 	DisposableEffect(context) {
 		val activity = context as? ComponentActivity
@@ -187,32 +193,13 @@ private fun CookCueScreen() {
 	}
 
 	if (recipe == null) {
-		Scaffold(containerColor = MaterialTheme.colorScheme.background) { padding ->
-			Column(
-				modifier = Modifier
-					.fillMaxSize()
-					.padding(padding)
-					.padding(20.dp),
-			) {
-				SectionTitle("Recepty")
-				Spacer(Modifier.height(18.dp))
-				Text(
-					if (CookingSessionController.catalogLoading) {
-						"Načítavam online katalóg receptov…"
-					} else if (CookingSessionController.catalogError) {
-						"Nepodarilo sa načítať katalóg. Skontroluj pripojenie a skús to znova."
-					} else {
-						"Online katalóg zatiaľ neobsahuje žiadne dostupné recepty."
-					}
-				)
-				if (!CookingSessionController.catalogLoading) {
-					Spacer(Modifier.height(16.dp))
-					Button(onClick = { CookingSessionController.refreshCatalog(context) }) {
-						Text("SKÚSIŤ ZNOVA")
-					}
-				}
-			}
-		}
+		RecipeCatalogScreen(
+			recipes = CookingSessionController.availableRecipes,
+			catalogLoading = CookingSessionController.catalogLoading,
+			catalogError = CookingSessionController.catalogError,
+			onSelect = { CookingSessionController.selectRecipe(it) },
+			onRefresh = { CookingSessionController.refreshCatalog(context) },
+		)
 		return
 	}
 
@@ -236,12 +223,22 @@ private fun CookCueScreen() {
 	val current = activeActions.firstOrNull()
 	val primaryWait = snapshot.background.minByOrNull { it.endSeconds }
 	val displayedWait = if (activeActions.isEmpty()) primaryWait else null
-	val activeTaskId = current?.task?.id ?: displayedWait?.task?.id
+	val activeTaskId = current?.task?.id ?: displayedWait?.task?.id ?: snapshot.pendingEvents.firstOrNull()?.task?.id
 	val planItems = snapshot.schedule.distinctBy { it.task.repeatInfo?.id ?: it.task.id }
 	val currentPlanId = snapshot.schedule.firstOrNull { it.task.id == activeTaskId }
 		?.task?.let { it.repeatInfo?.id ?: it.id }
 	val activeStepIndex = planItems.indexOfFirst {
 		(it.task.repeatInfo?.id ?: it.task.id) == currentPlanId
+	}
+	BackHandler(enabled = if (snapshot.started) showPlan else !showCatalog) {
+		if (snapshot.started) showPlan = false else showCatalog = true
+	}
+
+	// Keyed to the step rather than the ticking clock: manual scrolling remains possible.
+	LaunchedEffect(showPlan, activeStepIndex, snapshot.started, recipe.id) {
+		if (snapshot.started) {
+			screenListState.scrollToItem(if (showPlan) 1 + activeStepIndex.coerceAtLeast(0) else 0)
+		}
 	}
 	val secondaryBackground = snapshot.background.filterNot {
 		it.task.id == displayedWait?.task?.id
@@ -363,6 +360,8 @@ private fun CookCueScreen() {
 					onClick = {
 						showStopCookingDialog = false
 						CookingSessionController.stop()
+						showPlan = false
+						showCatalog = true
 						persistAndSync()
 					},
 				) {
@@ -379,59 +378,52 @@ private fun CookCueScreen() {
 		)
 	}
 
+	if (!snapshot.started && showCatalog) {
+		RecipeCatalogScreen(
+			recipes = CookingSessionController.availableRecipes,
+			catalogLoading = CookingSessionController.catalogLoading,
+			catalogError = CookingSessionController.catalogError,
+			onSelect = { recipeId ->
+				CookingSessionController.selectRecipe(recipeId)
+				persistAndSync()
+				showCatalog = false
+			},
+			onRefresh = { CookingSessionController.refreshCatalog(context) },
+		)
+		return
+	}
+
 	Scaffold(
 		containerColor = MaterialTheme.colorScheme.background,
 	) { padding ->
-		LazyColumn(
-			modifier = Modifier
-				.fillMaxSize()
-				.padding(padding),
-			contentPadding = PaddingValues(bottom = 28.dp),
-		) {
-			item {
-				CookCueTopBar(
-					recipeTitle = recipe.title,
-					showRecipesAction = snapshot.started,
-					onRecipes = { showStopCookingDialog = true },
-				)
+		Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+			CookCueTopBar(
+				recipeTitle = recipe.title,
+				showRecipesAction = true,
+				onRecipes = {
+					if (snapshot.started) showStopCookingDialog = true else showCatalog = true
+				},
+			)
+			if (snapshot.started) {
+				SessionModeTabs(showPlan = showPlan, onSelectPlan = { showPlan = it })
 			}
-
+			LazyColumn(
+				modifier = Modifier.weight(1f),
+				state = screenListState,
+				contentPadding = PaddingValues(bottom = 28.dp),
+			) {
 			if (!snapshot.started) {
 				item {
 					Column(
 						modifier = Modifier.padding(horizontal = 20.dp),
 					) {
 						Spacer(Modifier.height(18.dp))
-						SectionTitle("Recept")
-						Spacer(Modifier.height(8.dp))
-						CookingSessionController.availableRecipes.forEach { option ->
-							if (option.id == selectedRecipeId) {
-								Button(
-									onClick = {},
-									modifier = Modifier.fillMaxWidth(),
-									shape = RoundedCornerShape(12.dp),
-								) {
-									Text(option.title)
-								}
-							} else {
-								OutlinedButton(
-									onClick = {
-										CookingSessionController.selectRecipe(option.id)
-										persistAndSync()
-									},
-									modifier = Modifier.fillMaxWidth(),
-									shape = RoundedCornerShape(12.dp),
-								) {
-									Text(option.title)
-								}
-							}
-							Spacer(Modifier.height(6.dp))
-						}
-						Spacer(Modifier.height(12.dp))
+						SmallLabel(if (recipe.scheduleMode == ScheduleMode.ITINERARY) "DETAIL ITINERÁRA" else "DETAIL RECEPTU")
+						Spacer(Modifier.height(10.dp))
 						Text(
 							text = recipe.title,
 							style = MaterialTheme.typography.headlineLarge.copy(
-								fontFamily = FontFamily.Serif,
+								fontFamily = FontFamily.SansSerif,
 								fontWeight = FontWeight.SemiBold,
 							),
 						)
@@ -454,6 +446,7 @@ private fun CookCueScreen() {
 									notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
 								}
 								CookingSessionController.start()
+								showPlan = false
 								persistAndSync()
 							},
 						)
@@ -467,7 +460,7 @@ private fun CookCueScreen() {
 						}
 					}
 				}
-			} else {
+			} else if (!showPlan) {
 				if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
 					item {
 						Column(
@@ -601,6 +594,8 @@ private fun CookCueScreen() {
 									completedEarly = completedEarly,
 									onFinish = {
 										CookingSessionController.stop()
+										showPlan = false
+										showCatalog = true
 										persistAndSync()
 									},
 								)
@@ -731,6 +726,7 @@ private fun CookCueScreen() {
 				}
 			}
 
+			if (!snapshot.started || showPlan) {
 			item {
 				Column(
 					modifier = Modifier.padding(horizontal = 20.dp),
@@ -832,6 +828,34 @@ private fun CookCueScreen() {
 					)
 				}
 			}
+			}
+			}
+		}
+	}
+}
+
+@Composable
+private fun SessionModeTabs(showPlan: Boolean, onSelectPlan: (Boolean) -> Unit) {
+	Row(
+		modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp),
+		horizontalArrangement = Arrangement.spacedBy(8.dp),
+	) {
+		listOf(false to "Teraz", true to "Plán").forEach { (plan, label) ->
+			val selected = showPlan == plan
+			Surface(
+				modifier = Modifier.weight(1f).clickable { onSelectPlan(plan) },
+				shape = RoundedCornerShape(14.dp),
+				color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+			) {
+				Text(
+					text = label,
+					style = MaterialTheme.typography.labelLarge,
+					fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+					color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+					modifier = Modifier.padding(vertical = 12.dp),
+					textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+				)
+			}
 		}
 	}
 }
@@ -854,7 +878,7 @@ private fun CookCueTopBar(
 			Text(
 				text = recipeTitle,
 				style = MaterialTheme.typography.titleMedium.copy(
-					fontFamily = FontFamily.Serif,
+					fontFamily = FontFamily.SansSerif,
 					fontWeight = FontWeight.SemiBold,
 				),
 				modifier = Modifier.weight(1f),
@@ -1101,7 +1125,7 @@ private fun CurrentStepCard(
 			Text(
 				text = title,
 				style = MaterialTheme.typography.headlineMedium.copy(
-					fontFamily = FontFamily.Serif,
+					fontFamily = FontFamily.SansSerif,
 					fontWeight = FontWeight.SemiBold,
 				),
 				lineHeight = 33.sp,
@@ -1325,7 +1349,7 @@ private fun TimerDial(
 					formatRemaining(remaining)
 				},
 				style = MaterialTheme.typography.headlineMedium.copy(
-					fontFamily = FontFamily.Serif,
+					fontFamily = FontFamily.SansSerif,
 					fontWeight = FontWeight.Bold,
 				),
 				color = MaterialTheme.colorScheme.primary,
@@ -1363,7 +1387,7 @@ private fun CompletionCard(
 			Text(
 				text = if (isItinerary) "Itinerár je hotový" else "Varenie je hotové",
 				style = MaterialTheme.typography.headlineMedium.copy(
-					fontFamily = FontFamily.Serif,
+					fontFamily = FontFamily.SansSerif,
 					fontWeight = FontWeight.SemiBold,
 				),
 			)
@@ -1404,7 +1428,7 @@ private fun PausedItineraryCard(
 			Text(
 				text = "Stav zostáva uložený",
 				style = MaterialTheme.typography.titleLarge.copy(
-					fontFamily = FontFamily.Serif,
+					fontFamily = FontFamily.SansSerif,
 					fontWeight = FontWeight.SemiBold,
 				),
 			)
@@ -1442,7 +1466,7 @@ private fun IdleCard(isItinerary: Boolean) {
 			Text(
 				text = if (isItinerary) "Momentálne nie je na rade žiadna zastávka" else "Momentálne od teba nič netreba",
 				style = MaterialTheme.typography.titleLarge.copy(
-					fontFamily = FontFamily.Serif,
+					fontFamily = FontFamily.SansSerif,
 					fontWeight = FontWeight.SemiBold,
 				),
 			)
@@ -1487,7 +1511,7 @@ private fun PendingEventCard(
 			Text(
 				text = title,
 				style = MaterialTheme.typography.titleLarge.copy(
-					fontFamily = FontFamily.Serif,
+					fontFamily = FontFamily.SansSerif,
 					fontWeight = FontWeight.SemiBold,
 				),
 			)
@@ -1721,7 +1745,7 @@ private fun SectionTitle(text: String) {
 	Text(
 		text = text,
 		style = MaterialTheme.typography.headlineSmall.copy(
-			fontFamily = FontFamily.Serif,
+			fontFamily = FontFamily.SansSerif,
 			fontWeight = FontWeight.SemiBold,
 		),
 	)
@@ -2020,7 +2044,7 @@ private fun TaskDetailDialog(
 						Text(
 							text = task.title,
 							style = MaterialTheme.typography.titleLarge.copy(
-								fontFamily = FontFamily.Serif,
+								fontFamily = FontFamily.SansSerif,
 								fontWeight = FontWeight.SemiBold,
 							),
 							modifier = Modifier.weight(1f),
@@ -2054,7 +2078,7 @@ private fun TaskDetailDialog(
 						Text(
 							text = task.title,
 							style = MaterialTheme.typography.headlineMedium.copy(
-								fontFamily = FontFamily.Serif,
+								fontFamily = FontFamily.SansSerif,
 								fontWeight = FontWeight.SemiBold,
 							),
 						)
@@ -2247,7 +2271,7 @@ private fun TaskCompassPanel(
 			Text(
 				text = reading.distanceMeters?.let(::formatDistance) ?: "Hľadám polohu…",
 				style = MaterialTheme.typography.headlineSmall.copy(
-					fontFamily = FontFamily.Serif,
+					fontFamily = FontFamily.SansSerif,
 					fontWeight = FontWeight.SemiBold,
 				),
 			)
