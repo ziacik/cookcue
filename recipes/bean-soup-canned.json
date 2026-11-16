@@ -2,12 +2,12 @@
 	"schemaVersion": 1,
 	"id": "bean-soup-canned",
 	"title": "Fazuľová polievka s klobásou (z konzervy)",
-	"description": "Pre 2 osoby · červená fazuľová s klobásou ako pôvodný recept, ale bez namáčania · tekutá, bez zahusťovania a octu",
+	"description": "Pre 2 osoby · rovnaké množstvo fazule a rovnaký základ ako pôvodný recept, bez namáčania · tekutá, bez zahusťovania a octu",
 	"servings": 2,
 	"ingredients": [
 		{
 			"name": "červená fazuľa v konzerve",
-			"amount": "1 konzerva 400–420 g (cca 240–260 g po scedení)"
+			"amount": "300 g po scedení (cca 1¼ konzervy po 400–420 g; kúp 2)"
 		},
 		{
 			"name": "údená klobása",
@@ -124,7 +124,7 @@
 				"cook",
 				"sink"
 			],
-			"instruction": "Otvor jednu 400–420 g konzervu červenej fazule, nálev zlej a fazuľu krátko prepláchni v sitku pod vodou. Nechaj odkvapkať a odlož bokom. Zrná nechaj celé."
+			"instruction": "Otvor dve 400–420 g konzervy červenej fazule. Nálev zlej, fazuľu krátko prepláchni v sitku a odváž približne 300 g scedených zŕn (jedna celá konzerva a asi štvrtina druhej). Nechaj odkvapkať, odlož bokom a zrná nechaj celé. Nespotrebovaný zvyšok odlož do chladničky v uzatvorenej nádobe podľa pokynov na obale."
 		},
 		{
 			"id": "prep-carrot",
@@ -323,7 +323,7 @@
 				"large-pot",
 				"burner"
 			],
-			"instruction": "Do hrnca pridaj pripravenú scedenú a prepláchnutú červenú fazuľu. Jemne premiešaj, aby zostali celé zrná. Nič neroztláčaj a ničím nezahusťuj."
+			"instruction": "Do hrnca pridaj pripravených približne 300 g scedenej a prepláchnutej červenej fazule. Jemne premiešaj, aby zostali celé zrná. Nič neroztláčaj a ničím nezahusťuj."
 		},
 		{
 			"id": "heat-beans",
@@ -425,5 +425,5 @@
 			"advice": "Pridaj trochu horúcej vody. Ďalší bujón už nepridávaj."
 		}
 	],
-	"preCookingNote": "Použi 1 konzervu červenej fazule v náleve (400–420 g, po scedení cca 240–260 g). Fazuľa je už uvarená; prepláchni ju a pridaj až ku koncu. Bez namáčania a bez rozpučenia."
+	"preCookingNote": "Na rovnaké množstvo fazule ako v pôvodnom recepte (120 g suchej) použi približne 300 g scedenej uvarenej červenej fazule. Z konzervy 400–420 g zostáva po scedení približne 240 g, takže otvor dve konzervy a odváž asi 300 g scedených zŕn. Zvyšok odlož do chladničky v uzatvorenej nádobe a spotrebuj podľa obalu. Bez namáčania a rozpučenia."
 }
