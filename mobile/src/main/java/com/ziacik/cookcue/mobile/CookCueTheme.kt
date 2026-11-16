@@ -9,20 +9,20 @@ import androidx.compose.ui.graphics.Color
 
 val CookCueWine = Color(0xFF5B1120)
 val CookCueRose = Color(0xFFA0525A)
-val CookCueCream = Color(0xFFFFFAF5)
-val CookCuePaper = Color(0xFFF5ECE5)
-val CookCueSand = Color(0xFFEADFD6)
+val CookCueCream = Color(0xFFFAF9F7)
+val CookCuePaper = Color(0xFFF3F1EF)
+val CookCueSand = Color(0xFFE6E2E0)
 val CookCueTaupe = Color(0xFFC9B79E)
-val CookCueInk = Color(0xFF2D292A)
+val CookCueInk = Color(0xFF25252A)
 val CookCueHerb = Color(0xFF63705B)
 val CookCueHoney = Color(0xFFC7A66A)
 
 private val LightColors = lightColorScheme(
 	primary = CookCueWine,
 	onPrimary = Color.White,
-	primaryContainer = Color(0xFFF3E3E6),
-	onPrimaryContainer = Color(0xFF3A0A14),
-	secondary = CookCueHerb,
+	primaryContainer = Color(0xFFF8E9ED),
+	onPrimaryContainer = Color(0xFF491423),
+	secondary = Color(0xFF526B5B),
 	onSecondary = Color.White,
 	secondaryContainer = Color(0xFFE9EDE4),
 	onSecondaryContainer = Color(0xFF252C20),
@@ -32,10 +32,10 @@ private val LightColors = lightColorScheme(
 	onTertiaryContainer = Color(0xFF38270E),
 	background = CookCueCream,
 	onBackground = CookCueInk,
-	surface = Color(0xFFFFFDFC),
+	surface = Color.White,
 	onSurface = CookCueInk,
 	surfaceVariant = CookCuePaper,
-	onSurfaceVariant = Color(0xFF6D6061),
+	onSurfaceVariant = Color(0xFF69666A),
 	outline = CookCueSand,
 )
 
@@ -52,13 +52,13 @@ private val DarkColors = darkColorScheme(
 	onTertiary = Color(0xFF3B2A0D),
 	tertiaryContainer = Color(0xFF554019),
 	onTertiaryContainer = Color(0xFFF8E5BB),
-	background = Color(0xFF171214),
-	onBackground = Color(0xFFF6ECEE),
-	surface = Color(0xFF201719),
-	onSurface = Color(0xFFF6ECEE),
-	surfaceVariant = Color(0xFF302629),
-	onSurfaceVariant = Color(0xFFD3C2C5),
-	outline = Color(0xFF55474A),
+	background = Color(0xFF17171A),
+	onBackground = Color(0xFFF5F2F3),
+	surface = Color(0xFF222226),
+	onSurface = Color(0xFFF5F2F3),
+	surfaceVariant = Color(0xFF2D2C31),
+	onSurfaceVariant = Color(0xFFD2CDD0),
+	outline = Color(0xFF4B484D),
 )
 
 @Composable
