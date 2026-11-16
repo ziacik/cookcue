@@ -8,6 +8,12 @@
 			"minAppVersion": 1
 		},
 		{
+			"id": "bean-soup-canned",
+			"version": 1,
+			"file": "bean-soup-canned.json",
+			"minAppVersion": 1
+		},
+		{
 			"id": "scrambled-eggs-onion",
 			"version": 1,
 			"file": "scrambled-eggs-onion.json",

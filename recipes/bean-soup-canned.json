@@ -1,0 +1,429 @@
+{
+	"schemaVersion": 1,
+	"id": "bean-soup-canned",
+	"title": "Fazuľová polievka s klobásou (z konzervy)",
+	"description": "Pre 2 osoby · červená fazuľová s klobásou ako pôvodný recept, ale bez namáčania · tekutá, bez zahusťovania a octu",
+	"servings": 2,
+	"ingredients": [
+		{
+			"name": "červená fazuľa v konzerve",
+			"amount": "1 konzerva 400–420 g (cca 240–260 g po scedení)"
+		},
+		{
+			"name": "údená klobása",
+			"amount": "150 g"
+		},
+		{
+			"name": "menšia cibuľa",
+			"amount": "1 ks"
+		},
+		{
+			"name": "cesnak",
+			"amount": "2 strúčiky"
+		},
+		{
+			"name": "menšia mrkva",
+			"amount": "1/3 ks"
+		},
+		{
+			"name": "malý zemiak",
+			"amount": "1 ks"
+		},
+		{
+			"name": "bobkový list + nové korenie",
+			"amount": "1 list + 3 guľky"
+		},
+		{
+			"name": "zeleninový bujón",
+			"amount": "1/2 kocky"
+		},
+		{
+			"name": "sladká mletá paprika",
+			"amount": "1/2 ČL"
+		},
+		{
+			"name": "majorán",
+			"amount": "1/2 ČL"
+		},
+		{
+			"name": "soľ",
+			"amount": "podľa chuti, pridávaj postupne (bujón, klobása a konzerva už obsahujú soľ)"
+		},
+		{
+			"name": "čierne korenie",
+			"amount": "podľa chuti"
+		},
+		{
+			"name": "olej alebo masť",
+			"amount": "trochu"
+		},
+		{
+			"name": "voda",
+			"amount": "800 ml na začiatok + horúca voda na dolievanie"
+		}
+	],
+	"resourceCapacities": {
+		"cook": 1,
+		"large-pot": 1,
+		"pan": 1,
+		"burner": 2,
+		"sink": 1
+	},
+	"tasks": [
+		{
+			"id": "start-broth",
+			"title": "Začni pripravovať vývar",
+			"durationSeconds": 240,
+			"resources": [
+				"cook",
+				"large-pot",
+				"burner"
+			],
+			"instruction": "Do veľkého hrnca daj 800 ml vody, 1/2 kocky zeleninového bujónu, 1 bobkový list a 3 guľky nového korenia. Zapni sporák. Fazuľu zatiaľ nepridávaj."
+		},
+		{
+			"id": "wait-for-boil",
+			"title": "Priveď vývar do varu",
+			"durationSeconds": 240,
+			"dependsOn": [
+				"start-broth"
+			],
+			"resources": [
+				"large-pot",
+				"burner"
+			],
+			"kind": "EVENT",
+			"instruction": "Keď voda s bujónom a koreninami začne vrieť, potvrď to. Potom stiahni výkon na pokojný mierny var.",
+			"actionLabel": "VRIE"
+		},
+		{
+			"id": "broth-simmer",
+			"title": "Nechaj vývar rozvoňať 10 minút",
+			"durationSeconds": 600,
+			"dependsOn": [
+				"wait-for-boil"
+			],
+			"resources": [
+				"large-pot",
+				"burner"
+			],
+			"kind": "WAIT",
+			"instruction": "Vývar s bobkovým listom a novým korením nechaj aspoň 10 minút jemne prebublávať. Počas toho pripravuj zeleninu a opeč klobásu. Ak príprava potrvá dlhšie, stíš var; vývar môže ďalej zostať na sporáku.",
+			"tips": [
+				"Zatiaľ nepridávaj konzervovanú fazuľu — už je uvarená a dlhým varom by sa rozpadala."
+			]
+		},
+		{
+			"id": "rinse-canned-beans",
+			"title": "Sceď a prepláchni fazuľu",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"start-broth"
+			],
+			"resources": [
+				"cook",
+				"sink"
+			],
+			"instruction": "Otvor jednu 400–420 g konzervu červenej fazule, nálev zlej a fazuľu krátko prepláchni v sitku pod vodou. Nechaj odkvapkať a odlož bokom. Zrná nechaj celé."
+		},
+		{
+			"id": "prep-carrot",
+			"title": "Nakrájaj mrkvu",
+			"durationSeconds": 300,
+			"dependsOn": [
+				"start-broth"
+			],
+			"resources": [
+				"cook"
+			],
+			"skill": "PEELING",
+			"instruction": "1/3 menšej mrkvy nakrájaj na kolieska hrubé približne 2–3 mm."
+		},
+		{
+			"id": "prep-potato",
+			"title": "Nakrájaj zemiak",
+			"durationSeconds": 360,
+			"dependsOn": [
+				"start-broth"
+			],
+			"resources": [
+				"cook"
+			],
+			"skill": "PEELING",
+			"instruction": "1 malý zemiak nakrájaj na kocky približne 1–1,5 cm."
+		},
+		{
+			"id": "prep-onion",
+			"title": "Nakrájaj cibuľu",
+			"durationSeconds": 300,
+			"dependsOn": [
+				"start-broth"
+			],
+			"resources": [
+				"cook"
+			],
+			"skill": "KNIFE",
+			"instruction": "1 menšiu cibuľu nakrájaj nadrobno."
+		},
+		{
+			"id": "prep-sausage",
+			"title": "Nakrájaj klobásu",
+			"durationSeconds": 240,
+			"dependsOn": [
+				"start-broth"
+			],
+			"resources": [
+				"cook"
+			],
+			"skill": "KNIFE",
+			"instruction": "150 g klobásy nakrájaj na kolieska; väčšie kolieska pokojne prekroj ešte napoly."
+		},
+		{
+			"id": "prep-garlic-spices",
+			"title": "Priprav cesnak a papriku",
+			"durationSeconds": 240,
+			"dependsOn": [
+				"start-broth"
+			],
+			"resources": [
+				"cook"
+			],
+			"instruction": "Ošúp 2 strúčiky cesnaku a priprav lis. Odmeraj 1/2 ČL sladkej papriky a nechaj ju poruke, aby si ju potom nemusel hľadať pri horúcej panvici."
+		},
+		{
+			"id": "brown-sausage",
+			"title": "Opeč klobásu",
+			"durationSeconds": 240,
+			"dependsOn": [
+				"prep-sausage"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Rozohrej panvicu na strednom výkone. Daj trochu oleja alebo masti a opeč klobásu, kým zavonia, trochu zhnedne a pustí tuk. Klobásu vyber na tanier.",
+			"tips": [
+				"Tuk z panvice nevylievaj."
+			]
+		},
+		{
+			"id": "saute-onion",
+			"title": "Orestuj cibuľu",
+			"durationSeconds": 240,
+			"dependsOn": [
+				"prep-onion",
+				"brown-sausage"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Na tuku z klobásy orestuj cibuľu. Hotová je, keď je mäkká, nechrumká a nevonia surovo.",
+			"tips": [
+				"Farbu cibule veľmi nerieš – tuk z klobásy ju môže výrazne zafarbiť."
+			]
+		},
+		{
+			"id": "garlic-paprika",
+			"title": "Pridaj cesnak a papriku",
+			"durationSeconds": 90,
+			"dependsOn": [
+				"saute-onion",
+				"prep-garlic-spices"
+			],
+			"resources": [
+				"cook",
+				"pan",
+				"burner"
+			],
+			"instruction": "Pretlač 2 strúčiky cesnaku priamo do panvice k cibuli a miešaj 20–30 sekúnd. Pridaj 1/2 ČL sladkej papriky a prakticky hneď 1–2 PL vody z hrnca. Premiešaj.",
+			"tips": [
+				"Paprika sa nesmie spáliť, inak zhorkne."
+			]
+		},
+		{
+			"id": "combine",
+			"title": "Spoj všetko v hrnci",
+			"durationSeconds": 240,
+			"dependsOn": [
+				"broth-simmer",
+				"garlic-paprika",
+				"prep-carrot",
+				"prep-potato"
+			],
+			"resources": [
+				"cook",
+				"large-pot"
+			],
+			"instruction": "Celý obsah panvice s cibuľou, cesnakom a paprikou prelej do hrnca s vývarom. Vráť 150 g opečenej klobásy. Pridaj 1/3 menšej mrkvy a 1 malý nakrájaný zemiak. Premiešaj. Fazuľu ešte nepridávaj."
+		},
+		{
+			"id": "adjust-water",
+			"title": "Nastav množstvo vody",
+			"durationSeconds": 240,
+			"dependsOn": [
+				"combine"
+			],
+			"resources": [
+				"cook",
+				"large-pot"
+			],
+			"instruction": "Ak ingrediencie trčia nad hladinu, dolej horúcu vodu. Začni približne 100–150 ml, hneď premiešaj a pozri. Ak treba, hneď pridaj ďalšiu dávku; medzi dolievaniami nemusíš čakať.",
+			"tips": [
+				"Horúcu vodu môžeš najprv naliať do použitej panvice, zakrúžiť ňou a až potom preliať do hrnca. Zoberieš tým z panvice zvyšky opečenej chuti.",
+				"Cieľ: všetko je ponorené, okolo ingrediencií je dosť vývaru a výsledok vyzerá ako polievka, nie prívarok."
+			]
+		},
+		{
+			"id": "vegetables-cook",
+			"title": "Var klobásu a zeleninu 10 minút",
+			"durationSeconds": 600,
+			"dependsOn": [
+				"adjust-water"
+			],
+			"resources": [
+				"large-pot",
+				"burner"
+			],
+			"kind": "WAIT",
+			"instruction": "Nechaj polievku 10 minút mierne vrieť, aby sa zemiak a mrkva uvarili a klobása odovzdala chuť vývaru. Konzervovanú fazuľu ešte nepridávaj.",
+			"tips": [
+				"Bez pokrievky, prípadne s pootvorenou pokrievkou, ak sa odparuje priveľa vody."
+			]
+		},
+		{
+			"id": "vegetables-ready",
+			"title": "Skontroluj zemiak a mrkvu",
+			"durationSeconds": 180,
+			"dependsOn": [
+				"vegetables-cook"
+			],
+			"resources": [
+				"large-pot",
+				"burner"
+			],
+			"kind": "EVENT",
+			"instruction": "Pichni vidličkou do väčšej kocky zemiaka a ochutnaj mrkvu. Sú mäkké? Ak nie, nechaj ich ďalej mierne variť a skontroluj znovu o 3 minúty. Fazuľu pridáš až potom.",
+			"actionLabel": "ÁNO",
+			"retryActionLabel": "NIE",
+			"retryAfterSeconds": 180
+		},
+		{
+			"id": "add-canned-beans",
+			"title": "Pridaj celú konzervovanú fazuľu",
+			"durationSeconds": 120,
+			"dependsOn": [
+				"vegetables-ready",
+				"rinse-canned-beans"
+			],
+			"resources": [
+				"cook",
+				"large-pot",
+				"burner"
+			],
+			"instruction": "Do hrnca pridaj pripravenú scedenú a prepláchnutú červenú fazuľu. Jemne premiešaj, aby zostali celé zrná. Nič neroztláčaj a ničím nezahusťuj."
+		},
+		{
+			"id": "heat-beans",
+			"title": "Prehrej fazuľu 5 minút",
+			"durationSeconds": 300,
+			"dependsOn": [
+				"add-canned-beans"
+			],
+			"resources": [
+				"large-pot",
+				"burner"
+			],
+			"kind": "WAIT",
+			"instruction": "Nechaj polievku ešte 5 minút na miernom vare, aby sa fazuľa prehriala a spojila s chuťou klobásového vývaru. Nevar prudko, aby sa zrná nerozpadli."
+		},
+		{
+			"id": "final-ready",
+			"title": "Skontroluj finálnu mäkkosť",
+			"durationSeconds": 180,
+			"dependsOn": [
+				"heat-beans"
+			],
+			"resources": [
+				"large-pot",
+				"burner"
+			],
+			"kind": "EVENT",
+			"instruction": "Je fazuľa horúca, mrkva mäkká a ide vidlička do zemiaka ľahko bez odporu? Ak nie, nechaj polievku ešte jemne variť a skontroluj o 3 minúty.",
+			"actionLabel": "ÁNO",
+			"retryActionLabel": "NIE",
+			"retryAfterSeconds": 180
+		},
+		{
+			"id": "season",
+			"title": "Finálne dochuť",
+			"durationSeconds": 240,
+			"dependsOn": [
+				"final-ready"
+			],
+			"resources": [
+				"cook",
+				"large-pot"
+			],
+			"instruction": "Vypni sporák. Ochutnaj vývar. Pridaj trochu čierneho korenia (napríklad 2–3 otočenia mlynčeka). 1/2 ČL majoránu rozdrv medzi prstami a pridaj do polievky. Premiešaj a podľa chuti postupne dosoľuj po malých štipkách; bujón, klobása aj konzervovaná fazuľa už môžu obsahovať soľ. Ocot ani smotanu nepridávaj.",
+			"tips": [
+				"Polievka má zostať normálne tekutá s celými fazuľami. Žiadna múka, roztláčanie ani zahusťovanie."
+			]
+		},
+		{
+			"id": "rest",
+			"title": "Nechaj polievku postáť",
+			"durationSeconds": 300,
+			"dependsOn": [
+				"season"
+			],
+			"resources": [
+				"large-pot"
+			],
+			"kind": "WAIT",
+			"instruction": "Nechaj polievku 5 minút postáť."
+		},
+		{
+			"id": "final-taste",
+			"title": "Ešte raz ochutnaj",
+			"durationSeconds": 180,
+			"dependsOn": [
+				"rest"
+			],
+			"resources": [
+				"cook",
+				"large-pot"
+			],
+			"instruction": "Po 5 minútach ešte raz ochutnaj a podľa potreby použi krízovú pomoc nižšie."
+		}
+	],
+	"troubleshooting": [
+		{
+			"problem": "Príliš málo vývaru",
+			"advice": "Dolej trochu horúcej vody, premiešaj a podľa potreby dolaď soľ a majorán. Má to byť tekutá polievka."
+		},
+		{
+			"problem": "Príliš veľa vody",
+			"advice": "Ak má polievka dosť výraznú chuť, nechaj ju tak — má byť tekutá. Ak je chuť slabá, dolaď ju soľou a korením; fazuľu neroztláčaj a polievku nezahusťuj."
+		},
+		{
+			"problem": "Zemiak alebo mrkva sú tvrdé",
+			"advice": "Nechaj ich ďalej variť a skontroluj po 3 minútach. Konzervovanú fazuľu pridávaj až keď sú mäkké."
+		},
+		{
+			"problem": "Fazuľa sa rozpadá",
+			"advice": "Keďže konzervovaná fazuľa je uvarená, pridávaj ju až na záver a prehrej iba 5 minút na miernom vare. Miešaj jemne."
+		},
+		{
+			"problem": "Mdlá chuť",
+			"advice": "Najprv skús trochu soli; potom čierne korenie alebo majorán. Chuť má byť klobásovo-papriková, nie kyslá."
+		},
+		{
+			"problem": "Príliš slaná",
+			"advice": "Pridaj trochu horúcej vody. Ďalší bujón už nepridávaj."
+		}
+	],
+	"preCookingNote": "Použi 1 konzervu červenej fazule v náleve (400–420 g, po scedení cca 240–260 g). Fazuľa je už uvarená; prepláchni ju a pridaj až ku koncu. Bez namáčania a bez rozpučenia."
+}
