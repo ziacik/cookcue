@@ -32,6 +32,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -63,6 +65,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -737,7 +741,7 @@ private fun CookCueScreen() {
 						text = if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
 							"Plán sa priebežne prepočítava okolo pevných časov."
 						} else {
-							"Všetko krok za krokom. CookCue stráži čas."
+							"Aktuálny krok je zvýraznený. Klepnutím otvoríš detail."
 						},
 						style = MaterialTheme.typography.bodyMedium,
 						color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -837,13 +841,13 @@ private fun CookCueScreen() {
 @Composable
 private fun SessionModeTabs(showPlan: Boolean, onSelectPlan: (Boolean) -> Unit) {
 	Row(
-		modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp),
+		modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp).selectableGroup(),
 		horizontalArrangement = Arrangement.spacedBy(8.dp),
 	) {
 		listOf(false to "Teraz", true to "Plán").forEach { (plan, label) ->
 			val selected = showPlan == plan
 			Surface(
-				modifier = Modifier.weight(1f).clickable { onSelectPlan(plan) },
+				modifier = Modifier.weight(1f).selectable(selected = selected, role = Role.Tab, onClick = { onSelectPlan(plan) }),
 				shape = RoundedCornerShape(14.dp),
 				color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
 			) {
@@ -882,6 +886,8 @@ private fun CookCueTopBar(
 					fontWeight = FontWeight.SemiBold,
 				),
 				modifier = Modifier.weight(1f),
+				maxLines = 1,
+				overflow = TextOverflow.Ellipsis,
 			)
 			if (showRecipesAction) {
 				TextButton(
@@ -993,7 +999,7 @@ private fun PreCookingPanel(
 				),
 			) {
 				Text(
-					text = if (isItinerary) "▶  SPUSTIŤ ITINERÁR" else "▶  SPUSTIŤ VARENIE",
+					text = if (isItinerary) "Začať itinerár" else "Začať variť",
 					fontWeight = FontWeight.Bold,
 					modifier = Modifier.padding(vertical = 3.dp),
 				)
@@ -1744,7 +1750,7 @@ private fun NextStepRow(
 private fun SectionTitle(text: String) {
 	Text(
 		text = text,
-		style = MaterialTheme.typography.headlineSmall.copy(
+		style = MaterialTheme.typography.titleLarge.copy(
 			fontFamily = FontFamily.SansSerif,
 			fontWeight = FontWeight.SemiBold,
 		),
