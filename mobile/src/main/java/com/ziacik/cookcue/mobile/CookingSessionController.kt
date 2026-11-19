@@ -9,6 +9,7 @@ import com.ziacik.cookcue.core.model.Recipe
 import com.ziacik.cookcue.core.model.ScheduleMode
 import com.ziacik.cookcue.core.model.ScheduledTask
 import com.ziacik.cookcue.core.model.TaskKind
+import com.ziacik.cookcue.core.scheduler.ActiveTaskClock
 import com.ziacik.cookcue.core.scheduler.ItineraryScheduler
 import com.ziacik.cookcue.core.scheduler.Scheduler
 
@@ -897,9 +898,11 @@ object CookingSessionController {
 			// planned timestamp. Skipping or finishing earlier tasks can move
 			// planned starts into the past; that must never consume this timer.
 			// Persist the actual start so recomputing the plan cannot reset it.
-			val newlyStarted = activeActions
-				.filterNot { taskStartOverrides.containsKey(it.task.id) }
-				.associate { it.task.id to maxOf(it.startSeconds, elapsedSeconds) }
+			val newlyStarted = ActiveTaskClock.newlyStarted(
+				activeActions = activeActions,
+				elapsedSeconds = elapsedSeconds,
+				recordedStarts = taskStartOverrides,
+			)
 			if (newlyStarted.isNotEmpty()) {
 				taskStartOverrides = taskStartOverrides + newlyStarted
 				schedule = scheduler.schedule(
