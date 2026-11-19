@@ -167,6 +167,67 @@ class SchedulerTest {
 		assertTrue(finish.startSeconds >= toast.endSeconds)
 	}
 
+
+	@Test
+	fun realStartIsNotLostWhenPreviousStepFinishesEarly() {
+		val source = recipe(
+			capacities = mapOf("cook" to 1, "pan" to 1),
+			CookingTask("prep", "Prepare ingredients", 240, resources = uses("cook")),
+			CookingTask(
+				"onion", "Saute onion", 300,
+				dependsOn = setOf("prep"),
+				resources = uses("cook", "pan"),
+			),
+			CookingTask(
+				"paprika", "Add paprika", 90,
+				dependsOn = setOf("onion"),
+				resources = uses("cook", "pan"),
+			),
+		)
+
+		val planned = scheduler.schedule(source)
+		assertEquals(240L, planned.single { it.task.id == "onion" }.startSeconds)
+
+		// Prep was completed in one second, but the onion was only started
+		// at second 100. Its 5-minute timer must not inherit 99 elapsed seconds.
+		val live = scheduler.schedule(
+			recipe = source,
+			durationOverrides = mapOf("prep" to 1),
+			startOverrides = mapOf("prep" to 0, "onion" to 100),
+		)
+		assertEquals(100L, live.single { it.task.id == "onion" }.startSeconds)
+		assertEquals(400L, live.single { it.task.id == "paprika" }.startSeconds)
+
+		val finishedEarly = scheduler.schedule(
+			recipe = source,
+			durationOverrides = mapOf("prep" to 1, "onion" to 30),
+			startOverrides = mapOf("prep" to 0, "onion" to 100),
+		)
+		assertEquals(130L, finishedEarly.single { it.task.id == "paprika" }.startSeconds)
+	}
+
+	@Test
+	fun actualStartOfPanWorkDoesNotShortenIndependentSimmer() {
+		val source = recipe(
+			capacities = mapOf("cook" to 1, "pan" to 1, "pot" to 1, "burner" to 2),
+			CookingTask(
+				"simmer", "Simmer broth", 600,
+				kind = TaskKind.WAIT, resources = uses("pot", "burner"),
+			),
+			CookingTask(
+				"onion", "Saute onion", 300,
+				resources = uses("cook", "pan", "burner"),
+			),
+		)
+		val actual = scheduler.schedule(
+			recipe = source,
+			startOverrides = mapOf("onion" to 420),
+		)
+		assertEquals(0L, actual.single { it.task.id == "simmer" }.startSeconds)
+		assertEquals(600L, actual.single { it.task.id == "simmer" }.endSeconds)
+		assertEquals(420L, actual.single { it.task.id == "onion" }.startSeconds)
+	}
+
 	private fun recipe(
 		capacities: Map<String, Int>,
 		vararg tasks: CookingTask,

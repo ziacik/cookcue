@@ -132,6 +132,7 @@ private fun CookCueScreen() {
 	val selectedRecipeId = CookingSessionController.selectedRecipeId
 	val startedAt = CookingSessionController.startedAt
 	val durationOverrides = CookingSessionController.durationOverrides
+	val taskStartOverrides = CookingSessionController.taskStartOverrides
 	val skippedTaskIds = CookingSessionController.skippedTaskIds
 	val deferredTaskIds = CookingSessionController.deferredTaskIds
 	val paused = CookingSessionController.paused
@@ -220,6 +221,7 @@ private fun CookCueScreen() {
 		now,
 		startedAt,
 		durationOverrides,
+		taskStartOverrides,
 		skippedTaskIds,
 		deferredTaskIds,
 		paused,
@@ -231,6 +233,14 @@ private fun CookCueScreen() {
 		recipe,
 	) {
 		CookingSessionController.snapshot(now)
+	}
+	// An automatically activated cooking step must survive app restarts with its
+	// real start timestamp, including when the user leaves the cooking screen.
+	LaunchedEffect(startedAt, taskStartOverrides) {
+		if (startedAt != null && taskStartOverrides.isNotEmpty()) {
+			MobileSessionPersistence.save(context)
+			MobileSessionSync.publish(context)
+		}
 	}
 	val activeActions = snapshot.activeActions
 	val current = activeActions.firstOrNull()

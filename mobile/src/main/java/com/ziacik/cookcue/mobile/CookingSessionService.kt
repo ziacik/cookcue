@@ -82,7 +82,12 @@ class CookingSessionService : Service() {
 
 	private suspend fun monitorSession() {
 		while (currentCoroutineContext().isActive) {
+			val previousTaskStarts = CookingSessionController.taskStartOverrides
 			val snapshot = CookingSessionController.snapshot()
+			if (previousTaskStarts != CookingSessionController.taskStartOverrides) {
+				MobileSessionPersistence.save(applicationContext)
+				MobileSessionSync.publish(applicationContext)
+			}
 			if (!snapshot.started || snapshot.paused) {
 				stopSelf()
 				return

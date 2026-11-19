@@ -9,6 +9,7 @@ import com.ziacik.cookcue.core.model.Recipe
 import com.ziacik.cookcue.core.model.ScheduleMode
 import com.ziacik.cookcue.core.model.ScheduledTask
 import com.ziacik.cookcue.core.model.TaskKind
+import com.ziacik.cookcue.core.scheduler.ActiveTaskClock
 import com.ziacik.cookcue.core.scheduler.ItineraryScheduler
 import com.ziacik.cookcue.core.scheduler.Scheduler
 
@@ -703,6 +704,13 @@ object CookingSessionController {
 				}
 				?: schedule
 					.asSequence()
+					.map {
+						if (recipe.scheduleMode == ScheduleMode.COOKING) {
+							ActiveTaskClock.withRecordedStart(it, taskStartOverrides)
+						} else {
+							it
+						}
+					}
 					.filter {
 						it.task.kind == TaskKind.ACTIVE &&
 							!isTaskCompleted(it.task.id) &&
@@ -856,6 +864,7 @@ object CookingSessionController {
 		var schedule = scheduler.schedule(
 			recipe = recipe,
 			durationOverrides = durationOverrides,
+			startOverrides = taskStartOverrides,
 		)
 
 		repeat(8) {
@@ -872,6 +881,7 @@ object CookingSessionController {
 
 			val activeActions = schedule
 				.asSequence()
+				.map { ActiveTaskClock.withRecordedStart(it, taskStartOverrides) }
 				.filter {
 					it.task.kind == TaskKind.ACTIVE &&
 						!isTaskCompleted(it.task.id) &&
@@ -892,6 +902,25 @@ object CookingSessionController {
 					eventIsDue(it.task.id, elapsedSeconds)
 			}
 
+			// An ACTIVE task starts when it becomes actionable, not at an old
+			// planned timestamp. Skipping or finishing earlier tasks can move
+			// planned starts into the past; that must never consume this timer.
+			// Persist the actual start so recomputing the plan cannot reset it.
+			val newlyStarted = ActiveTaskClock.newlyStarted(
+				activeActions = activeActions,
+				elapsedSeconds = elapsedSeconds,
+				recordedStarts = taskStartOverrides,
+			)
+			if (newlyStarted.isNotEmpty()) {
+				taskStartOverrides = taskStartOverrides + newlyStarted
+				schedule = scheduler.schedule(
+					recipe = recipe,
+					durationOverrides = durationOverrides,
+					startOverrides = taskStartOverrides,
+				)
+				return@repeat
+			}
+
 			val liveOverrides = durationOverrides.toMutableMap()
 			(activeActions + pendingEvents).forEach { gate ->
 				val elapsedForTask = (elapsedSeconds - gate.startSeconds + 1).coerceAtLeast(1)
@@ -905,6 +934,7 @@ object CookingSessionController {
 			val nextSchedule = scheduler.schedule(
 				recipe = recipe,
 				durationOverrides = liveOverrides,
+				startOverrides = taskStartOverrides,
 			)
 
 			if (
