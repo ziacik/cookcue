@@ -74,6 +74,6 @@ dependencies {
 	implementation("androidx.activity:activity-compose:1.13.0")
 	implementation("androidx.compose.foundation:foundation")
 	implementation("androidx.compose.ui:ui")
-	implementation("androidx.wear.compose:compose-material3:1.7.1")
+	implementation("androidx.wear.compose:compose-material3:1.7.2")
 	implementation("com.google.android.gms:play-services-wearable:20.0.1")
 }
