@@ -35,6 +35,14 @@ class ActiveTaskClockTest {
 	}
 
 	@Test
+	fun aRunningTimersVisibleStartNeverMovesOnReschedule() {
+		val reprojected = ScheduledTask(onion, startSeconds = 540, endSeconds = 840)
+		val active = ActiveTaskClock.withRecordedStart(reprojected, mapOf("onion" to 350))
+		assertEquals(350L, active.startSeconds)
+		assertEquals(650L, active.endSeconds)
+	}
+
+	@Test
 	fun aTaskMayBeginAtItsOriginalStartWithoutArtificialDelay() {
 		val planned = ScheduledTask(onion, startSeconds = 100, endSeconds = 400)
 		val observed = ActiveTaskClock.newlyStarted(
