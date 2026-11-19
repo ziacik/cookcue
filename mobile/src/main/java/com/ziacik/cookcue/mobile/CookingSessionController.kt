@@ -704,6 +704,13 @@ object CookingSessionController {
 				}
 				?: schedule
 					.asSequence()
+					.map {
+						if (recipe.scheduleMode == ScheduleMode.COOKING) {
+							ActiveTaskClock.withRecordedStart(it, taskStartOverrides)
+						} else {
+							it
+						}
+					}
 					.filter {
 						it.task.kind == TaskKind.ACTIVE &&
 							!isTaskCompleted(it.task.id) &&
@@ -874,6 +881,7 @@ object CookingSessionController {
 
 			val activeActions = schedule
 				.asSequence()
+				.map { ActiveTaskClock.withRecordedStart(it, taskStartOverrides) }
 				.filter {
 					it.task.kind == TaskKind.ACTIVE &&
 						!isTaskCompleted(it.task.id) &&
