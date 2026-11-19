@@ -11,8 +11,9 @@ class Scheduler {
 		recipe: Recipe,
 		profile: CookProfile = CookProfile.Default,
 		durationOverrides: Map<String, Long> = emptyMap(),
+		startOverrides: Map<String, Long> = emptyMap(),
 	): List<ScheduledTask> {
-		validate(recipe, durationOverrides)
+		validate(recipe, durationOverrides, startOverrides)
 
 		val tasksById = recipe.tasks.associateBy { it.id }
 		val children = recipe.tasks
@@ -55,7 +56,7 @@ class Scheduler {
 			val start = earliestFeasibleStart(
 				task = task,
 				duration = duration,
-				notBefore = dependenciesFinishedAt,
+				notBefore = maxOf(dependenciesFinishedAt, startOverrides[task.id] ?: 0L),
 				scheduled = scheduled,
 				capacities = recipe.resourceCapacities,
 			)
@@ -148,6 +149,7 @@ class Scheduler {
 	private fun validate(
 		recipe: Recipe,
 		durationOverrides: Map<String, Long>,
+		startOverrides: Map<String, Long>,
 	) {
 		require(recipe.tasks.map { it.id }.distinct().size == recipe.tasks.size) {
 			"Task ids must be unique."
@@ -161,6 +163,15 @@ class Scheduler {
 			}
 			require(duration > 0) {
 				"Duration override for '$taskId' must be positive."
+			}
+		}
+
+		startOverrides.forEach { (taskId, start) ->
+			require(taskId in ids) {
+				"Start override references missing task '$taskId'."
+			}
+			require(start >= 0L) {
+				"Start override for '$taskId' must be non-negative."
 			}
 		}
 
