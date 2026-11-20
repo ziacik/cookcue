@@ -318,6 +318,25 @@ object CookingSessionController {
 		markUserAction()
 	}
 
+	/**
+	 * End an explicitly flexible timer at the real elapsed time. This advances
+	 * only its dependent tasks; it never jumps the session clock or skips events.
+	 * Exact timers (such as coffee extraction) cannot be completed early.
+	 */
+	fun completeWaitEarly(taskId: String) {
+		val snapshot = snapshot()
+		if (!snapshot.started || snapshot.paused || recipe.scheduleMode != ScheduleMode.COOKING) {
+			return
+		}
+		val wait = snapshot.background.firstOrNull {
+			it.task.id == taskId && it.task.allowEarlyCompletion
+		} ?: return
+		val actualDuration = (snapshot.elapsedSeconds - wait.startSeconds).coerceAtLeast(1)
+		durationOverrides = durationOverrides + (taskId to actualDuration)
+		taskStartOverrides = taskStartOverrides + (taskId to wait.startSeconds)
+		markUserAction()
+	}
+
 	fun completeAction(taskId: String) {
 		val snapshot = snapshot()
 		val action = snapshot.activeActions

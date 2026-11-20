@@ -142,8 +142,12 @@ data class CookingTask(
 	val sensors: List<TaskSensor> = emptyList(),
 	val itineraryTiming: ItineraryTiming? = null,
 	val repeatInfo: RepeatInfo? = null,
+	val allowEarlyCompletion: Boolean = false,
 ) {
 	init {
+		require(!allowEarlyCompletion || kind == TaskKind.WAIT) {
+			"Only WAIT tasks can be completed before their timer ends."
+		}
 		require(id.isNotBlank())
 		require(title.isNotBlank())
 		require(durationSeconds > 0)

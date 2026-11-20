@@ -246,6 +246,8 @@ private fun CookCueScreen() {
 	val current = activeActions.firstOrNull()
 	val primaryWait = snapshot.background.minByOrNull { it.endSeconds }
 	val displayedWait = if (activeActions.isEmpty()) primaryWait else null
+	val canAdvanceWait = displayedWait?.task?.allowEarlyCompletion == true &&
+		snapshot.pendingEvents.isEmpty()
 	val activeTaskId = current?.task?.id ?: displayedWait?.task?.id
 	val planItems = snapshot.schedule.distinctBy { it.task.repeatInfo?.id ?: it.task.id }
 	val currentPlanId = snapshot.schedule.firstOrNull { it.task.id == activeTaskId }
@@ -270,7 +272,7 @@ private fun CookCueScreen() {
 
 	val keepScreenAwake =
 		snapshot.started &&
-			(current != null || snapshot.pendingEvents.isNotEmpty() || snapshot.completed)
+			(current != null || primaryWait != null || snapshot.pendingEvents.isNotEmpty() || snapshot.completed)
 
 	LaunchedEffect(keepScreenAwake) {
 		val window = (context as? ComponentActivity)?.window ?: return@LaunchedEffect
@@ -551,7 +553,7 @@ private fun CookCueScreen() {
 											(it.task.repeatInfo?.id ?: it.task.id) == actionPlanId
 										}
 										CurrentStepCard(
-											title = action.task.title,
+											title = conciseTaskTitle(action.task),
 											image = action.task.image,
 											instruction = action.task.instruction,
 											tips = action.task.tips,
@@ -560,7 +562,10 @@ private fun CookCueScreen() {
 											elapsedSeconds = elapsed,
 											stepNumber = stepIndex.takeIf { it >= 0 }?.plus(1),
 											stepCount = planItems.size,
+											stepLabel = action.task.repeatInfo?.let { "${it.title} ${it.repetition}/${it.count}" },
 											actionLabel = "HOTOVO",
+											allowEarlyCompletion = false,
+											onCompleteWaitEarly = {},
 											optional = action.task.optional,
 											isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY,
 											onDefer = {
@@ -587,7 +592,7 @@ private fun CookCueScreen() {
 									(displayedWait.endSeconds - displayedWait.startSeconds)
 										.coerceAtLeast(1)
 								CurrentStepCard(
-									title = displayedWait.task.title,
+									title = conciseTaskTitle(displayedWait.task),
 									image = displayedWait.task.image,
 									instruction = displayedWait.task.instruction,
 									tips = displayedWait.task.tips,
@@ -596,7 +601,13 @@ private fun CookCueScreen() {
 									elapsedSeconds = elapsed,
 									stepNumber = activeStepIndex.takeIf { it >= 0 }?.plus(1),
 									stepCount = planItems.size,
+									stepLabel = displayedWait.task.repeatInfo?.let { "${it.title} ${it.repetition}/${it.count}" },
 									actionLabel = null,
+									allowEarlyCompletion = canAdvanceWait,
+									onCompleteWaitEarly = {
+										CookingSessionController.completeWaitEarly(displayedWait.task.id)
+										persistAndSync()
+									},
 									optional = false,
 									isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY,
 									onDefer = {},
@@ -629,7 +640,9 @@ private fun CookCueScreen() {
 					) {
 						Spacer(Modifier.height(12.dp))
 						PendingEventCard(
-							title = event.task.title,
+							title = event.task.repeatInfo?.let {
+								"${it.title} ${it.repetition}/${it.count} · ${conciseTaskTitle(event.task)}"
+							} ?: event.task.title,
 							image = event.task.image,
 							instruction = event.task.instruction,
 							tips = event.task.tips,
@@ -693,7 +706,9 @@ private fun CookCueScreen() {
 						) {
 							Spacer(Modifier.height(16.dp))
 							NextStepRow(
-								title = next.task.title,
+								title = next.task.repeatInfo?.let {
+									"${it.title} ${it.repetition}/${it.count} · ${conciseTaskTitle(next.task)}"
+								} ?: next.task.title,
 								time = if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
 									formatScheduledStart(recipe, next)
 								} else {
@@ -727,14 +742,18 @@ private fun CookCueScreen() {
 							}
 							OutlinedButton(
 								onClick = {
-									CookingSessionController.next()
+									if (canAdvanceWait) {
+										CookingSessionController.completeWaitEarly(displayedWait!!.task.id)
+									} else {
+										CookingSessionController.next()
+									}
 									persistAndSync()
 								},
-								enabled = snapshot.nextAction != null,
+								enabled = canAdvanceWait || snapshot.nextAction != null,
 								modifier = Modifier.weight(1f),
 								shape = RoundedCornerShape(12.dp),
 							) {
-								Text("ĎALŠÍ →")
+								Text(if (canAdvanceWait) "HOTOVO SKÔR →" else "ĎALŠÍ →")
 							}
 						}
 					}
@@ -805,7 +824,7 @@ private fun CookCueScreen() {
 					isLast = index == planItems.lastIndex,
 					canActivate = !snapshot.paused,
 					repeatLabel = repeat?.let {
-						"Opakovania: " + repetitionsCompleted + "/" + it.count + " · výdrž 5 s"
+						"Hotové: " + repetitionsCompleted + "/" + it.count
 					},
 					onOpenDetail = { selectedTaskDetailId = item.task.id },
 					onActivate = {
@@ -1047,6 +1066,13 @@ private fun IngredientList(
 	}
 }
 
+private fun conciseTaskTitle(task: CookingTask): String {
+	val repeat = task.repeatInfo ?: return task.title
+	return task.title
+		.removePrefix("${repeat.id.uppercase()} · ")
+		.removeSuffix(" · ${repeat.repetition}/${repeat.count}")
+}
+
 @Composable
 private fun CurrentStepCard(
 	title: String,
@@ -1058,7 +1084,10 @@ private fun CurrentStepCard(
 	elapsedSeconds: Long,
 	stepNumber: Int?,
 	stepCount: Int,
+	stepLabel: String?,
 	actionLabel: String?,
+	allowEarlyCompletion: Boolean,
+	onCompleteWaitEarly: () -> Unit,
 	optional: Boolean,
 	isItinerary: Boolean,
 	onDefer: () -> Unit,
@@ -1095,7 +1124,7 @@ private fun CurrentStepCard(
 				Spacer(Modifier.weight(1f))
 				if (stepNumber != null && stepCount > 0) {
 					Text(
-						text = "Krok $stepNumber z $stepCount",
+						text = stepLabel ?: "Krok $stepNumber z $stepCount",
 						style = MaterialTheme.typography.labelMedium,
 						color = MaterialTheme.colorScheme.onSurfaceVariant,
 					)
@@ -1137,6 +1166,17 @@ private fun CurrentStepCard(
 					estimateSeconds = estimateSeconds,
 					elapsedSeconds = elapsedSeconds,
 				)
+			}
+
+			if (allowEarlyCompletion) {
+				Spacer(Modifier.height(12.dp))
+				Button(
+					onClick = onCompleteWaitEarly,
+					modifier = Modifier.fillMaxWidth(),
+					shape = RoundedCornerShape(12.dp),
+				) {
+					Text("✓  HOTOVO SKÔR")
+				}
 			}
 
 			if (tips.isNotEmpty()) {

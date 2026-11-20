@@ -290,8 +290,14 @@ private fun WearCookCueScreen() {
 					taskTitle = state.backgroundTitle,
 					totalSeconds = backgroundTotal,
 					elapsedSeconds = backgroundElapsed,
-					showDone = false,
-					onDone = {},
+					showDone = state.backgroundCanFinishEarly && state.backgroundTaskId.isNotBlank(),
+					onDone = {
+						WearActionSender.send(
+							context,
+							DataLayerProtocol.ACTION_COMPLETE_WAIT_EARLY,
+							state.backgroundTaskId,
+						)
+					},
 				)
 			}
 

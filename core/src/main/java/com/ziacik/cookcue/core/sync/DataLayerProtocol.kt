@@ -11,6 +11,7 @@ object DataLayerProtocol {
 	const val ACTION_CONFIRM_EVENT = "confirm_event"
 	const val ACTION_DEFER_EVENT = "defer_event"
 	const val ACTION_COMPLETE_ACTIVE = "complete_active"
+	const val ACTION_COMPLETE_WAIT_EARLY = "complete_wait_early"
 	const val ACTION_STOP = "stop"
 
 	const val KEY_VERSION = "version"
@@ -25,6 +26,8 @@ object DataLayerProtocol {
 	const val KEY_CURRENT_REMAINING_SECONDS = "current_remaining_seconds"
 	const val KEY_CURRENT_ESTIMATE_SECONDS = "current_estimate_seconds"
 	const val KEY_CURRENT_ELAPSED_SECONDS = "current_elapsed_seconds"
+	const val KEY_BACKGROUND_TASK_ID = "background_task_id"
+	const val KEY_BACKGROUND_CAN_FINISH_EARLY = "background_can_finish_early"
 	const val KEY_BACKGROUND_TITLE = "background_title"
 	const val KEY_BACKGROUND_REMAINING_SECONDS = "background_remaining_seconds"
 	const val KEY_BACKGROUND_ESTIMATE_SECONDS = "background_estimate_seconds"
