@@ -130,6 +130,7 @@ internal object RecipeJsonCodec {
 			retryActionLabel = task.optionalString("retryActionLabel"),
 			retryAfterSeconds = task.optionalLong("retryAfterSeconds"),
 			optional = task.optBoolean("optional", false),
+			allowEarlyCompletion = task.optBoolean("allowEarlyCompletion", false),
 			image = task.optJSONObject("image")?.let { image ->
 				TaskImage(
 					url = image.getString("url"),
