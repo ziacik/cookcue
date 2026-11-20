@@ -51,6 +51,11 @@ object MobileSessionSync {
 				currentElapsed,
 			)
 
+			putString(DataLayerProtocol.KEY_BACKGROUND_TASK_ID, background?.task?.id.orEmpty())
+			putBoolean(
+				DataLayerProtocol.KEY_BACKGROUND_CAN_FINISH_EARLY,
+				background?.task?.allowEarlyCompletion == true && snapshot.pendingEvents.isEmpty(),
+			)
 			putString(DataLayerProtocol.KEY_BACKGROUND_TITLE, background?.task?.title.orEmpty())
 			putLong(
 				DataLayerProtocol.KEY_BACKGROUND_REMAINING_SECONDS,
