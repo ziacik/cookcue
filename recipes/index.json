@@ -9,7 +9,7 @@
 		},
 		{
 			"id": "bean-soup-canned",
-			"version": 2,
+			"version": 3,
 			"file": "bean-soup-canned.json",
 			"minAppVersion": 1
 		},
