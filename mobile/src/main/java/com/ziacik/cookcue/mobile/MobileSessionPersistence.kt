@@ -7,6 +7,7 @@ import androidx.core.content.edit
 object MobileSessionPersistence {
 	private const val PREFS = "cookcue-session"
 	private const val KEY_RECIPE_ID = "recipe-id"
+	private const val KEY_RECIPE_OPTION_ID = "recipe-option-id"
 	private const val KEY_STARTED_AT = "started-at"
 	private const val KEY_STARTED_WALL_CLOCK = "started-wall-clock"
 	private const val KEY_DURATION_OVERRIDES = "duration-overrides"
@@ -117,6 +118,7 @@ object MobileSessionPersistence {
 
 			CookingSessionController.restore(
 				recipeId = restoredRecipe?.id,
+				selectedOptionId = prefs.getString(KEY_RECIPE_OPTION_ID, null),
 				startedAt = startedAt,
 				sessionStartedWallClockMillis = startedWallClock,
 				durationOverrides = overrides,
@@ -150,6 +152,7 @@ object MobileSessionPersistence {
 			.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 			.edit {
 				putString(KEY_RECIPE_ID, CookingSessionController.selectedRecipeId)
+				putString(KEY_RECIPE_OPTION_ID, CookingSessionController.selectedOptionId)
 				putLong(KEY_STARTED_AT, CookingSessionController.startedAt ?: -1L)
 				putLong(
 					KEY_STARTED_WALL_CLOCK,
