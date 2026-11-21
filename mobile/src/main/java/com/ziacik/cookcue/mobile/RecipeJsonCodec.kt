@@ -32,7 +32,6 @@ internal object RecipeJsonCodec {
 			"Unsupported recipe schema version."
 		}
 
-
 		val baseRecipe = decodeSingle(root)
 		val options = root.optJSONArray("options")?.mapObjects { option ->
 			val id = option.getString("id")
@@ -64,9 +63,9 @@ internal object RecipeJsonCodec {
 				val ingredient = source.getJSONObject(index)
 				val name = ingredient.getString("name")
 				if (ingredients.has(name)) {
-					val override = ingredients.getJSONObject(name)
-					if (override.has("name")) ingredient.put("name", override.getString("name"))
-					if (override.has("amount")) ingredient.put("amount", override.getString("amount"))
+					val replacement = ingredients.getJSONObject(name)
+					if (replacement.has("name")) ingredient.put("name", replacement.getString("name"))
+					if (replacement.has("amount")) ingredient.put("amount", replacement.getString("amount"))
 					found.add(name)
 				}
 			}
@@ -92,9 +91,9 @@ internal object RecipeJsonCodec {
 				val tip = tips.getJSONObject(index)
 				val problem = tip.getString("problem")
 				if (replacements.has(problem)) {
-					val override = replacements.getJSONObject(problem)
-					if (override.has("problem")) tip.put("problem", override.getString("problem"))
-					if (override.has("advice")) tip.put("advice", override.getString("advice"))
+					val replacement = replacements.getJSONObject(problem)
+					if (replacement.has("problem")) tip.put("problem", replacement.getString("problem"))
+					if (replacement.has("advice")) tip.put("advice", replacement.getString("advice"))
 					found.add(problem)
 				}
 			}
