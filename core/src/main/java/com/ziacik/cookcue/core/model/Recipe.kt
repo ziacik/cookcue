@@ -181,6 +181,12 @@ data class TroubleshootingTip(
 	val advice: String,
 )
 
+data class RecipeOption(
+	val id: String,
+	val label: String,
+	val recipe: Recipe,
+)
+
 data class Recipe(
 	val id: String,
 	val title: String,
@@ -196,6 +202,7 @@ data class Recipe(
 	val scheduleTimeZoneId: String? = null,
 	val earlyFinishActionLabel: String? = null,
 	val earlyFinishTaskIds: Set<String> = emptySet(),
+	val options: List<RecipeOption> = emptyList(),
 ) {
 	init {
 		require(earlyFinishTaskIds.isEmpty() || !earlyFinishActionLabel.isNullOrBlank()) {
