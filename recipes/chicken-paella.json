@@ -380,5 +380,45 @@
 			"problem": "Používam inú ryžu než Bomba",
 			"advice": "Čas 7 + 11 minút a 600 ml vývaru sú orientované na Bomba. Arborio či iná guľatozrnná ryža môže potrebovať menej vody a kratší čas; sleduj obal a varenie ukonči podľa skutočnej mäkkosti."
 		}
+	],
+	"options": [
+		{
+			"id": "bomba",
+			"label": "Bomba"
+		},
+		{
+			"id": "sollana",
+			"label": "Arroz Cebolla Sollana",
+			"overrides": {
+				"description": "2–3 porcie · ryža Arroz Cebolla Sollana, kuracie stehná, zelené fazuľky a vývar z bujónu · cca 60–75 min aj s prípravou",
+				"preCookingNote": "Recept je nastavený na 200 g ryže Arroz Cebolla Sollana, počiatočných 500 ml horúceho vývaru a približne 100 ml horúcej vody v rezerve. Ideálne použi širokú panvicu 28–30 cm. Časovanie je orientačne 7 minút živšieho a 11 minút mierneho varu, ale množstvo tekutiny závisí aj od panvice a výkonu horáka: kontroluj ryžu a pri tvrdých zrnách a suchom dne dolievaj po okraji po 30–50 ml. Presný časovač sa spúšťa až po potvrdení VRIE. Od zaliatia ryžu NEMIEŠAJ a panvicu NEZAKRÝVAJ. Upozornenie po 7 minútach vyžaduje manuálne zníženie výkonu. Prípravné kroky s akciou Hotovo posúvaj podľa skutočného dokončenia.",
+				"ingredients": {
+					"španielska ryža Bomba (na paellu)": {
+						"name": "španielska ryža Arroz Cebolla Sollana (na paellu)",
+						"amount": "200 g, suchá; nepreplachovať"
+					},
+					"kurací bujón": {
+						"amount": "množstvo podľa obalu na 500 ml vývaru; radšej slabší"
+					},
+					"voda": {
+						"amount": "600 ml: 500 ml na vývar + približne 100 ml horúca rezerva"
+					}
+				},
+				"taskInstructions": {
+					"gather": "Priprav širokú panvicu ideálne 28–30 cm, varešku, dosku, nôž, strúhadlo, váhu, odmerku a žiaruvzdornú nádobu na 500 ml vývaru. K dispozícii maj rýchlovarnú kanvicu. Prečítaj si časovanie ryže: od začiatku varu 7 minút silnejšie, potom 11 minút mierne a následne kontrola. Nič na sporáku zatiaľ nezapínaj.",
+					"measure": "Odváž 200 g suchej ryže Arroz Cebolla Sollana. Neumývaj ju. Odmeraj 600 ml vody do vypnutej kanvice; neskôr použiješ 500 ml do vývaru a cca 100 ml necháš ako horúcu rezervu. Priprav kocku bujónu (dávka podľa obalu na 500 ml) a štipku šafranu do žiaruvzdornej nádoby. Zatiaľ nevar vodu.",
+					"start-kettle": "Zapni kanvicu so 600 ml odmeranej vody. Bujón ani šafran nedávaj do kanvice — už čakajú v žiaruvzdornej nádobe. Voda sa teraz bude ohrievať paralelne s paradajkovým základom. Klikni Hotovo hneď po zapnutí.",
+					"make-stock": "Stiahni výkon panvice na minimum (prípadne ju na chvíľu odstav). Z kanvice opatrne nalej PRESNE 500 ml horúcej vody do žiaruvzdornej nádoby s bujónom a šafranom. Miešaj, kým sa bujón rozpustí. Zvyšnú horúcu vodu nechaj na prípadné dolievanie. Vývar by mal byť jemne slaný, nie presolený. Teraz maj všetko potrebné na ryžu pripravené.",
+					"coat-rice": "Vráť panvicu na stredný výkon. Prisyp všetkých 200 g suchej ryže Arroz Cebolla Sollana a asi minútu ju premiešavaj s paradajkovým základom, kuracím mäsom a fazuľkami, aby sa rovnomerne obalila. Ešte sa nezačalo presné časovanie varu. Pred zaliatím sa uisti, že máš po ruke horúci vývar a poznáš ďalšie kroky.",
+					"pour-stock": "Nalej na panvicu všetkých 500 ml horúceho vývaru. Raz opatrne premiešaj a rozlož ryžu rovnomerne do tenkej vrstvy, aby neostala kopa uprostred. Od tejto chvíle ryžu už NEMIEŠAJ. Panvicu nezakrývaj. Zvýš výkon, aby vývar začal viditeľne a rovnomerne vrieť. Klikni Hotovo po zaliatí a rozložení, nie až po dovarení."
+				},
+				"troubleshooting": {
+					"Používam inú ryžu než Bomba": {
+						"problem": "Používam inú ryžu než Sollana",
+						"advice": "Čas 7 + 11 minút a počiatočných 500 ml vývaru sú orientované na Sollana. Bomba obyčajne potrebuje viac tekutiny (v tomto recepte 600 ml); pri ďalšej ryži sa riaď obalom, mäkkosťou zŕn a tým, koľko tekutiny zostáva v panvici."
+					}
+				}
+			}
+		}
 	]
 }
