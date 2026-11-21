@@ -97,13 +97,22 @@ object CookingSessionController {
 		if (availableRecipes.none { it.id == selectedRecipeId }) {
 			selectedRecipeId = availableRecipes.firstOrNull()?.id.orEmpty()
 		}
+		val options = availableRecipes.firstOrNull { it.id == selectedRecipeId }?.options.orEmpty()
+		selectedOptionId = selectedOptionId.takeIf { id -> options.any { it.id == id } }
+			?: options.firstOrNull()?.id.orEmpty()
 	}
 
 	var selectedRecipeId by mutableStateOf("")
 		private set
 
+	var selectedOptionId by mutableStateOf("")
+		private set
+
 	val recipeOrNull: Recipe?
-		get() = availableRecipes.firstOrNull { it.id == selectedRecipeId }
+		get() {
+			val base = availableRecipes.firstOrNull { it.id == selectedRecipeId } ?: return null
+			return base.options.firstOrNull { it.id == selectedOptionId }?.recipe ?: base
+		}
 
 	val recipe: Recipe
 		get() = requireNotNull(recipeOrNull) { "No recipe loaded from the online catalog." }
@@ -117,6 +126,7 @@ object CookingSessionController {
 		}
 
 		selectedRecipeId = recipeId
+		selectedOptionId = availableRecipes.first { it.id == recipeId }.options.firstOrNull()?.id.orEmpty()
 		durationOverrides = emptyMap()
 		taskStartOverrides = emptyMap()
 		skippedTaskIds = emptySet()
@@ -130,6 +140,15 @@ object CookingSessionController {
 		nearbySuggestionSnoozeTaskId = null
 		nearbySuggestionSnoozeUntilElapsedRealtime = 0L
 		eventDeferredUntil = emptyMap()
+		markSilentTransition()
+	}
+
+
+	fun selectRecipeOption(optionId: String) {
+		if (startedAt != null) return
+		val base = availableRecipes.firstOrNull { it.id == selectedRecipeId } ?: return
+		if (base.options.none { it.id == optionId }) return
+		selectedOptionId = optionId
 		markSilentTransition()
 	}
 
@@ -256,12 +275,16 @@ object CookingSessionController {
 		nearbySuggestionSnoozeUntilElapsedRealtime: Long = 0L,
 		eventDeferredUntil: Map<String, Long> = emptyMap(),
 		completedEarly: Boolean = false,
+		selectedOptionId: String? = null,
 	) {
 		if (availableRecipes.isEmpty()) return
 		selectedRecipeId = availableRecipes
 			.firstOrNull { it.id == recipeId }
 			?.id
 			?: availableRecipes.first().id
+		val options = availableRecipes.first { it.id == selectedRecipeId }.options
+		this.selectedOptionId = selectedOptionId?.takeIf { id -> options.any { it.id == id } }
+			?: options.firstOrNull()?.id.orEmpty()
 
 		val itineraryCanResume =
 			recipe.scheduleMode == ScheduleMode.ITINERARY &&
