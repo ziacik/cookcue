@@ -454,6 +454,32 @@ private fun CookCueScreen() {
 							color = MaterialTheme.colorScheme.onSurfaceVariant,
 						)
 						Spacer(Modifier.height(18.dp))
+						val recipeOptions = CookingSessionController.availableRecipes
+							.firstOrNull { it.id == selectedRecipeId }?.options.orEmpty()
+						if (recipeOptions.size > 1) {
+							SectionTitle("Druh ryže")
+							Spacer(Modifier.height(8.dp))
+							recipeOptions.forEach { option ->
+								if (option.id == CookingSessionController.selectedOptionId) {
+									Button(
+										onClick = {},
+										modifier = Modifier.fillMaxWidth(),
+										shape = RoundedCornerShape(12.dp),
+									) { Text(option.label) }
+								} else {
+									OutlinedButton(
+										onClick = {
+											CookingSessionController.selectRecipeOption(option.id)
+											persistAndSync()
+										},
+										modifier = Modifier.fillMaxWidth(),
+										shape = RoundedCornerShape(12.dp),
+									) { Text(option.label) }
+								}
+								Spacer(Modifier.height(6.dp))
+							}
+							Spacer(Modifier.height(12.dp))
+						}
 						PreCookingPanel(
 							note = recipe.preCookingNote,
 							isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY,
