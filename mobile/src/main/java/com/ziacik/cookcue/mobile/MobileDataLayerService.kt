@@ -22,6 +22,8 @@ class MobileDataLayerService : WearableListenerService() {
 			when (action) {
 				DataLayerProtocol.ACTION_REQUEST_STATE -> Unit
 				DataLayerProtocol.ACTION_START -> CookingSessionController.start()
+				DataLayerProtocol.ACTION_PAUSE_PREPARATION -> CookingSessionController.pausePreparation()
+				DataLayerProtocol.ACTION_RESUME_PREPARATION -> CookingSessionController.resumePreparation()
 				DataLayerProtocol.ACTION_PREVIOUS -> CookingSessionController.previous()
 				DataLayerProtocol.ACTION_NEXT -> CookingSessionController.next()
 				DataLayerProtocol.ACTION_CONFIRM_EVENT -> CookingSessionController.confirmEvent(taskId)
