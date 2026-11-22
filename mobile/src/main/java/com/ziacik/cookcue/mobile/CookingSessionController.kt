@@ -846,6 +846,7 @@ object CookingSessionController {
 
 		val navigationAllowed =
 			recipe.scheduleMode != ScheduleMode.ITINERARY &&
+				!paused &&
 				activeActions.isEmpty() &&
 				pendingEvents.isEmpty()
 		val previousAction = if (navigationAllowed) {
