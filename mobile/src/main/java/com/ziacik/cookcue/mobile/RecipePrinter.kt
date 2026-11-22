@@ -21,7 +21,6 @@ import androidx.core.graphics.withSave
 import androidx.core.graphics.withTranslation
 import com.ziacik.cookcue.core.model.CookingTask
 import com.ziacik.cookcue.core.model.Recipe
-import com.ziacik.cookcue.core.model.TaskKind
 import com.ziacik.cookcue.core.scheduler.Scheduler
 import java.io.FileOutputStream
 
@@ -146,7 +145,7 @@ private class RecipePrintAdapter(
 					canvas.drawText(
 						"CookCue · " + (index + 1) + "/" + plan.pages.size,
 						0f,
-						bounds.height() - 1f,
+						bounds.height() - 6f,
 						footer,
 					)
 					}
@@ -392,11 +391,7 @@ private fun recipeBlocks(recipe: Recipe): List<PrintBlock> = buildList {
 		val first = group.first()
 		val repeat = first.task.repeatInfo
 		if (repeat == null) {
-			add(PrintBlock(stepLines(
-				index + 1,
-				first.task,
-				first.startSeconds,
-			), 7f))
+			add(PrintBlock(stepLines(index + 1, first.task), 7f))
 		} else {
 			val lines = mutableListOf(
 				PrintLine(
@@ -434,7 +429,7 @@ private fun recipeBlocks(recipe: Recipe): List<PrintBlock> = buildList {
 	}
 }
 
-private fun stepLines(number: Int, task: CookingTask, startsAt: Long): List<PrintLine> =
+private fun stepLines(number: Int, task: CookingTask): List<PrintLine> =
 	buildList {
 		val optional = if (task.optional) " · voliteľné" else ""
 		add(PrintLine(
@@ -444,9 +439,6 @@ private fun stepLines(number: Int, task: CookingTask, startsAt: Long): List<Prin
 		))
 		if (task.instruction.isNotBlank() && task.instruction != task.title) {
 			add(PrintLine(task.instruction, PrintStyle.BODY))
-		}
-		if (task.kind == TaskKind.EVENT && !task.actionLabel.isNullOrBlank()) {
-			add(PrintLine("Potvrď: " + task.actionLabel, PrintStyle.SMALL))
 		}
 		task.tips.forEach { add(PrintLine("Tip: " + it, PrintStyle.SMALL)) }
 	}
