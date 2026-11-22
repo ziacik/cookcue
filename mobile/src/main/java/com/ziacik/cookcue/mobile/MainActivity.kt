@@ -404,7 +404,9 @@ private fun CookCueScreen() {
 				CookCueTopBar(
 					recipeTitle = recipe.title,
 					showRecipesAction = snapshot.started,
+					showPrintAction = recipe.scheduleMode == ScheduleMode.COOKING,
 					onRecipes = { showStopCookingDialog = true },
+					onPrint = { RecipePrinter.print(context, recipe) },
 				)
 			}
 
@@ -895,7 +897,9 @@ private fun CookCueScreen() {
 private fun CookCueTopBar(
 	recipeTitle: String,
 	showRecipesAction: Boolean,
+	showPrintAction: Boolean,
 	onRecipes: () -> Unit,
+	onPrint: () -> Unit,
 ) {
 	Column {
 		Row(
@@ -914,6 +918,18 @@ private fun CookCueTopBar(
 				),
 				modifier = Modifier.weight(1f),
 			)
+			if (showPrintAction) {
+				TextButton(
+					onClick = onPrint,
+					contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+				) {
+					Text(
+						text = "TLAČIŤ",
+						style = MaterialTheme.typography.labelMedium,
+						fontWeight = FontWeight.Bold,
+					)
+				}
+			}
 			if (showRecipesAction) {
 				TextButton(
 					onClick = onRecipes,
