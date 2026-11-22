@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.graphics.pdf.PdfDocument
 import android.os.Bundle
 import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
@@ -13,7 +14,6 @@ import android.print.PrintAttributes
 import android.print.PrintDocumentAdapter
 import android.print.PrintDocumentInfo
 import android.print.PrintManager
-import android.print.pdf.PrintedPdfDocument
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
@@ -41,6 +41,50 @@ internal object RecipePrinter {
 				.setColorMode(PrintAttributes.COLOR_MODE_MONOCHROME)
 				.build(),
 		)
+	}
+}
+
+/**
+ * Physical print margins are part of the PDF content, not just a hint passed
+ * to the Android print dialog. All coordinates are in 1/72-inch PDF points.
+ *
+ * PrintedPdfDocument relies on the margins returned by the print service,
+ * which can be zero even if the initial print attributes requested margins.
+ */
+private data class RecipePrintPageArea(
+	val pageWidth: Int,
+	val pageHeight: Int,
+	val left: Float,
+	val top: Float,
+	val right: Float,
+	val bottom: Float,
+) {
+	val width: Float get() = pageWidth - left - right
+	val height: Float get() = pageHeight - top - bottom
+
+	companion object {
+		private const val POINTS_PER_INCH = 72f
+		private const val MILS_PER_INCH = 1000f
+		private const val MIN_MARGIN_POINTS = 15f * POINTS_PER_INCH / 25.4f
+
+		fun from(attributes: PrintAttributes): RecipePrintPageArea {
+			val media = attributes.mediaSize ?: PrintAttributes.MediaSize.ISO_A4
+			val margins = attributes.minMargins
+			fun points(mils: Int) = mils * POINTS_PER_INCH / MILS_PER_INCH
+			fun inset(mils: Int) = maxOf(MIN_MARGIN_POINTS, points(mils))
+			val area = RecipePrintPageArea(
+				pageWidth = points(media.widthMils).toInt(),
+				pageHeight = points(media.heightMils).toInt(),
+				left = inset(margins?.leftMils ?: 0),
+				top = inset(margins?.topMils ?: 0),
+				right = inset(margins?.rightMils ?: 0),
+				bottom = inset(margins?.bottomMils ?: 0),
+			)
+			require(area.width > 0 && area.height > 0) {
+				"Na zvolený formát sa recept nezmestí."
+			}
+			return area
+		}
 	}
 }
 
@@ -88,13 +132,16 @@ private class RecipePrintAdapter(
 		}
 
 		try {
-			val document = PrintedPdfDocument(context, printAttributes)
+			val pageArea = RecipePrintPageArea.from(printAttributes)
+			// A full-page PdfDocument has a stable (0,0) coordinate origin.
+			// Printing services may override PrintAttributes.minMargins, so
+			// always apply our own 15 mm (or larger printer) insets.
+			val document = PdfDocument()
 			try {
-				val bounds = document.pageContentRect
 				val composer = CompactRecipeComposer(
 					recipe = recipe,
-					width = bounds.width().toFloat(),
-					height = bounds.height().toFloat(),
+					width = pageArea.width,
+					height = pageArea.height,
 				)
 				// Only make a small font adjustment if it actually saves a sheet.
 				// Otherwise keep full-size type and balance content across pages.
@@ -118,9 +165,16 @@ private class RecipePrintAdapter(
 					if (cancellationSignal.isCanceled) return@forEachIndexed
 					if (pages.none { index in it.start..it.end }) return@forEachIndexed
 
-					val page = document.startPage(index + 1)
+					val page = document.startPage(
+						PdfDocument.PageInfo.Builder(
+							pageArea.pageWidth,
+							pageArea.pageHeight,
+							index + 1,
+						).create(),
+					)
 					val canvas = page.canvas
-					canvas.withTranslation(bounds.left.toFloat(), bounds.top.toFloat()) {
+					canvas.withTranslation(pageArea.left, pageArea.top) {
+						clipRect(0f, 0f, pageArea.width, pageArea.height)
 						placements.forEach { it.draw(this) }
 
 					if (index > 0) {
@@ -136,7 +190,7 @@ private class RecipePrintAdapter(
 						strokeWidth = 0.6f
 					}
 					val dividerY = if (index == 0) plan.dividerY else 19f
-					canvas.drawLine(0f, dividerY, bounds.width().toFloat(), dividerY, rule)
+					canvas.drawLine(0f, dividerY, pageArea.width, dividerY, rule)
 
 					val footer = Paint(Paint.ANTI_ALIAS_FLAG).apply {
 						color = Color.DKGRAY
@@ -145,7 +199,7 @@ private class RecipePrintAdapter(
 					canvas.drawText(
 						"CookCue · " + (index + 1) + "/" + plan.pages.size,
 						0f,
-						bounds.height() - 6f,
+						pageArea.height - 6f,
 						footer,
 					)
 					}
