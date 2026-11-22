@@ -6,6 +6,8 @@ object DataLayerProtocol {
 
 	const val ACTION_REQUEST_STATE = "request_state"
 	const val ACTION_START = "start"
+	const val ACTION_PAUSE_PREPARATION = "pause_preparation"
+	const val ACTION_RESUME_PREPARATION = "resume_preparation"
 	const val ACTION_PREVIOUS = "previous"
 	const val ACTION_NEXT = "next"
 	const val ACTION_CONFIRM_EVENT = "confirm_event"
@@ -17,6 +19,8 @@ object DataLayerProtocol {
 	const val KEY_VERSION = "version"
 	const val KEY_STARTED = "started"
 	const val KEY_PAUSED = "paused"
+	const val KEY_PAUSED_PREPARATION = "paused_preparation"
+	const val KEY_CAN_PAUSE_PREPARATION = "can_pause_preparation"
 	const val KEY_COMPLETED = "completed"
 	const val KEY_RECIPE_TITLE = "recipe_title"
 	const val KEY_CURRENT_TASK_ID = "current_task_id"

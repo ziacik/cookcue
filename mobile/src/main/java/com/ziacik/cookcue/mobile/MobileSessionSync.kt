@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import com.ziacik.cookcue.core.sync.DataLayerProtocol
+import com.ziacik.cookcue.core.model.ScheduleMode
 
 data class TransitionSignal(
 	val id: Long,
@@ -27,6 +28,14 @@ object MobileSessionSync {
 			putLong(DataLayerProtocol.KEY_VERSION, System.currentTimeMillis())
 			putBoolean(DataLayerProtocol.KEY_STARTED, snapshot.started)
 			putBoolean(DataLayerProtocol.KEY_PAUSED, snapshot.paused)
+			putBoolean(
+				DataLayerProtocol.KEY_PAUSED_PREPARATION,
+				snapshot.paused && CookingSessionController.recipeOrNull?.scheduleMode == ScheduleMode.COOKING,
+			)
+			putBoolean(
+				DataLayerProtocol.KEY_CAN_PAUSE_PREPARATION,
+				CookingSessionController.canPausePreparation(snapshot),
+			)
 			putBoolean(DataLayerProtocol.KEY_COMPLETED, snapshot.completed)
 			putString(DataLayerProtocol.KEY_RECIPE_TITLE, CookingSessionController.recipeOrNull?.title.orEmpty())
 

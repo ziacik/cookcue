@@ -136,6 +136,7 @@ private fun CookCueScreen() {
 	val skippedTaskIds = CookingSessionController.skippedTaskIds
 	val deferredTaskIds = CookingSessionController.deferredTaskIds
 	val paused = CookingSessionController.paused
+	val pausedCookingElapsedMillis = CookingSessionController.pausedCookingElapsedMillis
 	val completedEarly = CookingSessionController.completedEarly
 	val activeTaskOverrideId = CookingSessionController.activeTaskOverrideId
 	val activeTaskOverrideStartedAtSeconds =
@@ -225,6 +226,7 @@ private fun CookCueScreen() {
 		skippedTaskIds,
 		deferredTaskIds,
 		paused,
+		pausedCookingElapsedMillis,
 		completedEarly,
 		activeTaskOverrideId,
 		activeTaskOverrideStartedAtSeconds,
@@ -532,6 +534,39 @@ private fun CookCueScreen() {
 								) {
 									Text(
 										text = "⏸  POZASTAVIŤ ITINERÁR",
+										fontWeight = FontWeight.Bold,
+									)
+								}
+							}
+						}
+					}
+				}
+
+				if (
+					recipe.scheduleMode == ScheduleMode.COOKING &&
+					(snapshot.paused || CookingSessionController.canPausePreparation(snapshot))
+				) {
+					item {
+						Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+							Spacer(Modifier.height(12.dp))
+							if (snapshot.paused) {
+								PausedPreparationCard(
+									onResume = {
+										CookingSessionController.resumePreparation()
+										persistAndSync()
+									},
+								)
+							} else {
+								OutlinedButton(
+									onClick = {
+										CookingSessionController.pausePreparation()
+										persistAndSync()
+									},
+									modifier = Modifier.fillMaxWidth(),
+									shape = RoundedCornerShape(12.dp),
+								) {
+									Text(
+										text = "⏸  POZASTAVIŤ PRÍPRAVU",
 										fontWeight = FontWeight.Bold,
 									)
 								}
@@ -1476,6 +1511,41 @@ private fun CompletionCard(
 					fontWeight = FontWeight.Bold,
 					modifier = Modifier.padding(vertical = 4.dp),
 				)
+			}
+		}
+	}
+}
+
+@Composable
+private fun PausedPreparationCard(onResume: () -> Unit) {
+	Surface(
+		modifier = Modifier.fillMaxWidth(),
+		color = MaterialTheme.colorScheme.secondaryContainer,
+		shape = RoundedCornerShape(18.dp),
+	) {
+		Column(modifier = Modifier.padding(18.dp)) {
+			SmallLabel("PRÍPRAVA POZASTAVENÁ")
+			Spacer(Modifier.height(7.dp))
+			Text(
+				text = "Pokračuj, keď budeš pripravený",
+				style = MaterialTheme.typography.titleLarge.copy(
+					fontFamily = FontFamily.Serif,
+					fontWeight = FontWeight.SemiBold,
+				),
+			)
+			Spacer(Modifier.height(4.dp))
+			Text(
+				text = "Čas prípravy aj zostávajúci plán stoja. Po pokračovaní sa vrátiš k rovnakému kroku.",
+				style = MaterialTheme.typography.bodyMedium,
+				color = MaterialTheme.colorScheme.onSecondaryContainer,
+			)
+			Spacer(Modifier.height(12.dp))
+			Button(
+				onClick = onResume,
+				modifier = Modifier.fillMaxWidth(),
+				shape = RoundedCornerShape(12.dp),
+			) {
+				Text(text = "▶  POKRAČOVAŤ", fontWeight = FontWeight.Bold)
 			}
 		}
 	}
