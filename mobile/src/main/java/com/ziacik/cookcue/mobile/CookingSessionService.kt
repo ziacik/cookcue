@@ -362,6 +362,11 @@ class CookingSessionService : Service() {
 		if (snapshot.activeActions.size > 1) {
 			return "Teraz: " + snapshot.activeActions.joinToString(" + ") { it.task.title }
 		}
+		snapshot.retryCountdowns.firstOrNull()?.let { retry ->
+			val remaining = (retry.untilSeconds - snapshot.elapsedSeconds).coerceAtLeast(0)
+			val clock = "%02d:%02d".format(remaining / 60, remaining % 60)
+			return "Ďalšia kontrola o $clock: " + retry.event.task.title
+		}
 		snapshot.background.minByOrNull { it.endSeconds }?.let {
 			return "Čakám: " + it.task.title
 		}
