@@ -251,7 +251,8 @@ private fun CookCueScreen() {
 	val displayedWait = if (activeActions.isEmpty()) primaryWait else null
 	val canAdvanceWait = displayedWait?.task?.allowEarlyCompletion == true &&
 		snapshot.pendingEvents.isEmpty()
-	val activeTaskId = current?.task?.id ?: displayedWait?.task?.id
+	val activeTaskId = current?.task?.id ?: displayedWait?.task?.id ?:
+		snapshot.retryCountdowns.firstOrNull()?.event?.task?.id
 	val planItems = snapshot.schedule.distinctBy { it.task.repeatInfo?.id ?: it.task.id }
 	val currentPlanId = snapshot.schedule.firstOrNull { it.task.id == activeTaskId }
 		?.task?.let { it.repeatInfo?.id ?: it.id }
@@ -275,7 +276,8 @@ private fun CookCueScreen() {
 
 	val keepScreenAwake =
 		snapshot.started &&
-			(current != null || primaryWait != null || snapshot.pendingEvents.isNotEmpty() || snapshot.completed)
+			(current != null || primaryWait != null || snapshot.retryCountdowns.isNotEmpty() ||
+				snapshot.pendingEvents.isNotEmpty() || snapshot.completed)
 
 	LaunchedEffect(keepScreenAwake) {
 		val window = (context as? ComponentActivity)?.window ?: return@LaunchedEffect
@@ -680,6 +682,8 @@ private fun CookCueScreen() {
 								)
 							}
 
+							snapshot.retryCountdowns.isNotEmpty() -> Unit
+
 							snapshot.completed -> {
 								CompletionCard(
 									isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY,
@@ -695,6 +699,41 @@ private fun CookCueScreen() {
 								IdleCard(isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY)
 							}
 						}
+					}
+				}
+
+				items(snapshot.retryCountdowns, key = { "retry-" + it.event.task.id }) { retry ->
+					val task = retry.event.task
+					val retryPlanId = task.repeatInfo?.id ?: task.id
+					val retryIndex = planItems.indexOfFirst {
+						(it.task.repeatInfo?.id ?: it.task.id) == retryPlanId
+					}
+					Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+						Spacer(Modifier.height(12.dp))
+						CurrentStepCard(
+							title = "Ďalšia kontrola: " + conciseTaskTitle(task),
+							image = task.image,
+							instruction = task.retryInstruction
+								?: "Pokračuj podľa pokynov receptu. Po odpočítaní sa zobrazí kontrolná otázka.",
+							tips = emptyList(),
+							links = emptyList(),
+							estimateSeconds = retry.durationSeconds,
+							elapsedSeconds = retry.elapsedSeconds(snapshot.elapsedSeconds),
+							stepNumber = retryIndex.takeIf { it >= 0 }?.plus(1),
+							stepCount = planItems.size,
+							stepLabel = task.repeatInfo?.let {
+								"${it.title} ${it.repetition}/${it.count}"
+							},
+							actionLabel = null,
+							allowEarlyCompletion = false,
+							onCompleteWaitEarly = {},
+							optional = false,
+							isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY,
+							onDefer = {},
+							onSkip = {},
+							onAction = {},
+							statusLabel = "ODPOČET KONTROLY",
+						)
 					}
 				}
 
@@ -862,7 +901,8 @@ private fun CookCueScreen() {
 				}
 				val groupActive = children.any { step ->
 					step.task.id == activeTaskId ||
-						snapshot.pendingEvents.any { it.task.id == step.task.id }
+						snapshot.pendingEvents.any { it.task.id == step.task.id } ||
+						snapshot.retryCountdowns.any { it.event.task.id == step.task.id }
 				}
 				val groupProgress = if (repeat == null) {
 					snapshot.taskProgress[item.task.id] ?: TaskProgress.PENDING
@@ -1171,6 +1211,7 @@ private fun CurrentStepCard(
 	onDefer: () -> Unit,
 	onSkip: () -> Unit,
 	onAction: () -> Unit,
+	statusLabel: String = "TERAZ",
 ) {
 	Surface(
 		modifier = Modifier.fillMaxWidth(),
@@ -1192,7 +1233,7 @@ private fun CurrentStepCard(
 					shape = RoundedCornerShape(50),
 				) {
 					Text(
-						text = if (optional) "VOLITEĽNÉ · TERAZ" else "TERAZ",
+						text = if (optional) "VOLITEĽNÉ · TERAZ" else statusLabel,
 						style = MaterialTheme.typography.labelMedium,
 						fontWeight = FontWeight.Bold,
 						color = MaterialTheme.colorScheme.primary,

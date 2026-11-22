@@ -10,6 +10,8 @@ import com.ziacik.cookcue.core.model.ScheduleMode
 import com.ziacik.cookcue.core.model.ScheduledTask
 import com.ziacik.cookcue.core.model.TaskKind
 import com.ziacik.cookcue.core.scheduler.ActiveTaskClock
+import com.ziacik.cookcue.core.scheduler.EventRetryCountdown
+import com.ziacik.cookcue.core.scheduler.EventRetryCountdowns
 import com.ziacik.cookcue.core.scheduler.ItineraryScheduler
 import com.ziacik.cookcue.core.scheduler.PreparationPauseClock
 import com.ziacik.cookcue.core.scheduler.PreparationPausePolicy
@@ -33,6 +35,7 @@ data class MobileSessionSnapshot(
 	val currentAction: ScheduledTask?,
 	val background: List<ScheduledTask>,
 	val pendingEvents: List<ScheduledTask>,
+	val retryCountdowns: List<EventRetryCountdown>,
 	val previousAction: ScheduledTask?,
 	val nextAction: ScheduledTask?,
 	val nextScheduled: ScheduledTask?,
@@ -730,6 +733,7 @@ object CookingSessionController {
 				currentAction = null,
 				background = emptyList(),
 				pendingEvents = emptyList(),
+				retryCountdowns = emptyList(),
 				previousAction = null,
 				nextAction = null,
 				nextScheduled = null,
@@ -833,6 +837,18 @@ object CookingSessionController {
 			}
 		}
 
+		val retryCountdowns = if (start == null || paused) {
+			emptyList()
+		} else {
+			EventRetryCountdowns.active(
+				schedule = schedule,
+				retryUntilById = eventDeferredUntil,
+				elapsedSeconds = elapsedSeconds,
+				inactiveTaskIds = blockedIds + skippedTaskIds + deferredTaskIds +
+					durationOverrides.keys + manuallyCompletedTaskIds,
+			)
+		}
+
 		val actionSteps = schedule.filter {
 			it.task.kind == TaskKind.ACTIVE &&
 				it.task.resources.any { resource -> resource.resource == "cook" } &&
@@ -848,7 +864,8 @@ object CookingSessionController {
 			recipe.scheduleMode != ScheduleMode.ITINERARY &&
 				!paused &&
 				activeActions.isEmpty() &&
-				pendingEvents.isEmpty()
+				pendingEvents.isEmpty() &&
+				retryCountdowns.isEmpty()
 		val previousAction = if (navigationAllowed) {
 			actionSteps.getOrNull(navigationIndex - 1)
 		} else {
@@ -870,6 +887,7 @@ object CookingSessionController {
 		val activeIds = buildSet {
 			activeActions.mapTo(this) { it.task.id }
 			pendingEvents.mapTo(this) { it.task.id }
+			retryCountdowns.mapTo(this) { it.event.task.id }
 		}
 		val taskProgress = recipe.tasks.associate { task ->
 			task.id to when {
@@ -887,6 +905,7 @@ object CookingSessionController {
 				unconfirmedManualTaskIds.isEmpty() &&
 				activeActions.isEmpty() &&
 				pendingEvents.isEmpty() &&
+				retryCountdowns.isEmpty() &&
 				background.isEmpty() &&
 				nextScheduled == null
 
@@ -900,6 +919,7 @@ object CookingSessionController {
 			currentAction = currentAction,
 			background = background,
 			pendingEvents = pendingEvents,
+			retryCountdowns = retryCountdowns,
 			previousAction = previousAction,
 			nextAction = nextAction,
 			nextScheduled = nextScheduled,
@@ -913,6 +933,7 @@ object CookingSessionController {
 				currentAction = null,
 				background = emptyList(),
 				pendingEvents = emptyList(),
+				retryCountdowns = emptyList(),
 				previousAction = null,
 				nextAction = null,
 				nextScheduled = null,

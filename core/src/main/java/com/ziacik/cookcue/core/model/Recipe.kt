@@ -134,6 +134,7 @@ data class CookingTask(
 	val actionLabel: String? = null,
 	val retryActionLabel: String? = null,
 	val retryAfterSeconds: Long? = null,
+	val retryInstruction: String? = null,
 	val optional: Boolean = false,
 	val image: TaskImage? = null,
 	val place: TaskPlace? = null,
@@ -157,7 +158,7 @@ data class CookingTask(
 			}
 		}
 
-		if (retryAfterSeconds != null || retryActionLabel != null) {
+		if (retryAfterSeconds != null || retryActionLabel != null || retryInstruction != null) {
 			require(kind == TaskKind.EVENT) {
 				"Only event task '$id' can define a retry action."
 			}
@@ -166,6 +167,9 @@ data class CookingTask(
 			}
 			require(!retryActionLabel.isNullOrBlank()) {
 				"Retryable event task '$id' must define retryActionLabel."
+			}
+			require(retryInstruction == null || retryInstruction.isNotBlank()) {
+				"Retry instruction for event task '$id' must not be blank."
 			}
 		}
 	}
