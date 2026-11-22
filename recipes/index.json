@@ -69,7 +69,7 @@
 		},
 		{
 			"id": "chicken-paella",
-			"version": 2,
+			"version": 3,
 			"file": "chicken-paella.json",
 			"minAppVersion": 1
 		},

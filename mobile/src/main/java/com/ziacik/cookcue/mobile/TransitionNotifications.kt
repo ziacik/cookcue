@@ -54,7 +54,7 @@ fun MobileSessionSnapshot.transitionCues(): List<TransitionCue> {
 
 object MobileTransitionNotifier {
 	private const val CHANNEL_ID = "cooking_transitions"
-	private const val NOTIFICATION_ID_BASE = 2001
+	private const val NOTIFICATION_ID = 2001
 
 	fun ensureChannel(context: Context) {
 		val manager = context.getSystemService(NotificationManager::class.java)
@@ -67,6 +67,15 @@ object MobileTransitionNotifier {
 			enableVibration(true)
 		}
 		manager.createNotificationChannel(channel)
+	}
+
+	// Older releases used a different ID per cue, leaving a notification for every step.
+	// Remove those alerts without touching the foreground cooking-session notification.
+	fun clearLegacyNotifications(context: Context) {
+		val manager = context.getSystemService(NotificationManager::class.java)
+		manager.activeNotifications
+			.filter { it.notification.channelId == CHANNEL_ID && it.id != NOTIFICATION_ID }
+			.forEach { manager.cancel(it.tag, it.id) }
 	}
 
 	fun notify(
@@ -101,9 +110,8 @@ object MobileTransitionNotifier {
 			.setLocalOnly(true)
 			.build()
 
-		val notificationId = NOTIFICATION_ID_BASE + (cue.key.hashCode() and 0x0fff)
 		context
 			.getSystemService(NotificationManager::class.java)
-			.notify(notificationId, notification)
+			.notify(NOTIFICATION_ID, notification)
 	}
 }
