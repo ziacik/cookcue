@@ -864,7 +864,8 @@ object CookingSessionController {
 			recipe.scheduleMode != ScheduleMode.ITINERARY &&
 				!paused &&
 				activeActions.isEmpty() &&
-				pendingEvents.isEmpty()
+				pendingEvents.isEmpty() &&
+				retryCountdowns.isEmpty()
 		val previousAction = if (navigationAllowed) {
 			actionSteps.getOrNull(navigationIndex - 1)
 		} else {
