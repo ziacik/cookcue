@@ -134,6 +134,7 @@ data class CookingTask(
 	val actionLabel: String? = null,
 	val retryActionLabel: String? = null,
 	val retryAfterSeconds: Long? = null,
+	val retryInstruction: String? = null,
 	val optional: Boolean = false,
 	val image: TaskImage? = null,
 	val place: TaskPlace? = null,
@@ -142,8 +143,12 @@ data class CookingTask(
 	val sensors: List<TaskSensor> = emptyList(),
 	val itineraryTiming: ItineraryTiming? = null,
 	val repeatInfo: RepeatInfo? = null,
+	val allowEarlyCompletion: Boolean = false,
 ) {
 	init {
+		require(!allowEarlyCompletion || kind == TaskKind.WAIT) {
+			"Only WAIT tasks can be completed before their timer ends."
+		}
 		require(id.isNotBlank())
 		require(title.isNotBlank())
 		require(durationSeconds > 0)
@@ -153,7 +158,7 @@ data class CookingTask(
 			}
 		}
 
-		if (retryAfterSeconds != null || retryActionLabel != null) {
+		if (retryAfterSeconds != null || retryActionLabel != null || retryInstruction != null) {
 			require(kind == TaskKind.EVENT) {
 				"Only event task '$id' can define a retry action."
 			}
@@ -162,6 +167,9 @@ data class CookingTask(
 			}
 			require(!retryActionLabel.isNullOrBlank()) {
 				"Retryable event task '$id' must define retryActionLabel."
+			}
+			require(retryInstruction == null || retryInstruction.isNotBlank()) {
+				"Retry instruction for event task '$id' must not be blank."
 			}
 		}
 	}
@@ -175,6 +183,12 @@ data class Ingredient(
 data class TroubleshootingTip(
 	val problem: String,
 	val advice: String,
+)
+
+data class RecipeOption(
+	val id: String,
+	val label: String,
+	val recipe: Recipe,
 )
 
 data class Recipe(
@@ -192,6 +206,7 @@ data class Recipe(
 	val scheduleTimeZoneId: String? = null,
 	val earlyFinishActionLabel: String? = null,
 	val earlyFinishTaskIds: Set<String> = emptySet(),
+	val options: List<RecipeOption> = emptyList(),
 ) {
 	init {
 		require(earlyFinishTaskIds.isEmpty() || !earlyFinishActionLabel.isNullOrBlank()) {

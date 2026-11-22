@@ -9,7 +9,7 @@
 		},
 		{
 			"id": "bean-soup-canned",
-			"version": 1,
+			"version": 3,
 			"file": "bean-soup-canned.json",
 			"minAppVersion": 1
 		},
@@ -69,7 +69,7 @@
 		},
 		{
 			"id": "chicken-paella",
-			"version": 1,
+			"version": 3,
 			"file": "chicken-paella.json",
 			"minAppVersion": 1
 		},

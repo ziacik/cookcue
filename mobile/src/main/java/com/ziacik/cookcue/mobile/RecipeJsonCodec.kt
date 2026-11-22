@@ -5,6 +5,7 @@ import com.ziacik.cookcue.core.model.Ingredient
 import com.ziacik.cookcue.core.model.ItineraryTiming
 import com.ziacik.cookcue.core.model.LocationProximitySensor
 import com.ziacik.cookcue.core.model.Recipe
+import com.ziacik.cookcue.core.model.RecipeOption
 import com.ziacik.cookcue.core.model.RepeatCycleExpander
 import com.ziacik.cookcue.core.model.ResourceRequirement
 import com.ziacik.cookcue.core.model.ScheduleMode
@@ -31,6 +32,76 @@ internal object RecipeJsonCodec {
 			"Unsupported recipe schema version."
 		}
 
+		val baseRecipe = decodeSingle(root)
+		val options = root.optJSONArray("options")?.mapObjects { option ->
+			val id = option.getString("id")
+			val label = option.getString("label")
+			require(id.isNotBlank() && label.isNotBlank())
+			val optionRoot = JSONObject(root.toString())
+			optionRoot.remove("options")
+			option.optJSONObject("overrides")?.let { overrides ->
+				applyOptionOverrides(optionRoot, overrides)
+			}
+			RecipeOption(id = id, label = label, recipe = decodeSingle(optionRoot))
+		}.orEmpty()
+		require(options.map { it.id }.distinct().size == options.size) {
+			"Recipe option ids must be unique."
+		}
+		return baseRecipe.copy(options = options)
+	}
+
+	private fun applyOptionOverrides(root: JSONObject, overrides: JSONObject) {
+		listOf("description", "preCookingNote").forEach { key ->
+			if (overrides.has(key)) {
+				root.put(key, overrides.getString(key))
+			}
+		}
+		overrides.optJSONObject("ingredients")?.let { ingredients ->
+			val source = root.getJSONArray("ingredients")
+			val found = mutableSetOf<String>()
+			for (index in 0 until source.length()) {
+				val ingredient = source.getJSONObject(index)
+				val name = ingredient.getString("name")
+				if (ingredients.has(name)) {
+					val replacement = ingredients.getJSONObject(name)
+					if (replacement.has("name")) ingredient.put("name", replacement.getString("name"))
+					if (replacement.has("amount")) ingredient.put("amount", replacement.getString("amount"))
+					found.add(name)
+				}
+			}
+			require(found.size == ingredients.length()) { "Unknown ingredient in recipe option." }
+		}
+		overrides.optJSONObject("taskInstructions")?.let { instructions ->
+			val tasks = root.getJSONArray("tasks")
+			val found = mutableSetOf<String>()
+			for (index in 0 until tasks.length()) {
+				val task = tasks.getJSONObject(index)
+				val id = task.getString("id")
+				if (instructions.has(id)) {
+					task.put("instruction", instructions.getString(id))
+					found.add(id)
+				}
+			}
+			require(found.size == instructions.length()) { "Unknown task in recipe option." }
+		}
+		overrides.optJSONObject("troubleshooting")?.let { replacements ->
+			val tips = root.getJSONArray("troubleshooting")
+			val found = mutableSetOf<String>()
+			for (index in 0 until tips.length()) {
+				val tip = tips.getJSONObject(index)
+				val problem = tip.getString("problem")
+				if (replacements.has(problem)) {
+					val replacement = replacements.getJSONObject(problem)
+					if (replacement.has("problem")) tip.put("problem", replacement.getString("problem"))
+					if (replacement.has("advice")) tip.put("advice", replacement.getString("advice"))
+					found.add(problem)
+				}
+			}
+			require(found.size == replacements.length()) { "Unknown troubleshooting tip in recipe option." }
+		}
+	}
+
+	private fun decodeSingle(root: JSONObject): Recipe {
 		val recipe = Recipe(
 			id = root.getString("id"),
 			title = root.getString("title"),
@@ -129,7 +200,9 @@ internal object RecipeJsonCodec {
 			actionLabel = task.optionalString("actionLabel"),
 			retryActionLabel = task.optionalString("retryActionLabel"),
 			retryAfterSeconds = task.optionalLong("retryAfterSeconds"),
+			retryInstruction = task.optionalString("retryInstruction"),
 			optional = task.optBoolean("optional", false),
+			allowEarlyCompletion = task.optBoolean("allowEarlyCompletion", false),
 			image = task.optJSONObject("image")?.let { image ->
 				TaskImage(
 					url = image.getString("url"),

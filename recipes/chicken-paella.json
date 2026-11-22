@@ -2,12 +2,12 @@
 	"schemaVersion": 1,
 	"id": "chicken-paella",
 	"title": "Kuracia paella",
-	"description": "2–3 porcie · ryža Bomba, kuracie stehná, zelené fazuľky a vývar z bujónu · cca 60–75 min aj s prípravou (podľa tempa)",
+	"description": "2–3 porcie · ryža Bomba, ideálne kuracie stehná (možno aj prsia), zelené fazuľky a výrazný paradajkový základ · cca 65–80 min aj s prípravou",
 	"servings": 3,
 	"ingredients": [
 		{
-			"name": "vykostené kuracie stehná (bez kože)",
-			"amount": "300 g, kúsky cca 2–3 cm"
+			"name": "kuracie stehná bez kože alebo kuracie prsia",
+			"amount": "300 g, ideálne vykostené stehná; prsia tiež možno, ale pripravujú sa kratšie"
 		},
 		{
 			"name": "španielska ryža Bomba (na paellu)",
@@ -26,8 +26,8 @@
 			"amount": "2 strúčiky"
 		},
 		{
-			"name": "kurací bujón",
-			"amount": "množstvo podľa obalu na 600 ml vývaru; radšej slabší"
+			"name": "bujón (ideálne kurací, prípadne zeleninový)",
+			"amount": "bežná koncentrácia podľa obalu na 600 ml vývaru; nezrieďovať naschvál"
 		},
 		{
 			"name": "voda",
@@ -47,7 +47,7 @@
 		},
 		{
 			"name": "soľ",
-			"amount": "na kura, zvyšok opatrne podľa slanosti bujónu"
+			"amount": "na mäso; dochuť vývar až po ochutnaní (pozor na slanosť bujónu)"
 		},
 		{
 			"name": "citrón",
@@ -60,7 +60,7 @@
 		"burner": 1,
 		"kettle": 1
 	},
-	"preCookingNote": "Recept je načasovaný pre 200 g ryže Bomba, približne 600 ml horúceho vývaru a širokú panvicu (ideálne 28–30 cm). Pri inej ryži sa potrebné množstvo tekutiny a čas môžu líšiť; Arborio nie je úplne rovnocenná náhrada. Prípravné/opekacie kroky (Hotovo) majú iba plánovaný čas a posúvajú sa podľa skutočného dokončenia. Presné časovače ryže začnú až po potvrdení VRIE, keď vývar naozaj začne rovnomerne bublať. Od zaliatia ryžu NEMIEŠAJ a panvicu NEZAKRÝVAJ. Pri zvukovom upozornení po 7 minútach treba osobne znížiť výkon; appka nevie ovládať sporák. Pred pridaním ryže si prečítaj aj záverečné kroky.",
+	"preCookingNote": "Recept je načasovaný pre 200 g ryže Bomba, približne 600 ml horúceho vývaru a širokú panvicu (ideálne 28–30 cm). Pri inej ryži sa potrebné množstvo tekutiny a čas môžu líšiť; Arborio nie je úplne rovnocenná náhrada. Výraznú chuť zabezpečí dobré opečenie kuraťa a asi 7–8 minút redukovania paradajkového základu, nie pridávanie množstva korenia. Kurací bujón má výraznejšiu mäsovú chuť; zeleninový sa dá použiť, ale výsledok môže byť jemnejší. Pri prsiach mäso opeč úplne dohotova, odlož a vráť až pred odpočinkom paelly, aby sa 18 minút nevarilo s ryžou. Prípravné/opekacie kroky (Hotovo) majú iba plánovaný čas a posúvajú sa podľa skutočného dokončenia. Presné časovače ryže začnú až po potvrdení VRIE, keď vývar naozaj začne rovnomerne bublať. Od zaliatia ryžu NEMIEŠAJ a panvicu NEZAKRÝVAJ. Pri zvukovom upozornení po 7 minútach treba osobne znížiť výkon; appka nevie ovládať sporák. Pred pridaním ryže si prečítaj aj záverečné kroky.",
 	"tasks": [
 		{
 			"id": "gather",
@@ -95,7 +95,7 @@
 				"cook"
 			],
 			"skill": "KNIFE",
-			"instruction": "300 g vykostených kuracích stehien pokrájaj na približne 2–3 cm kúsky. Osuš kuchynskou utierkou a jemne osoľ. Po surovom mäse umy nôž, dosku aj ruky; zeleninu už máš pripravenú."
+			"instruction": "Pokrájaj 300 g vykostených kuracích stehien na 2–3 cm kúsky; prípadne použi prsia pokrájané na cca 2 cm kúsky. Osuš a jemne osoľ. Prsia sa budú opekať kratšie, úplne dohotova a potom sa odložia. Po surovom mäse umy nôž, dosku aj ruky."
 		},
 		{
 			"id": "measure",
@@ -135,7 +135,7 @@
 				"pan",
 				"burner"
 			],
-			"instruction": "Pridaj kura do rozpálenej panvice, rozlož kúsky do jednej vrstvy. Opekaj približne 8–10 minút za občasného otočenia, kým je na viacerých stranách pekne zlatohnedé. Ak sa pripaľuje, mierne stiahni výkon. Úplne sa dovarí neskôr s ryžou. Klikni Hotovo, keď je skutočne opečené, nie len podľa odhadovaného času."
+			"instruction": "Rozlož mäso v rozpálenej panvici v jednej vrstve, aby skutočne hnedlo a nepustilo priveľa vody. STEHNÁ: opekaj asi 8–10 minút za občasného otočenia, kým z viacerých strán zozlatnú; nechaj ich v panvici, dovaria sa s ryžou. PRSIA: opekaj kratšie, orientačne 5–7 minút podľa veľkosti kúskov, až kým sú úplne prepečené (ideálne 74 °C v strede). Vyber ich na čistý tanier a prikry; do paelly ich vrátiš až pred odpočinkom. Hnedý výpek v panvici nevyhadzuj. Ak sa niečo pripaľuje, zníž výkon. Klikni Hotovo podľa skutočného opečenia, nie podľa odhadu."
 		},
 		{
 			"id": "saute-beans",
@@ -149,7 +149,7 @@
 				"pan",
 				"burner"
 			],
-			"instruction": "Ku kuraciemu mäsu pridaj pripravené fazuľky. Opekaj približne 3–4 minúty a občas premiešaj, kým sa rozohrejú a mierne zmäknú. Kura aj fazuľky nechaj v panvici."
+			"instruction": "Pridaj fazuľky na panvicu ku stehnám alebo do výpeku po prsiach, ktoré zostávajú prikryté na čistom tanieri. Opekaj 3–4 minúty za občasného premiešania, aby sa prepojili s výpekom a mierne zmäkli."
 		},
 		{
 			"id": "start-kettle",
@@ -182,8 +182,8 @@
 		},
 		{
 			"id": "sofrito",
-			"title": "Urob paradajkový základ",
-			"durationSeconds": 240,
+			"title": "Zredukuj paradajkový základ (sofrito)",
+			"durationSeconds": 480,
 			"dependsOn": [
 				"start-kettle"
 			],
@@ -192,7 +192,7 @@
 				"pan",
 				"burner"
 			],
-			"instruction": "K mäsu a fazuľkám pridaj nastrúhanú paradajku a nechaj ju za občasného miešania asi 3 minúty odpariť, aby nebola vodnatá. Pridaj nasekaný cesnak a 1/2 ČL sladkej papriky, premiešaj len asi posledných 20–30 sekúnd a hneď pokračuj. Papriku nenechaj na suchom rozpálenom dne, môže zhorknúť. Na kanvicu čakáš paralelne; ak voda už zovrela, potvrď udalosť."
+			"instruction": "K fazuľkám (a stehnám, ak ich používaš) pridaj nastrúhanú paradajku. Na strednom výkone za občasného miešania a zoškrabávania chutného hnedého výpeku zo dna redukuj asi 7–8 minút, kým už nie je vodnatá, získa hustejšiu konzistenciu a koncentrovanú vôňu. Čas je orientačný: ak je stále vodnatá, pokračuj; ak začína schnúť alebo černieť, stiahni výkon. Cesnak a 1/2 ČL sladkej papriky pridaj až na posledných 20–30 sekúnd, krátko premiešaj a hneď pokračuj, aby paprika nezhorkla. Kanvica sa ohrieva paralelne."
 		},
 		{
 			"id": "make-stock",
@@ -207,7 +207,7 @@
 				"pan",
 				"burner"
 			],
-			"instruction": "Stiahni výkon panvice na minimum (prípadne ju na chvíľu odstav). Z kanvice opatrne nalej PRESNE 600 ml horúcej vody do žiaruvzdornej nádoby s bujónom a šafranom. Miešaj, kým sa bujón rozpustí. Zvyšnú horúcu vodu nechaj na prípadné dolievanie. Vývar by mal byť jemne slaný, nie presolený. Teraz maj všetko potrebné na ryžu pripravené."
+			"instruction": "Stiahni výkon panvice na minimum (prípadne ju na chvíľu odstav). Do žiaruvzdornej nádoby s bujónom a šafranom opatrne nalej PRESNE 600 ml horúcej vody. Použi bežnú dávku bujónu podľa obalu, nie zámerne slabšiu. Rozmiešaj a OCHUTNAJ: vývar má byť výrazný a primerane slaný, nie vodnatý ani presolený. Ak mu chýba len soľ, jemne dosoľ; ďalšia kocka nie je automaticky riešenie. Kurací bujón podporí mäsovú chuť viac než zeleninový. Zvyšnú horúcu vodu nechaj na dolievanie. Pred ryžou maj všetko pripravené."
 		},
 		{
 			"id": "coat-rice",
@@ -221,7 +221,7 @@
 				"pan",
 				"burner"
 			],
-			"instruction": "Vráť panvicu na stredný výkon. Prisyp všetkých 200 g suchej ryže Bomba a asi minútu ju premiešavaj s paradajkovým základom, kuracím mäsom a fazuľkami, aby sa rovnomerne obalila. Ešte sa nezačalo presné časovanie varu. Pred zaliatím sa uisti, že máš po ruke horúci vývar a poznáš ďalšie kroky."
+			"instruction": "Vráť panvicu na stredný výkon. Prisyp 200 g suchej ryže Bomba a asi minútu miešaj s hustým paradajkovým základom, fazuľkami a stehnami (ak ich používaš). Upečené prsia nechaj zatiaľ prikryté mimo panvice, aby sa nevysušili. Ešte sa nezačalo presné časovanie varu; pred zaliatím maj horúci vývar poruke."
 		},
 		{
 			"id": "pour-stock",
@@ -312,12 +312,13 @@
 			"actionLabel": "RYŽA JE HOTOVÁ",
 			"retryActionLabel": "EŠTE TVRDÁ",
 			"retryAfterSeconds": 120,
-			"instruction": "Ochutnaj niekoľko zrniek pri okraji a v strede. Ryža má byť uvarená, no nie rozvarená, a väčšina tekutiny vsiaknutá. Ak je stále tvrdá, nechaj ju ďalšie 2 minúty na slabom výkone a stlač EŠTE TVRDÁ; appka pripomenie ďalšiu kontrolu. Ak už dno vysychá, prilej 30–50 ml rezervnej horúcej vody po okraji, nemiešaj. Keď je ryža dobrá, potvrď RYŽA JE HOTOVÁ. Ak nechceš chrumkavé dno, hneď vypni horák a v nasledujúcom voliteľnom kroku daj Preskočiť."
+			"retryInstruction": "Nechaj ryžu ešte 2 minúty mierne variť na slabom výkone. Ak už dno vysychá, prilej po okraji 30–50 ml horúcej vody. Ryžu nemiešaj.",
+			"instruction": "Ochutnaj niekoľko zrniek pri okraji a v strede. Ryža má byť uvarená, no nie rozvarená, a väčšina tekutiny vsiaknutá. Ak je stále tvrdá, nechaj ju ďalšie 2 minúty na slabom výkone a stlač EŠTE TVRDÁ; appka pripomenie ďalšiu kontrolu. Ak už dno vysychá, prilej 30–50 ml rezervnej horúcej vody po okraji, nemiešaj. Keď je ryža dobrá, potvrď RYŽA JE HOTOVÁ. Socarrat skúšaj len pri hotovej ryži a skoro suchom dne. Ak ho nechceš, hneď vypni horák a nasledujúci voliteľný krok preskoč."
 		},
 		{
 			"id": "socarrat",
 			"title": "Voliteľne: vytvor chrumkavé dno",
-			"durationSeconds": 30,
+			"durationSeconds": 60,
 			"dependsOn": [
 				"rice-ready"
 			],
@@ -327,7 +328,7 @@
 				"burner"
 			],
 			"optional": true,
-			"instruction": "Len ak je ryža hotová a vývar vsiaknutý: na krátkych 20–30 sekúnd mierne zvýš výkon a počúvaj jemné praskanie. Keď cítiš príjemnú opečenú vôňu, HNEĎ vypni horák a stlač Hotovo, aj ak je to skôr. Ak máš nepriľnavú panvicu, obávaš sa pripálenia alebo je dno už suché, VYPNI horák a tento krok preskoč. NIKDY nečakaj na koniec odhadu, ak sa jedlo začína páliť.",
+			"instruction": "Len ak je ryža uvarená a voľná tekutina vsiaknutá. Mierne zvýš výkon, približne na stredný, a sleduj dno: orientačne 30–60 sekúnd, nie povinný čas. Jemné praskanie a opečená vôňa sú vodítka, nie dôkaz chrumkavého dna. Silikónovou alebo drevenou obracačkou jemne nadvihni ryžu pri okraji: cieľ je tenká zlatohnedá vrstva, nie čierne dno. Keď sa tvorí, vypni a klikni Hotovo; pri pálivej vôni vypni ihneď. Na nepriľnavej/granitovej panvici nepoužívaj veľmi vysoký výkon a nesnaž sa výsledok vynútiť dlhým prehrievaním: ak vrstva nevzniká, vypni a pokojne preskoč. Čas je len odhad, netreba čakať na jeho koniec.",
 			"tips": [
 				"Cieľom je jemne opečená vrstva ryže, nie čierne spálené dno."
 			]
@@ -343,7 +344,7 @@
 				"pan"
 			],
 			"kind": "WAIT",
-			"instruction": "Skontroluj, že horák je naozaj VYPNUTÝ. Paellu nechaj 5 minút postáť mimo ohňa; môžeš ju voľne prekryť utierkou alebo alobalom tak, aby unikala para (bez kontaktu s horákom). Počas odpočinku ryžu nemiešaj. Časovač je presných 5 minút."
+			"instruction": "Vypni horák a odlož panvicu mimo ohňa. Ak si použil kuracie prsia, teraz rozlož už úplne prepečené, odložené kúsky na vrch paelly, aby sa prehriali, ale nepokazili socarrat. Nechaj 5 minút postáť, pokojne voľne prikryté čistou utierkou alebo alobalom s únikom pary (mimo horáka). Ryžu nemiešaj."
 		},
 		{
 			"id": "serve",
@@ -356,7 +357,7 @@
 				"cook",
 				"pan"
 			],
-			"instruction": "Paellu podávaj priamo z panvice alebo opatrne nalož na taniere. Pokvapkaj citrónom podľa chuti. Ak sa podaril socarrat, jemne ho naber zo dna. Skontroluj, či je kura úplne prepečené; vo vnútri nesmie byť surové."
+			"instruction": "Podávaj priamo z panvice alebo opatrne na taniere a podľa chuti pokvapkaj citrónom. Ak vznikol socarrat, jemne ho naber zo dna. Skontroluj, či je mäso úplne prepečené; pri prsiach ich už po vrátení zbytočne dlho nevar."
 		}
 	],
 	"troubleshooting": [
@@ -374,11 +375,55 @@
 		},
 		{
 			"problem": "Vývar je príliš slaný",
-			"advice": "S bujónom sa dá ľahko presoliť; radšej začni slabším vývarom. V hotovej paelle sa soľ zle odstraňuje, preto nedosáľaj bez ochutnania."
+			"advice": "Používaj dávku bujónu podľa obalu a vývar pred zaliatím ochutnaj. Ak je príliš slaný, uprav ho vodou pred pridaním k ryži; hotovú paellu už len ťažko napravíš."
+		},
+		{
+			"problem": "Paella chutí mdlo, len ako ryža s bujónom",
+			"advice": "Nabudúce mäso skutočne opeč dohneda, ponechaj výpek a paradajkový základ var 7–8 minút do hustej konzistencie. Vývar priprav v bežnej koncentrácii a ochutnaj pred pridaním ryže; kurací má viac mäsovej chuti než zeleninový. Nepomôže len nasypať viac korenia či naslepo soliť."
 		},
 		{
 			"problem": "Používam inú ryžu než Bomba",
 			"advice": "Čas 7 + 11 minút a 600 ml vývaru sú orientované na Bomba. Arborio či iná guľatozrnná ryža môže potrebovať menej vody a kratší čas; sleduj obal a varenie ukonči podľa skutočnej mäkkosti."
+		}
+	],
+	"options": [
+		{
+			"id": "bomba",
+			"label": "Bomba"
+		},
+		{
+			"id": "sollana",
+			"label": "Arroz Cebolla Sollana",
+			"overrides": {
+				"description": "2–3 porcie · ryža Arroz Cebolla Sollana, ideálne kuracie stehná (možno aj prsia), zelené fazuľky a výrazný paradajkový základ · cca 65–80 min aj s prípravou",
+				"preCookingNote": "Recept je nastavený na 200 g ryže Arroz Cebolla Sollana, počiatočných 500 ml horúceho vývaru a približne 100 ml horúcej vody v rezerve. Ideálne použi širokú panvicu 28–30 cm. Časovanie je orientačne 7 minút živšieho a 11 minút mierneho varu, ale množstvo tekutiny závisí aj od panvice a výkonu horáka: kontroluj ryžu a pri tvrdých zrnách a suchom dne dolievaj po okraji po 30–50 ml. Presný časovač sa spúšťa až po potvrdení VRIE. Od zaliatia ryžu NEMIEŠAJ a panvicu NEZAKRÝVAJ. Upozornenie po 7 minútach vyžaduje manuálne zníženie výkonu. Prípravné kroky s akciou Hotovo posúvaj podľa skutočného dokončenia. Pre výraznú chuť dobre opeč kura a paradajku redukuj 7–8 minút; bujón použi v bežnej koncentrácii a vývar ochutnaj. Kurací je výraznejší než zeleninový. Ak použiješ prsia, úplne ich prepeč, odlož a vráť až pred odpočinkom paelly, aby sa 18 minút nevarili s ryžou.",
+				"ingredients": {
+					"španielska ryža Bomba (na paellu)": {
+						"name": "španielska ryža Arroz Cebolla Sollana (na paellu)",
+						"amount": "200 g, suchá; nepreplachovať"
+					},
+					"voda": {
+						"amount": "600 ml: 500 ml na vývar + približne 100 ml horúca rezerva"
+					},
+					"bujón (ideálne kurací, prípadne zeleninový)": {
+						"amount": "bežná koncentrácia podľa obalu na 500 ml vývaru; nezrieďovať naschvál"
+					}
+				},
+				"taskInstructions": {
+					"gather": "Priprav širokú panvicu ideálne 28–30 cm, varešku, dosku, nôž, strúhadlo, váhu, odmerku a žiaruvzdornú nádobu na 500 ml vývaru. K dispozícii maj rýchlovarnú kanvicu. Prečítaj si časovanie ryže: od začiatku varu 7 minút silnejšie, potom 11 minút mierne a následne kontrola. Nič na sporáku zatiaľ nezapínaj.",
+					"measure": "Odváž 200 g suchej ryže Arroz Cebolla Sollana. Neumývaj ju. Odmeraj 600 ml vody do vypnutej kanvice; neskôr použiješ 500 ml do vývaru a cca 100 ml necháš ako horúcu rezervu. Priprav kocku bujónu (dávka podľa obalu na 500 ml) a štipku šafranu do žiaruvzdornej nádoby. Zatiaľ nevar vodu.",
+					"start-kettle": "Zapni kanvicu so 600 ml odmeranej vody. Bujón ani šafran nedávaj do kanvice — už čakajú v žiaruvzdornej nádobe. Voda sa teraz bude ohrievať paralelne s paradajkovým základom. Klikni Hotovo hneď po zapnutí.",
+					"make-stock": "Stiahni výkon panvice na minimum (prípadne ju na chvíľu odstav). Do žiaruvzdornej nádoby s bujónom a šafranom opatrne nalej PRESNE 500 ml horúcej vody. Použi bežnú dávku bujónu podľa obalu. Rozmiešaj a OCHUTNAJ: vývar má byť výrazný, primerane slaný, nie vodnatý ani presolený. Ak mu chýba len soľ, jemne dosoľ; nepridávaj bezhlavo ďalší bujón. Kurací bujón podporí mäsovú chuť viac než zeleninový. Zvyšnú horúcu vodu nechaj na dolievanie.",
+					"coat-rice": "Vráť panvicu na stredný výkon. Prisyp 200 g suchej ryže Arroz Cebolla Sollana a asi minútu miešaj s hustým paradajkovým základom, fazuľkami a stehnami (ak ich používaš). Upečené prsia nechaj zatiaľ prikryté mimo panvice, aby sa nevysušili. Ešte sa nezačalo presné časovanie varu; pred zaliatím maj horúci vývar poruke.",
+					"pour-stock": "Nalej na panvicu všetkých 500 ml horúceho vývaru. Raz opatrne premiešaj a rozlož ryžu rovnomerne do tenkej vrstvy, aby neostala kopa uprostred. Od tejto chvíle ryžu už NEMIEŠAJ. Panvicu nezakrývaj. Zvýš výkon, aby vývar začal viditeľne a rovnomerne vrieť. Klikni Hotovo po zaliatí a rozložení, nie až po dovarení."
+				},
+				"troubleshooting": {
+					"Používam inú ryžu než Bomba": {
+						"problem": "Používam inú ryžu než Sollana",
+						"advice": "Čas 7 + 11 minút a počiatočných 500 ml vývaru sú orientované na Sollana. Bomba obyčajne potrebuje viac tekutiny (v tomto recepte 600 ml); pri ďalšej ryži sa riaď obalom, mäkkosťou zŕn a tým, koľko tekutiny zostáva v panvici."
+					}
+				}
+			}
 		}
 	]
 }

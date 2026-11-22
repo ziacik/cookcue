@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"id": "potato-pancakes",
 	"title": "Zemiakové placky",
-	"description": "Polovičná dávka · 400 g zemiakov · približne 6–7 placiek po jednej · plyn, miernejšie smaženie",
+	"description": "Polovičná dávka · 400 g zemiakov · 6–7 placiek po jednej · plyn",
 	"servings": 2,
 	"ingredients": [
 		{
@@ -43,7 +43,7 @@
 		"pan": 1,
 		"burner": 1
 	},
-	"preCookingNote": "Plynový sporák: zvoľ menší až stredný plameň tak, aby nepresahoval okraj dna panvice. Nad kruhom plameňa sa môže panvica prehrievať nerovnomerne, najmä s tenkým dnom. Zo 400 g zemiakov urob približne 6–7 tenších placiek, vždy jednu na panvici. Cesto rozotri približne na 3–4 mm, aj na okrajoch: ak sa tam vytvorí hrubší prstenec, lyžicou ho zarovnaj. Každá strana má časovač 2:00 ako východiskový čas na miernom až strednom plameni; rozhoduje aj farba a prepečenie. Ak sú placky hotové skôr, nečakaj zbytočne. Ak ti dôjde cesto po dokončení placky, medzi várkami použi „CESTO SA MINULO – DOKONČIŤ“, nemusíš odklikať zvyšok plánovaných placiek. Toto tlačidlo vyžaduje aktuálnu verziu aplikácie. Panvicu nenechávaj bez dozoru.",
+	"preCookingNote": "Smaž na plyne na miernejšom plameni, aby okraje nezhoreli skôr než stred. Rozotri 6–7 placiek po jednej; stred môže byť mierne tenší než okraje. Čas na jednu stranu je orientačne 100 sekúnd, rozhoduje prepečenie. Ak okraje černejú, uber plameň. Keď sa minie cesto, dokonči pred začatím ďalšej placky a vypni sporák.",
 	"tasks": [
 		{
 			"id": "gather",
@@ -151,748 +151,93 @@
 			"instruction": "Pridaj maličkú kvapku cesta. Olej má jemne syčať, nie okamžite tmavnúť alebo dymiť. Ak je príliš horúci, zníž plameň a chvíľu počkaj. Ak nesyčí, daj EŠTE NIE a skontroluj o 30 sekúnd. Plamene nesmú siahať poza dno panvice."
 		},
 		{
-			"id": "load-1",
-			"title": "Rozotri 1. placku",
-			"durationSeconds": 75,
+			"id": "pancakes",
+			"title": "Placky",
 			"dependsOn": [
 				"pan-ready"
 			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ho rozotri do rovnomerne tenkej placky (orientačne 3–4 mm). Pri roztieraní skontroluj hlavne okraj: ak sa tam cesto nahrnulo do hrubého prstenca, rozotri ho smerom dovnútra, aby nebol hrubší než stred. Nerob ani priesvitné okraje. Priemer prispôsob množstvu cesta. Keď je placka na panvici a má rovnomernú hrúbku, stlač Hotovo; až tým začne dvojminútový časovač."
-		},
-		{
-			"id": "side-1a",
-			"title": "1. placka · prvá strana 2:00",
-			"durationSeconds": 120,
-			"dependsOn": [
-				"load-1"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "WAIT",
-			"instruction": "Smaž prvú stranu orientačne 2 minúty na miernom až strednom plameni. Na plyne môže panvica najviac hriať nad kruhom plameňa. Ak okraje černejú, ale stred je ešte surový, hneď uber plyn. Nesnaž sa nedopečený stred dohnať silnejším ohňom; pri ďalšej placke rozotri aj hrubý prstenec na okraji. Otoč podľa prepečenia, nie nasilu až po uplynutí času."
-		},
-		{
-			"id": "flip-1",
-			"title": "Otoč 1. placku",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"side-1a"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "OTOČENÁ",
-			"retryActionLabel": "EŠTE BLEDÁ",
-			"retryAfterSeconds": 30,
-			"instruction": "Skontroluj spodok a pevnosť placky širokou obracačkou. Keď je zlatohnedý a placka drží pokope, otoč ju. AŽ POTOM stlač OTOČENÁ; tým začne dvojminútový časovač druhej strany. Ak je spodok bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a vnútro je surové, zníž výkon; pri ďalšej placke rozotri najmä hrubý okraj."
-		},
-		{
-			"id": "side-1b",
-			"title": "1. placka · druhá strana 2:00",
-			"durationSeconds": 120,
-			"dependsOn": [
-				"flip-1"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "WAIT",
-			"instruction": "Smaž druhú stranu orientačne 2 minúty na miernejšom plameni. Ak sú okraje tmavé a stred surový, uber plyn; ak je placka hotová skôr, vyber ju skôr. Pred vybratím over, že stred aj hrubšie okraje sú prepečené."
-		},
-		{
-			"id": "remove-1",
-			"title": "Vyber 1. placku",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"side-1b"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "VYBRATÁ",
-			"retryActionLabel": "EŠTE NIE",
-			"retryAfterSeconds": 30,
-			"instruction": "Vyber placku, až keď je zlatohnedá a stred aj hrubšie časti sú prepečené; pri neistote kúsok v strede otvor a skontroluj. Ak je vnútri surová, zníž výkon a zvoľ EŠTE NIE – skontroluj po ďalších 30 sekundách. Ak už okraj černie, ďalšie prudké smaženie nepomôže; pri ďalšej placke zníž teplotu a zarovnaj hrúbku okraja. Hotovú placku polož na papierovú utierku. Až potom stlač VYBRATÁ."
-		},
-		{
-			"id": "prepare-2",
-			"title": "Priprav panvicu na 2. placku",
-			"durationSeconds": 60,
-			"dependsOn": [
-				"remove-1"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"instruction": "Premiešaj zvyšné cesto, prípadne zlej prebytočnú vodu a podľa potreby pridaj olej. Ak okraj predchádzajúcej placky černel, zníž plameň a nechaj panvicu trochu vychladnúť. Ak už nemáš cesto, namiesto pokračovania stlač CESTO SA MINULO – DOKONČIŤ."
-		},
-		{
-			"id": "pan-ready-2",
-			"title": "Je panvica pripravená na 2. placku?",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"prepare-2"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "ÁNO",
-			"retryActionLabel": "EŠTE NIE",
-			"retryAfterSeconds": 30,
-			"instruction": "Pri malej kvapke cesta má olej jemne syčať, ale nemá dymiť ani prudko tmavnúť. Ak je panvica príliš horúca, uber plyn a zvoľ EŠTE NIE. Ak už nemáš cesto, dokonči varenie cez CESTO SA MINULO – DOKONČIŤ."
-		},
-		{
-			"id": "load-2",
-			"title": "Rozotri 2. placku",
-			"durationSeconds": 75,
-			"dependsOn": [
-				"pan-ready-2"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ho rozotri do rovnomerne tenkej placky (orientačne 3–4 mm). Pri roztieraní skontroluj hlavne okraj: ak sa tam cesto nahrnulo do hrubého prstenca, rozotri ho smerom dovnútra, aby nebol hrubší než stred. Nerob ani priesvitné okraje. Priemer prispôsob množstvu cesta. Keď je placka na panvici a má rovnomernú hrúbku, stlač Hotovo; až tým začne dvojminútový časovač."
-		},
-		{
-			"id": "side-2a",
-			"title": "2. placka · prvá strana 2:00",
-			"durationSeconds": 120,
-			"dependsOn": [
-				"load-2"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "WAIT",
-			"instruction": "Smaž prvú stranu orientačne 2 minúty na miernom až strednom plameni. Na plyne môže panvica najviac hriať nad kruhom plameňa. Ak okraje černejú, ale stred je ešte surový, hneď uber plyn. Nesnaž sa nedopečený stred dohnať silnejším ohňom; pri ďalšej placke rozotri aj hrubý prstenec na okraji. Otoč podľa prepečenia, nie nasilu až po uplynutí času."
-		},
-		{
-			"id": "flip-2",
-			"title": "Otoč 2. placku",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"side-2a"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "OTOČENÁ",
-			"retryActionLabel": "EŠTE BLEDÁ",
-			"retryAfterSeconds": 30,
-			"instruction": "Skontroluj spodok a pevnosť placky širokou obracačkou. Keď je zlatohnedý a placka drží pokope, otoč ju. AŽ POTOM stlač OTOČENÁ; tým začne dvojminútový časovač druhej strany. Ak je spodok bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a vnútro je surové, zníž výkon; pri ďalšej placke rozotri najmä hrubý okraj."
-		},
-		{
-			"id": "side-2b",
-			"title": "2. placka · druhá strana 2:00",
-			"durationSeconds": 120,
-			"dependsOn": [
-				"flip-2"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "WAIT",
-			"instruction": "Smaž druhú stranu orientačne 2 minúty na miernejšom plameni. Ak sú okraje tmavé a stred surový, uber plyn; ak je placka hotová skôr, vyber ju skôr. Pred vybratím over, že stred aj hrubšie okraje sú prepečené."
-		},
-		{
-			"id": "remove-2",
-			"title": "Vyber 2. placku",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"side-2b"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "VYBRATÁ",
-			"retryActionLabel": "EŠTE NIE",
-			"retryAfterSeconds": 30,
-			"instruction": "Vyber placku, až keď je zlatohnedá a stred aj hrubšie časti sú prepečené; pri neistote kúsok v strede otvor a skontroluj. Ak je vnútri surová, zníž výkon a zvoľ EŠTE NIE – skontroluj po ďalších 30 sekundách. Ak už okraj černie, ďalšie prudké smaženie nepomôže; pri ďalšej placke zníž teplotu a zarovnaj hrúbku okraja. Hotovú placku polož na papierovú utierku. Až potom stlač VYBRATÁ."
-		},
-		{
-			"id": "prepare-3",
-			"title": "Priprav panvicu na 3. placku",
-			"durationSeconds": 60,
-			"dependsOn": [
-				"remove-2"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"instruction": "Premiešaj zvyšné cesto, prípadne zlej prebytočnú vodu a podľa potreby pridaj olej. Ak okraj predchádzajúcej placky černel, zníž plameň a nechaj panvicu trochu vychladnúť. Ak už nemáš cesto, namiesto pokračovania stlač CESTO SA MINULO – DOKONČIŤ."
-		},
-		{
-			"id": "pan-ready-3",
-			"title": "Je panvica pripravená na 3. placku?",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"prepare-3"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "ÁNO",
-			"retryActionLabel": "EŠTE NIE",
-			"retryAfterSeconds": 30,
-			"instruction": "Pri malej kvapke cesta má olej jemne syčať, ale nemá dymiť ani prudko tmavnúť. Ak je panvica príliš horúca, uber plyn a zvoľ EŠTE NIE. Ak už nemáš cesto, dokonči varenie cez CESTO SA MINULO – DOKONČIŤ."
-		},
-		{
-			"id": "load-3",
-			"title": "Rozotri 3. placku",
-			"durationSeconds": 75,
-			"dependsOn": [
-				"pan-ready-3"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ho rozotri do rovnomerne tenkej placky (orientačne 3–4 mm). Pri roztieraní skontroluj hlavne okraj: ak sa tam cesto nahrnulo do hrubého prstenca, rozotri ho smerom dovnútra, aby nebol hrubší než stred. Nerob ani priesvitné okraje. Priemer prispôsob množstvu cesta. Keď je placka na panvici a má rovnomernú hrúbku, stlač Hotovo; až tým začne dvojminútový časovač."
-		},
-		{
-			"id": "side-3a",
-			"title": "3. placka · prvá strana 2:00",
-			"durationSeconds": 120,
-			"dependsOn": [
-				"load-3"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "WAIT",
-			"instruction": "Smaž prvú stranu orientačne 2 minúty na miernom až strednom plameni. Na plyne môže panvica najviac hriať nad kruhom plameňa. Ak okraje černejú, ale stred je ešte surový, hneď uber plyn. Nesnaž sa nedopečený stred dohnať silnejším ohňom; pri ďalšej placke rozotri aj hrubý prstenec na okraji. Otoč podľa prepečenia, nie nasilu až po uplynutí času."
-		},
-		{
-			"id": "flip-3",
-			"title": "Otoč 3. placku",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"side-3a"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "OTOČENÁ",
-			"retryActionLabel": "EŠTE BLEDÁ",
-			"retryAfterSeconds": 30,
-			"instruction": "Skontroluj spodok a pevnosť placky širokou obracačkou. Keď je zlatohnedý a placka drží pokope, otoč ju. AŽ POTOM stlač OTOČENÁ; tým začne dvojminútový časovač druhej strany. Ak je spodok bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a vnútro je surové, zníž výkon; pri ďalšej placke rozotri najmä hrubý okraj."
-		},
-		{
-			"id": "side-3b",
-			"title": "3. placka · druhá strana 2:00",
-			"durationSeconds": 120,
-			"dependsOn": [
-				"flip-3"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "WAIT",
-			"instruction": "Smaž druhú stranu orientačne 2 minúty na miernejšom plameni. Ak sú okraje tmavé a stred surový, uber plyn; ak je placka hotová skôr, vyber ju skôr. Pred vybratím over, že stred aj hrubšie okraje sú prepečené."
-		},
-		{
-			"id": "remove-3",
-			"title": "Vyber 3. placku",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"side-3b"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "VYBRATÁ",
-			"retryActionLabel": "EŠTE NIE",
-			"retryAfterSeconds": 30,
-			"instruction": "Vyber placku, až keď je zlatohnedá a stred aj hrubšie časti sú prepečené; pri neistote kúsok v strede otvor a skontroluj. Ak je vnútri surová, zníž výkon a zvoľ EŠTE NIE – skontroluj po ďalších 30 sekundách. Ak už okraj černie, ďalšie prudké smaženie nepomôže; pri ďalšej placke zníž teplotu a zarovnaj hrúbku okraja. Hotovú placku polož na papierovú utierku. Až potom stlač VYBRATÁ."
-		},
-		{
-			"id": "prepare-4",
-			"title": "Priprav panvicu na 4. placku",
-			"durationSeconds": 60,
-			"dependsOn": [
-				"remove-3"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"instruction": "Premiešaj zvyšné cesto, prípadne zlej prebytočnú vodu a podľa potreby pridaj olej. Ak okraj predchádzajúcej placky černel, zníž plameň a nechaj panvicu trochu vychladnúť. Ak už nemáš cesto, namiesto pokračovania stlač CESTO SA MINULO – DOKONČIŤ."
-		},
-		{
-			"id": "pan-ready-4",
-			"title": "Je panvica pripravená na 4. placku?",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"prepare-4"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "ÁNO",
-			"retryActionLabel": "EŠTE NIE",
-			"retryAfterSeconds": 30,
-			"instruction": "Pri malej kvapke cesta má olej jemne syčať, ale nemá dymiť ani prudko tmavnúť. Ak je panvica príliš horúca, uber plyn a zvoľ EŠTE NIE. Ak už nemáš cesto, dokonči varenie cez CESTO SA MINULO – DOKONČIŤ."
-		},
-		{
-			"id": "load-4",
-			"title": "Rozotri 4. placku",
-			"durationSeconds": 75,
-			"dependsOn": [
-				"pan-ready-4"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ho rozotri do rovnomerne tenkej placky (orientačne 3–4 mm). Pri roztieraní skontroluj hlavne okraj: ak sa tam cesto nahrnulo do hrubého prstenca, rozotri ho smerom dovnútra, aby nebol hrubší než stred. Nerob ani priesvitné okraje. Priemer prispôsob množstvu cesta. Keď je placka na panvici a má rovnomernú hrúbku, stlač Hotovo; až tým začne dvojminútový časovač."
-		},
-		{
-			"id": "side-4a",
-			"title": "4. placka · prvá strana 2:00",
-			"durationSeconds": 120,
-			"dependsOn": [
-				"load-4"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "WAIT",
-			"instruction": "Smaž prvú stranu orientačne 2 minúty na miernom až strednom plameni. Na plyne môže panvica najviac hriať nad kruhom plameňa. Ak okraje černejú, ale stred je ešte surový, hneď uber plyn. Nesnaž sa nedopečený stred dohnať silnejším ohňom; pri ďalšej placke rozotri aj hrubý prstenec na okraji. Otoč podľa prepečenia, nie nasilu až po uplynutí času."
-		},
-		{
-			"id": "flip-4",
-			"title": "Otoč 4. placku",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"side-4a"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "OTOČENÁ",
-			"retryActionLabel": "EŠTE BLEDÁ",
-			"retryAfterSeconds": 30,
-			"instruction": "Skontroluj spodok a pevnosť placky širokou obracačkou. Keď je zlatohnedý a placka drží pokope, otoč ju. AŽ POTOM stlač OTOČENÁ; tým začne dvojminútový časovač druhej strany. Ak je spodok bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a vnútro je surové, zníž výkon; pri ďalšej placke rozotri najmä hrubý okraj."
-		},
-		{
-			"id": "side-4b",
-			"title": "4. placka · druhá strana 2:00",
-			"durationSeconds": 120,
-			"dependsOn": [
-				"flip-4"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "WAIT",
-			"instruction": "Smaž druhú stranu orientačne 2 minúty na miernejšom plameni. Ak sú okraje tmavé a stred surový, uber plyn; ak je placka hotová skôr, vyber ju skôr. Pred vybratím over, že stred aj hrubšie okraje sú prepečené."
-		},
-		{
-			"id": "remove-4",
-			"title": "Vyber 4. placku",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"side-4b"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "VYBRATÁ",
-			"retryActionLabel": "EŠTE NIE",
-			"retryAfterSeconds": 30,
-			"instruction": "Vyber placku, až keď je zlatohnedá a stred aj hrubšie časti sú prepečené; pri neistote kúsok v strede otvor a skontroluj. Ak je vnútri surová, zníž výkon a zvoľ EŠTE NIE – skontroluj po ďalších 30 sekundách. Ak už okraj černie, ďalšie prudké smaženie nepomôže; pri ďalšej placke zníž teplotu a zarovnaj hrúbku okraja. Hotovú placku polož na papierovú utierku. Až potom stlač VYBRATÁ."
-		},
-		{
-			"id": "prepare-5",
-			"title": "Priprav panvicu na 5. placku",
-			"durationSeconds": 60,
-			"dependsOn": [
-				"remove-4"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"instruction": "Premiešaj zvyšné cesto, prípadne zlej prebytočnú vodu a podľa potreby pridaj olej. Ak okraj predchádzajúcej placky černel, zníž plameň a nechaj panvicu trochu vychladnúť. Ak už nemáš cesto, namiesto pokračovania stlač CESTO SA MINULO – DOKONČIŤ."
-		},
-		{
-			"id": "pan-ready-5",
-			"title": "Je panvica pripravená na 5. placku?",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"prepare-5"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "ÁNO",
-			"retryActionLabel": "EŠTE NIE",
-			"retryAfterSeconds": 30,
-			"instruction": "Pri malej kvapke cesta má olej jemne syčať, ale nemá dymiť ani prudko tmavnúť. Ak je panvica príliš horúca, uber plyn a zvoľ EŠTE NIE. Ak už nemáš cesto, dokonči varenie cez CESTO SA MINULO – DOKONČIŤ."
-		},
-		{
-			"id": "load-5",
-			"title": "Rozotri 5. placku",
-			"durationSeconds": 75,
-			"dependsOn": [
-				"pan-ready-5"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ho rozotri do rovnomerne tenkej placky (orientačne 3–4 mm). Pri roztieraní skontroluj hlavne okraj: ak sa tam cesto nahrnulo do hrubého prstenca, rozotri ho smerom dovnútra, aby nebol hrubší než stred. Nerob ani priesvitné okraje. Priemer prispôsob množstvu cesta. Keď je placka na panvici a má rovnomernú hrúbku, stlač Hotovo; až tým začne dvojminútový časovač."
-		},
-		{
-			"id": "side-5a",
-			"title": "5. placka · prvá strana 2:00",
-			"durationSeconds": 120,
-			"dependsOn": [
-				"load-5"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "WAIT",
-			"instruction": "Smaž prvú stranu orientačne 2 minúty na miernom až strednom plameni. Na plyne môže panvica najviac hriať nad kruhom plameňa. Ak okraje černejú, ale stred je ešte surový, hneď uber plyn. Nesnaž sa nedopečený stred dohnať silnejším ohňom; pri ďalšej placke rozotri aj hrubý prstenec na okraji. Otoč podľa prepečenia, nie nasilu až po uplynutí času."
-		},
-		{
-			"id": "flip-5",
-			"title": "Otoč 5. placku",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"side-5a"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "OTOČENÁ",
-			"retryActionLabel": "EŠTE BLEDÁ",
-			"retryAfterSeconds": 30,
-			"instruction": "Skontroluj spodok a pevnosť placky širokou obracačkou. Keď je zlatohnedý a placka drží pokope, otoč ju. AŽ POTOM stlač OTOČENÁ; tým začne dvojminútový časovač druhej strany. Ak je spodok bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a vnútro je surové, zníž výkon; pri ďalšej placke rozotri najmä hrubý okraj."
-		},
-		{
-			"id": "side-5b",
-			"title": "5. placka · druhá strana 2:00",
-			"durationSeconds": 120,
-			"dependsOn": [
-				"flip-5"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "WAIT",
-			"instruction": "Smaž druhú stranu orientačne 2 minúty na miernejšom plameni. Ak sú okraje tmavé a stred surový, uber plyn; ak je placka hotová skôr, vyber ju skôr. Pred vybratím over, že stred aj hrubšie okraje sú prepečené."
-		},
-		{
-			"id": "remove-5",
-			"title": "Vyber 5. placku",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"side-5b"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "VYBRATÁ",
-			"retryActionLabel": "EŠTE NIE",
-			"retryAfterSeconds": 30,
-			"instruction": "Vyber placku, až keď je zlatohnedá a stred aj hrubšie časti sú prepečené; pri neistote kúsok v strede otvor a skontroluj. Ak je vnútri surová, zníž výkon a zvoľ EŠTE NIE – skontroluj po ďalších 30 sekundách. Ak už okraj černie, ďalšie prudké smaženie nepomôže; pri ďalšej placke zníž teplotu a zarovnaj hrúbku okraja. Hotovú placku polož na papierovú utierku. Až potom stlač VYBRATÁ."
-		},
-		{
-			"id": "prepare-6",
-			"title": "Priprav panvicu na 6. placku",
-			"durationSeconds": 60,
-			"dependsOn": [
-				"remove-5"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"instruction": "Premiešaj zvyšné cesto, prípadne zlej prebytočnú vodu a podľa potreby pridaj olej. Ak okraj predchádzajúcej placky černel, zníž plameň a nechaj panvicu trochu vychladnúť. Ak už nemáš cesto, namiesto pokračovania stlač CESTO SA MINULO – DOKONČIŤ."
-		},
-		{
-			"id": "pan-ready-6",
-			"title": "Je panvica pripravená na 6. placku?",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"prepare-6"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "ÁNO",
-			"retryActionLabel": "EŠTE NIE",
-			"retryAfterSeconds": 30,
-			"instruction": "Pri malej kvapke cesta má olej jemne syčať, ale nemá dymiť ani prudko tmavnúť. Ak je panvica príliš horúca, uber plyn a zvoľ EŠTE NIE. Ak už nemáš cesto, dokonči varenie cez CESTO SA MINULO – DOKONČIŤ."
-		},
-		{
-			"id": "load-6",
-			"title": "Rozotri 6. placku",
-			"durationSeconds": 75,
-			"dependsOn": [
-				"pan-ready-6"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ho rozotri do rovnomerne tenkej placky (orientačne 3–4 mm). Pri roztieraní skontroluj hlavne okraj: ak sa tam cesto nahrnulo do hrubého prstenca, rozotri ho smerom dovnútra, aby nebol hrubší než stred. Nerob ani priesvitné okraje. Priemer prispôsob množstvu cesta. Keď je placka na panvici a má rovnomernú hrúbku, stlač Hotovo; až tým začne dvojminútový časovač."
-		},
-		{
-			"id": "side-6a",
-			"title": "6. placka · prvá strana 2:00",
-			"durationSeconds": 120,
-			"dependsOn": [
-				"load-6"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "WAIT",
-			"instruction": "Smaž prvú stranu orientačne 2 minúty na miernom až strednom plameni. Na plyne môže panvica najviac hriať nad kruhom plameňa. Ak okraje černejú, ale stred je ešte surový, hneď uber plyn. Nesnaž sa nedopečený stred dohnať silnejším ohňom; pri ďalšej placke rozotri aj hrubý prstenec na okraji. Otoč podľa prepečenia, nie nasilu až po uplynutí času."
-		},
-		{
-			"id": "flip-6",
-			"title": "Otoč 6. placku",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"side-6a"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "OTOČENÁ",
-			"retryActionLabel": "EŠTE BLEDÁ",
-			"retryAfterSeconds": 30,
-			"instruction": "Skontroluj spodok a pevnosť placky širokou obracačkou. Keď je zlatohnedý a placka drží pokope, otoč ju. AŽ POTOM stlač OTOČENÁ; tým začne dvojminútový časovač druhej strany. Ak je spodok bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a vnútro je surové, zníž výkon; pri ďalšej placke rozotri najmä hrubý okraj."
-		},
-		{
-			"id": "side-6b",
-			"title": "6. placka · druhá strana 2:00",
-			"durationSeconds": 120,
-			"dependsOn": [
-				"flip-6"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "WAIT",
-			"instruction": "Smaž druhú stranu orientačne 2 minúty na miernejšom plameni. Ak sú okraje tmavé a stred surový, uber plyn; ak je placka hotová skôr, vyber ju skôr. Pred vybratím over, že stred aj hrubšie okraje sú prepečené."
-		},
-		{
-			"id": "remove-6",
-			"title": "Vyber 6. placku",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"side-6b"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "VYBRATÁ",
-			"retryActionLabel": "EŠTE NIE",
-			"retryAfterSeconds": 30,
-			"instruction": "Vyber placku, až keď je zlatohnedá a stred aj hrubšie časti sú prepečené; pri neistote kúsok v strede otvor a skontroluj. Ak je vnútri surová, zníž výkon a zvoľ EŠTE NIE – skontroluj po ďalších 30 sekundách. Ak už okraj černie, ďalšie prudké smaženie nepomôže; pri ďalšej placke zníž teplotu a zarovnaj hrúbku okraja. Hotovú placku polož na papierovú utierku. Až potom stlač VYBRATÁ."
-		},
-		{
-			"id": "prepare-7",
-			"title": "Priprav panvicu na 7. placku",
-			"durationSeconds": 60,
-			"dependsOn": [
-				"remove-6"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"instruction": "Premiešaj zvyšné cesto, prípadne zlej prebytočnú vodu a podľa potreby pridaj olej. Ak okraj predchádzajúcej placky černel, zníž plameň a nechaj panvicu trochu vychladnúť. Ak už nemáš cesto, namiesto pokračovania stlač CESTO SA MINULO – DOKONČIŤ."
-		},
-		{
-			"id": "pan-ready-7",
-			"title": "Je panvica pripravená na 7. placku?",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"prepare-7"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "ÁNO",
-			"retryActionLabel": "EŠTE NIE",
-			"retryAfterSeconds": 30,
-			"instruction": "Pri malej kvapke cesta má olej jemne syčať, ale nemá dymiť ani prudko tmavnúť. Ak je panvica príliš horúca, uber plyn a zvoľ EŠTE NIE. Ak už nemáš cesto, dokonči varenie cez CESTO SA MINULO – DOKONČIŤ."
-		},
-		{
-			"id": "load-7",
-			"title": "Rozotri 7. placku",
-			"durationSeconds": 75,
-			"dependsOn": [
-				"pan-ready-7"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"instruction": "Naber približne jednu sedminu cesta a zadnou stranou lyžice ho rozotri do rovnomerne tenkej placky (orientačne 3–4 mm). Pri roztieraní skontroluj hlavne okraj: ak sa tam cesto nahrnulo do hrubého prstenca, rozotri ho smerom dovnútra, aby nebol hrubší než stred. Nerob ani priesvitné okraje. Priemer prispôsob množstvu cesta. Keď je placka na panvici a má rovnomernú hrúbku, stlač Hotovo; až tým začne dvojminútový časovač."
-		},
-		{
-			"id": "side-7a",
-			"title": "7. placka · prvá strana 2:00",
-			"durationSeconds": 120,
-			"dependsOn": [
-				"load-7"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "WAIT",
-			"instruction": "Smaž prvú stranu orientačne 2 minúty na miernom až strednom plameni. Na plyne môže panvica najviac hriať nad kruhom plameňa. Ak okraje černejú, ale stred je ešte surový, hneď uber plyn. Nesnaž sa nedopečený stred dohnať silnejším ohňom; pri ďalšej placke rozotri aj hrubý prstenec na okraji. Otoč podľa prepečenia, nie nasilu až po uplynutí času."
-		},
-		{
-			"id": "flip-7",
-			"title": "Otoč 7. placku",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"side-7a"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "OTOČENÁ",
-			"retryActionLabel": "EŠTE BLEDÁ",
-			"retryAfterSeconds": 30,
-			"instruction": "Skontroluj spodok a pevnosť placky širokou obracačkou. Keď je zlatohnedý a placka drží pokope, otoč ju. AŽ POTOM stlač OTOČENÁ; tým začne dvojminútový časovač druhej strany. Ak je spodok bledý, zvoľ EŠTE BLEDÁ a skontroluj po 30 sekundách. Ak okraj už černie a vnútro je surové, zníž výkon; pri ďalšej placke rozotri najmä hrubý okraj."
-		},
-		{
-			"id": "side-7b",
-			"title": "7. placka · druhá strana 2:00",
-			"durationSeconds": 120,
-			"dependsOn": [
-				"flip-7"
-			],
-			"resources": [
-				"pan",
-				"burner"
-			],
-			"kind": "WAIT",
-			"instruction": "Smaž druhú stranu orientačne 2 minúty na miernejšom plameni. Ak sú okraje tmavé a stred surový, uber plyn; ak je placka hotová skôr, vyber ju skôr. Pred vybratím over, že stred aj hrubšie okraje sú prepečené."
-		},
-		{
-			"id": "remove-7",
-			"title": "Vyber 7. placku a vypni sporák",
-			"durationSeconds": 45,
-			"dependsOn": [
-				"side-7b"
-			],
-			"resources": [
-				"cook",
-				"pan",
-				"burner"
-			],
-			"kind": "EVENT",
-			"actionLabel": "VYBRATÁ",
-			"retryActionLabel": "EŠTE NIE",
-			"retryAfterSeconds": 30,
-			"instruction": "Vyber placku, až keď je zlatohnedá a stred aj hrubšie časti sú prepečené; pri neistote kúsok v strede otvor a skontroluj. Ak je vnútri surová, zníž výkon a zvoľ EŠTE NIE – skontroluj po ďalších 30 sekundách. Ak už okraj černie, ďalšie prudké smaženie nepomôže; pri ďalšej placke zníž teplotu a zarovnaj hrúbku okraja. Hotovú placku polož na papierovú utierku. Vypni sporák. Až potom stlač VYBRATÁ."
+			"repeat": {
+				"count": 7,
+				"steps": [
+					{
+						"id": "spread",
+						"title": "Rozotri placku",
+						"durationSeconds": 75,
+						"resources": [
+							"cook",
+							"pan",
+							"burner"
+						],
+						"instruction": "Ak je to ďalšia placka, premiešaj cesto a podľa potreby doplň olej. Rozotri jednu placku; stred môže byť o trochu tenší než okraje. Keď je na panvici, stlač HOTOVO a spustí sa časovač."
+					},
+					{
+						"id": "side-a",
+						"title": "Prvá strana · 1:40",
+						"durationSeconds": 100,
+						"resources": [
+							"pan",
+							"burner"
+						],
+						"kind": "WAIT",
+						"allowEarlyCompletion": true,
+						"instruction": "Smaž na miernom plameni. Ak je spodok zlatohnedý a placka drží, môžeš pokračovať aj pred koncom časovača."
+					},
+					{
+						"id": "flip",
+						"title": "Otoč placku",
+						"durationSeconds": 30,
+						"resources": [
+							"cook",
+							"pan",
+							"burner"
+						],
+						"kind": "EVENT",
+						"actionLabel": "OTOČENÁ",
+						"retryActionLabel": "EŠTE BLEDÁ",
+						"retryAfterSeconds": 20,
+						"instruction": "Skontroluj spodok. Keď je zlatohnedý a pevný, otoč placku a potvrď OTOČENÁ. Ak je bledý, nechaj ju ešte smažiť."
+					},
+					{
+						"id": "side-b",
+						"title": "Druhá strana · 1:40",
+						"durationSeconds": 100,
+						"resources": [
+							"pan",
+							"burner"
+						],
+						"kind": "WAIT",
+						"allowEarlyCompletion": true,
+						"instruction": "Smaž druhú stranu na miernom plameni. Ak je placka prepečená skôr, pokračuj bez čakania na časovač."
+					},
+					{
+						"id": "remove",
+						"title": "Vyber placku",
+						"durationSeconds": 30,
+						"resources": [
+							"cook",
+							"pan",
+							"burner"
+						],
+						"kind": "EVENT",
+						"actionLabel": "VYBRATÁ",
+						"retryActionLabel": "EŠTE NIE",
+						"retryAfterSeconds": 20,
+						"instruction": "Skontroluj najmä stred. Ak je surový, ešte dosmaž na miernom plameni. Hotovú placku vyber na papierovú utierku a potvrď VYBRATÁ."
+					}
+				]
+			}
 		},
 		{
 			"id": "serve",
-			"title": "Podávaj chrumkavé placky",
+			"title": "Vypni sporák a podávaj placky",
 			"durationSeconds": 60,
 			"dependsOn": [
-				"remove-7"
+				"pancakes"
 			],
 			"resources": [
 				"cook"
 			],
-			"instruction": "Hotové placky nechaj krátko odkvapkať od oleja a podávaj ešte horúce. Výborne chutia samotné alebo s kyslou smotanou."
+			"instruction": "Vypni sporák, nechaj placky krátko odkvapkať na papieri a podávaj ešte horúce."
 		}
 	],
 	"troubleshooting": [
@@ -906,11 +251,11 @@
 		},
 		{
 			"problem": "Okraje sú čierne, ale stred je surový",
-			"advice": "Zníž plameň a nechaj placku viac času pri miernejšej teplote. Pri plyne sa dno panvice môže prehrievať priamo nad kruhom horáka, obzvlášť pri tenkom dne. Plameň nesmie presahovať dno panvice. Zarovnaj hrubé okraje na približne rovnakú hrúbku ako stred, okolo 3–4 mm. Začni 2 minútami na stranu, ale rozhoduj podľa skutočného prepečenia."
+			"advice": "Zníž plameň, nechaj viac času na prepečenie stredu a pri ďalšej placke ho rozotri o trochu tenšie než okraje. Plameň nesmie presahovať dno panvice. Hrubšie okraje netreba stenčovať – mohli by sa pripiecť ešte rýchlejšie."
 		},
 		{
 			"problem": "Placky nie sú chrumkavé",
-			"advice": "Cesto rozotri rovnomerne na asi 3–4 mm (nie do priesvitných okrajov), použi primerane rozohriaty olej a nepreplň panvicu. Nepridávaj priveľa múky."
+			"advice": "Cesto neroztieraj príliš nahrubo, používaj primerane zohriaty olej, smaž vždy jednu placku a nepridávaj priveľa múky."
 		},
 		{
 			"problem": "Sú mastné",
@@ -919,17 +264,11 @@
 	],
 	"earlyFinishActionLabel": "CESTO SA MINULO – DOKONČIŤ",
 	"earlyFinishTaskIds": [
-		"prepare-2",
-		"pan-ready-2",
-		"prepare-3",
-		"pan-ready-3",
-		"prepare-4",
-		"pan-ready-4",
-		"prepare-5",
-		"pan-ready-5",
-		"prepare-6",
-		"pan-ready-6",
-		"prepare-7",
-		"pan-ready-7"
+		"pancakes/r2/spread",
+		"pancakes/r3/spread",
+		"pancakes/r4/spread",
+		"pancakes/r5/spread",
+		"pancakes/r6/spread",
+		"pancakes/r7/spread"
 	]
 }

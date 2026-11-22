@@ -95,6 +95,7 @@ import java.util.Locale
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		MobileTransitionNotifier.clearLegacyNotifications(this)
 		CookingSessionController.initialize(applicationContext)
 
 		setContent {
@@ -139,9 +140,11 @@ private fun CookCueScreen() {
 	val selectedRecipeId = CookingSessionController.selectedRecipeId
 	val startedAt = CookingSessionController.startedAt
 	val durationOverrides = CookingSessionController.durationOverrides
+	val taskStartOverrides = CookingSessionController.taskStartOverrides
 	val skippedTaskIds = CookingSessionController.skippedTaskIds
 	val deferredTaskIds = CookingSessionController.deferredTaskIds
 	val paused = CookingSessionController.paused
+	val pausedCookingElapsedMillis = CookingSessionController.pausedCookingElapsedMillis
 	val completedEarly = CookingSessionController.completedEarly
 	val activeTaskOverrideId = CookingSessionController.activeTaskOverrideId
 	val activeTaskOverrideStartedAtSeconds =
@@ -211,9 +214,11 @@ private fun CookCueScreen() {
 		now,
 		startedAt,
 		durationOverrides,
+		taskStartOverrides,
 		skippedTaskIds,
 		deferredTaskIds,
 		paused,
+		pausedCookingElapsedMillis,
 		completedEarly,
 		activeTaskOverrideId,
 		activeTaskOverrideStartedAtSeconds,
@@ -223,11 +228,23 @@ private fun CookCueScreen() {
 	) {
 		CookingSessionController.snapshot(now)
 	}
+	// An automatically activated cooking step must survive app restarts with its
+	// real start timestamp, including when the user leaves the cooking screen.
+	LaunchedEffect(startedAt, taskStartOverrides) {
+		if (startedAt != null && taskStartOverrides.isNotEmpty()) {
+			MobileSessionPersistence.save(context)
+			MobileSessionSync.publish(context)
+		}
+	}
 	val activeActions = snapshot.activeActions
 	val current = activeActions.firstOrNull()
 	val primaryWait = snapshot.background.minByOrNull { it.endSeconds }
 	val displayedWait = if (activeActions.isEmpty()) primaryWait else null
-	val activeTaskId = current?.task?.id ?: displayedWait?.task?.id ?: snapshot.pendingEvents.firstOrNull()?.task?.id
+	val canAdvanceWait = displayedWait?.task?.allowEarlyCompletion == true &&
+		snapshot.pendingEvents.isEmpty()
+	val activeTaskId = current?.task?.id ?: displayedWait?.task?.id ?:
+		snapshot.retryCountdowns.firstOrNull()?.event?.task?.id ?:
+		snapshot.pendingEvents.firstOrNull()?.task?.id
 	val planItems = snapshot.schedule.distinctBy { it.task.repeatInfo?.id ?: it.task.id }
 	val currentPlanId = snapshot.schedule.firstOrNull { it.task.id == activeTaskId }
 		?.task?.let { it.repeatInfo?.id ?: it.id }
@@ -261,7 +278,8 @@ private fun CookCueScreen() {
 
 	val keepScreenAwake =
 		snapshot.started &&
-			(current != null || snapshot.pendingEvents.isNotEmpty() || snapshot.completed)
+			(current != null || primaryWait != null || snapshot.retryCountdowns.isNotEmpty() ||
+				snapshot.pendingEvents.isNotEmpty() || snapshot.completed)
 
 	LaunchedEffect(keepScreenAwake) {
 		val window = (context as? ComponentActivity)?.window ?: return@LaunchedEffect
@@ -404,9 +422,11 @@ private fun CookCueScreen() {
 			CookCueTopBar(
 				recipeTitle = recipe.title,
 				showRecipesAction = true,
+				showPrintAction = recipe.scheduleMode == ScheduleMode.COOKING,
 				onRecipes = {
 					if (snapshot.started) showStopCookingDialog = true else showCatalog = true
 				},
+				onPrint = { RecipePrinter.print(context, recipe) },
 			)
 			if (snapshot.started) {
 				SessionModeTabs(showPlan = showPlan, onSelectPlan = { showPlan = it })
@@ -438,6 +458,32 @@ private fun CookCueScreen() {
 							color = MaterialTheme.colorScheme.onSurfaceVariant,
 						)
 						Spacer(Modifier.height(18.dp))
+						val recipeOptions = CookingSessionController.availableRecipes
+							.firstOrNull { it.id == selectedRecipeId }?.options.orEmpty()
+						if (recipeOptions.size > 1) {
+							SectionTitle("Druh ryže")
+							Spacer(Modifier.height(8.dp))
+							recipeOptions.forEach { option ->
+								if (option.id == CookingSessionController.selectedOptionId) {
+									Button(
+										onClick = {},
+										modifier = Modifier.fillMaxWidth(),
+										shape = RoundedCornerShape(12.dp),
+									) { Text(option.label) }
+								} else {
+									OutlinedButton(
+										onClick = {
+											CookingSessionController.selectRecipeOption(option.id)
+											persistAndSync()
+										},
+										modifier = Modifier.fillMaxWidth(),
+										shape = RoundedCornerShape(12.dp),
+									) { Text(option.label) }
+								}
+								Spacer(Modifier.height(6.dp))
+							}
+							Spacer(Modifier.height(12.dp))
+						}
 						PreCookingPanel(
 							note = recipe.preCookingNote,
 							isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY,
@@ -497,6 +543,39 @@ private fun CookCueScreen() {
 					}
 				}
 
+				if (
+					recipe.scheduleMode == ScheduleMode.COOKING &&
+					(snapshot.paused || CookingSessionController.canPausePreparation(snapshot))
+				) {
+					item {
+						Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+							Spacer(Modifier.height(12.dp))
+							if (snapshot.paused) {
+								PausedPreparationCard(
+									onResume = {
+										CookingSessionController.resumePreparation()
+										persistAndSync()
+									},
+								)
+							} else {
+								OutlinedButton(
+									onClick = {
+										CookingSessionController.pausePreparation()
+										persistAndSync()
+									},
+									modifier = Modifier.fillMaxWidth(),
+									shape = RoundedCornerShape(12.dp),
+								) {
+									Text(
+										text = "⏸  POZASTAVIŤ PRÍPRAVU",
+										fontWeight = FontWeight.Bold,
+									)
+								}
+							}
+						}
+					}
+				}
+
 				if (!snapshot.paused) nearbySuggestion?.let { suggestion ->
 					item {
 						Column(
@@ -538,7 +617,7 @@ private fun CookCueScreen() {
 											(it.task.repeatInfo?.id ?: it.task.id) == actionPlanId
 										}
 										CurrentStepCard(
-											title = action.task.title,
+											title = conciseTaskTitle(action.task),
 											image = action.task.image,
 											instruction = action.task.instruction,
 											tips = action.task.tips,
@@ -547,7 +626,10 @@ private fun CookCueScreen() {
 											elapsedSeconds = elapsed,
 											stepNumber = stepIndex.takeIf { it >= 0 }?.plus(1),
 											stepCount = planItems.size,
+											stepLabel = action.task.repeatInfo?.let { "${it.title} ${it.repetition}/${it.count}" },
 											actionLabel = "HOTOVO",
+											allowEarlyCompletion = false,
+											onCompleteWaitEarly = {},
 											optional = action.task.optional,
 											isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY,
 											onDefer = {
@@ -574,7 +656,7 @@ private fun CookCueScreen() {
 									(displayedWait.endSeconds - displayedWait.startSeconds)
 										.coerceAtLeast(1)
 								CurrentStepCard(
-									title = displayedWait.task.title,
+									title = conciseTaskTitle(displayedWait.task),
 									image = displayedWait.task.image,
 									instruction = displayedWait.task.instruction,
 									tips = displayedWait.task.tips,
@@ -583,7 +665,13 @@ private fun CookCueScreen() {
 									elapsedSeconds = elapsed,
 									stepNumber = activeStepIndex.takeIf { it >= 0 }?.plus(1),
 									stepCount = planItems.size,
+									stepLabel = displayedWait.task.repeatInfo?.let { "${it.title} ${it.repetition}/${it.count}" },
 									actionLabel = null,
+									allowEarlyCompletion = canAdvanceWait,
+									onCompleteWaitEarly = {
+										CookingSessionController.completeWaitEarly(displayedWait.task.id)
+										persistAndSync()
+									},
 									optional = false,
 									isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY,
 									onDefer = {},
@@ -591,6 +679,8 @@ private fun CookCueScreen() {
 									onAction = {},
 								)
 							}
+
+							snapshot.retryCountdowns.isNotEmpty() -> Unit
 
 							snapshot.completed -> {
 								CompletionCard(
@@ -612,13 +702,50 @@ private fun CookCueScreen() {
 					}
 				}
 
+				items(snapshot.retryCountdowns, key = { "retry-" + it.event.task.id }) { retry ->
+					val task = retry.event.task
+					val retryPlanId = task.repeatInfo?.id ?: task.id
+					val retryIndex = planItems.indexOfFirst {
+						(it.task.repeatInfo?.id ?: it.task.id) == retryPlanId
+					}
+					Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+						Spacer(Modifier.height(12.dp))
+						CurrentStepCard(
+							title = "Ďalšia kontrola: " + conciseTaskTitle(task),
+							image = task.image,
+							instruction = task.retryInstruction
+								?: "Pokračuj podľa pokynov receptu. Po odpočítaní sa zobrazí kontrolná otázka.",
+							tips = emptyList(),
+							links = emptyList(),
+							estimateSeconds = retry.durationSeconds,
+							elapsedSeconds = retry.elapsedSeconds(snapshot.elapsedSeconds),
+							stepNumber = retryIndex.takeIf { it >= 0 }?.plus(1),
+							stepCount = planItems.size,
+							stepLabel = task.repeatInfo?.let {
+								"${it.title} ${it.repetition}/${it.count}"
+							},
+							actionLabel = null,
+							allowEarlyCompletion = false,
+							onCompleteWaitEarly = {},
+							optional = false,
+							isItinerary = recipe.scheduleMode == ScheduleMode.ITINERARY,
+							onDefer = {},
+							onSkip = {},
+							onAction = {},
+							statusLabel = "ODPOČET KONTROLY",
+						)
+					}
+				}
+
 				items(snapshot.pendingEvents, key = { "event-" + it.task.id }) { event ->
 					Column(
 						modifier = Modifier.padding(horizontal = 16.dp),
 					) {
 						Spacer(Modifier.height(12.dp))
 						PendingEventCard(
-							title = event.task.title,
+							title = event.task.repeatInfo?.let {
+								"${it.title} ${it.repetition}/${it.count} · ${conciseTaskTitle(event.task)}"
+							} ?: event.task.title,
 							image = event.task.image,
 							instruction = event.task.instruction,
 							tips = event.task.tips,
@@ -682,7 +809,9 @@ private fun CookCueScreen() {
 						) {
 							Spacer(Modifier.height(16.dp))
 							NextStepRow(
-								title = next.task.title,
+								title = next.task.repeatInfo?.let {
+									"${it.title} ${it.repetition}/${it.count} · ${conciseTaskTitle(next.task)}"
+								} ?: next.task.title,
 								time = if (recipe.scheduleMode == ScheduleMode.ITINERARY) {
 									formatScheduledStart(recipe, next)
 								} else {
@@ -716,14 +845,18 @@ private fun CookCueScreen() {
 							}
 							OutlinedButton(
 								onClick = {
-									CookingSessionController.next()
+									if (canAdvanceWait) {
+										CookingSessionController.completeWaitEarly(displayedWait!!.task.id)
+									} else {
+										CookingSessionController.next()
+									}
 									persistAndSync()
 								},
-								enabled = snapshot.nextAction != null,
+								enabled = canAdvanceWait || snapshot.nextAction != null,
 								modifier = Modifier.weight(1f),
 								shape = RoundedCornerShape(12.dp),
 							) {
-								Text("ĎALŠÍ →")
+								Text(if (canAdvanceWait) "HOTOVO SKÔR →" else "ĎALŠÍ →")
 							}
 						}
 					}
@@ -769,7 +902,8 @@ private fun CookCueScreen() {
 				}
 				val groupActive = children.any { step ->
 					step.task.id == activeTaskId ||
-						snapshot.pendingEvents.any { it.task.id == step.task.id }
+						snapshot.pendingEvents.any { it.task.id == step.task.id } ||
+						snapshot.retryCountdowns.any { it.event.task.id == step.task.id }
 				}
 				val groupProgress = if (repeat == null) {
 					snapshot.taskProgress[item.task.id] ?: TaskProgress.PENDING
@@ -795,7 +929,7 @@ private fun CookCueScreen() {
 					isLast = index == planItems.lastIndex,
 					canActivate = !snapshot.paused,
 					repeatLabel = repeat?.let {
-						"Opakovania: " + repetitionsCompleted + "/" + it.count + " · výdrž 5 s"
+						"Hotové: " + repetitionsCompleted + "/" + it.count
 					},
 					onOpenDetail = { selectedTaskDetailId = item.task.id },
 					onActivate = {
@@ -868,7 +1002,9 @@ private fun SessionModeTabs(showPlan: Boolean, onSelectPlan: (Boolean) -> Unit) 
 private fun CookCueTopBar(
 	recipeTitle: String,
 	showRecipesAction: Boolean,
+	showPrintAction: Boolean,
 	onRecipes: () -> Unit,
+	onPrint: () -> Unit,
 ) {
 	Column {
 		Row(
@@ -889,6 +1025,18 @@ private fun CookCueTopBar(
 				maxLines = 1,
 				overflow = TextOverflow.Ellipsis,
 			)
+			if (showPrintAction) {
+				TextButton(
+					onClick = onPrint,
+					contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+				) {
+					Text(
+						text = "TLAČIŤ",
+						style = MaterialTheme.typography.labelMedium,
+						fontWeight = FontWeight.Bold,
+					)
+				}
+			}
 			if (showRecipesAction) {
 				TextButton(
 					onClick = onRecipes,
@@ -1067,6 +1215,13 @@ private fun IngredientList(
 	}
 }
 
+private fun conciseTaskTitle(task: CookingTask): String {
+	val repeat = task.repeatInfo ?: return task.title
+	return task.title
+		.removePrefix("${repeat.id.uppercase()} · ")
+		.removeSuffix(" · ${repeat.repetition}/${repeat.count}")
+}
+
 @Composable
 private fun CurrentStepCard(
 	title: String,
@@ -1078,12 +1233,16 @@ private fun CurrentStepCard(
 	elapsedSeconds: Long,
 	stepNumber: Int?,
 	stepCount: Int,
+	stepLabel: String?,
 	actionLabel: String?,
+	allowEarlyCompletion: Boolean,
+	onCompleteWaitEarly: () -> Unit,
 	optional: Boolean,
 	isItinerary: Boolean,
 	onDefer: () -> Unit,
 	onSkip: () -> Unit,
 	onAction: () -> Unit,
+	statusLabel: String = "TERAZ",
 ) {
 	Surface(
 		modifier = Modifier.fillMaxWidth(),
@@ -1105,7 +1264,7 @@ private fun CurrentStepCard(
 					shape = RoundedCornerShape(50),
 				) {
 					Text(
-						text = if (optional) "VOLITEĽNÉ · TERAZ" else "TERAZ",
+						text = if (optional) "VOLITEĽNÉ · TERAZ" else statusLabel,
 						style = MaterialTheme.typography.labelMedium,
 						fontWeight = FontWeight.Bold,
 						color = MaterialTheme.colorScheme.primary,
@@ -1115,7 +1274,7 @@ private fun CurrentStepCard(
 				Spacer(Modifier.weight(1f))
 				if (stepNumber != null && stepCount > 0) {
 					Text(
-						text = "Krok $stepNumber z $stepCount",
+						text = stepLabel ?: "Krok $stepNumber z $stepCount",
 						style = MaterialTheme.typography.labelMedium,
 						color = MaterialTheme.colorScheme.onSurfaceVariant,
 					)
@@ -1157,6 +1316,17 @@ private fun CurrentStepCard(
 					estimateSeconds = estimateSeconds,
 					elapsedSeconds = elapsedSeconds,
 				)
+			}
+
+			if (allowEarlyCompletion) {
+				Spacer(Modifier.height(12.dp))
+				Button(
+					onClick = onCompleteWaitEarly,
+					modifier = Modifier.fillMaxWidth(),
+					shape = RoundedCornerShape(12.dp),
+				) {
+					Text("✓  HOTOVO SKÔR")
+				}
 			}
 
 			if (tips.isNotEmpty()) {
@@ -1414,6 +1584,41 @@ private fun CompletionCard(
 					fontWeight = FontWeight.Bold,
 					modifier = Modifier.padding(vertical = 4.dp),
 				)
+			}
+		}
+	}
+}
+
+@Composable
+private fun PausedPreparationCard(onResume: () -> Unit) {
+	Surface(
+		modifier = Modifier.fillMaxWidth(),
+		color = MaterialTheme.colorScheme.secondaryContainer,
+		shape = RoundedCornerShape(18.dp),
+	) {
+		Column(modifier = Modifier.padding(18.dp)) {
+			SmallLabel("PRÍPRAVA POZASTAVENÁ")
+			Spacer(Modifier.height(7.dp))
+			Text(
+				text = "Pokračuj, keď budeš pripravený",
+				style = MaterialTheme.typography.titleLarge.copy(
+					fontFamily = FontFamily.Serif,
+					fontWeight = FontWeight.SemiBold,
+				),
+			)
+			Spacer(Modifier.height(4.dp))
+			Text(
+				text = "Čas prípravy aj zostávajúci plán stoja. Po pokračovaní sa vrátiš k rovnakému kroku.",
+				style = MaterialTheme.typography.bodyMedium,
+				color = MaterialTheme.colorScheme.onSecondaryContainer,
+			)
+			Spacer(Modifier.height(12.dp))
+			Button(
+				onClick = onResume,
+				modifier = Modifier.fillMaxWidth(),
+				shape = RoundedCornerShape(12.dp),
+			) {
+				Text(text = "▶  POKRAČOVAŤ", fontWeight = FontWeight.Bold)
 			}
 		}
 	}

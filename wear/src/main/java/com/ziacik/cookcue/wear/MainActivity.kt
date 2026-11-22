@@ -227,9 +227,20 @@ private fun WearCookCueScreen() {
 
 			state.paused -> {
 				SimpleState(
-					message = "Itinerár je pozastavený",
-					buttonText = null,
-					onClick = {},
+					message = if (state.pausedPreparation) {
+						"Príprava je pozastavená"
+					} else {
+						"Itinerár je pozastavený"
+					},
+					buttonText = if (state.pausedPreparation) "POKRAČOVAŤ" else null,
+					onClick = {
+						if (state.pausedPreparation) {
+							WearActionSender.send(
+								context,
+								DataLayerProtocol.ACTION_RESUME_PREPARATION,
+							)
+						}
+					},
 				)
 			}
 
@@ -275,6 +286,13 @@ private fun WearCookCueScreen() {
 					totalSeconds = state.currentEstimateSeconds,
 					elapsedSeconds = currentElapsed,
 					showDone = true,
+					showPause = state.canPausePreparation,
+					onPause = {
+						WearActionSender.send(
+							context,
+							DataLayerProtocol.ACTION_PAUSE_PREPARATION,
+						)
+					},
 					onDone = {
 						WearActionSender.send(
 							context,
@@ -290,8 +308,14 @@ private fun WearCookCueScreen() {
 					taskTitle = state.backgroundTitle,
 					totalSeconds = backgroundTotal,
 					elapsedSeconds = backgroundElapsed,
-					showDone = false,
-					onDone = {},
+					showDone = state.backgroundCanFinishEarly && state.backgroundTaskId.isNotBlank(),
+					onDone = {
+						WearActionSender.send(
+							context,
+							DataLayerProtocol.ACTION_COMPLETE_WAIT_EARLY,
+							state.backgroundTaskId,
+						)
+					},
 				)
 			}
 
@@ -313,6 +337,8 @@ private fun TimerState(
 	elapsedSeconds: Long,
 	showDone: Boolean,
 	onDone: () -> Unit,
+	showPause: Boolean = false,
+	onPause: () -> Unit = {},
 ) {
 	val hasTotal = totalSeconds > 0
 	val safeTotal = totalSeconds.coerceAtLeast(1)
@@ -380,9 +406,27 @@ private fun TimerState(
 				)
 			}
 
-			if (showDone) {
+			if (showDone || showPause) {
 				Spacer(Modifier.height(12.dp))
-				RoundDoneButton(onClick = onDone)
+				Row(
+					horizontalArrangement = Arrangement.spacedBy(12.dp),
+					verticalAlignment = Alignment.CenterVertically,
+				) {
+					if (showDone) RoundDoneButton(onClick = onDone)
+					if (showPause) {
+						Button(
+							onClick = onPause,
+							modifier = Modifier.size(40.dp),
+							colors = ButtonDefaults.buttonColors(
+								containerColor = CookCueWineDeep,
+								contentColor = CookCueCream,
+							),
+							shape = CircleShape,
+						) {
+							Text("Ⅱ", fontSize = 18.sp, fontWeight = FontWeight.Medium)
+						}
+					}
+				}
 			}
 		}
 	}

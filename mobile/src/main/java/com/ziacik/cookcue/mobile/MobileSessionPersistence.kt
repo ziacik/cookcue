@@ -3,10 +3,12 @@ package com.ziacik.cookcue.mobile
 import android.content.Context
 import android.os.SystemClock
 import androidx.core.content.edit
+import com.ziacik.cookcue.core.model.ScheduleMode
 
 object MobileSessionPersistence {
 	private const val PREFS = "cookcue-session"
 	private const val KEY_RECIPE_ID = "recipe-id"
+	private const val KEY_RECIPE_OPTION_ID = "recipe-option-id"
 	private const val KEY_STARTED_AT = "started-at"
 	private const val KEY_STARTED_WALL_CLOCK = "started-wall-clock"
 	private const val KEY_DURATION_OVERRIDES = "duration-overrides"
@@ -16,6 +18,7 @@ object MobileSessionPersistence {
 	private const val KEY_MANUALLY_COMPLETED_TASK_IDS = "manually-completed-task-ids"
 	private const val KEY_DEFERRED_TASK_IDS = "deferred-task-ids"
 	private const val KEY_PAUSED = "paused"
+	private const val KEY_PAUSED_COOKING_ELAPSED_MILLIS = "paused-cooking-elapsed-millis"
 	private const val KEY_COMPLETED_EARLY = "completed-early"
 	private const val KEY_ACTIVE_TASK_OVERRIDE_ID = "active-task-override-id"
 	private const val KEY_ACTIVE_TASK_OVERRIDE_STARTED_AT = "active-task-override-started-at"
@@ -93,6 +96,17 @@ object MobileSessionPersistence {
 				prefs.getString(KEY_DEFERRED_TASK_IDS, null).orEmpty()
 			).validTasks()
 			val paused = canRestoreSession && prefs.getBoolean(KEY_PAUSED, false)
+			val pausedCookingElapsedMillis = prefs
+				.getLong(KEY_PAUSED_COOKING_ELAPSED_MILLIS, -1L)
+				.takeIf {
+					paused &&
+						restoredRecipe?.scheduleMode == ScheduleMode.COOKING &&
+						it >= 0L
+				}
+			// Frozen elapsed time survives app restarts and device reboots.
+			val restoredStartedAt = startedAt ?: pausedCookingElapsedMillis?.let {
+				SystemClock.elapsedRealtime() - it
+			}
 			val completedEarly = canRestoreSession && prefs.getBoolean(KEY_COMPLETED_EARLY, false)
 
 			val activeTaskOverrideId = prefs
@@ -117,7 +131,8 @@ object MobileSessionPersistence {
 
 			CookingSessionController.restore(
 				recipeId = restoredRecipe?.id,
-				startedAt = startedAt,
+				selectedOptionId = prefs.getString(KEY_RECIPE_OPTION_ID, null),
+				startedAt = restoredStartedAt,
 				sessionStartedWallClockMillis = startedWallClock,
 				durationOverrides = overrides,
 				taskStartOverrides = taskStartOverrides,
@@ -125,6 +140,7 @@ object MobileSessionPersistence {
 				manuallyCompletedTaskIds = manuallyCompletedTaskIds,
 				deferredTaskIds = deferredTaskIds,
 				paused = paused,
+				pausedCookingElapsedMillis = pausedCookingElapsedMillis,
 				completedEarly = completedEarly,
 				activeTaskOverrideId = activeTaskOverrideId,
 				activeTaskOverrideStartedAtSeconds = activeTaskOverrideStartedAtSeconds,
@@ -150,6 +166,7 @@ object MobileSessionPersistence {
 			.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 			.edit {
 				putString(KEY_RECIPE_ID, CookingSessionController.selectedRecipeId)
+				putString(KEY_RECIPE_OPTION_ID, CookingSessionController.selectedOptionId)
 				putLong(KEY_STARTED_AT, CookingSessionController.startedAt ?: -1L)
 				putLong(
 					KEY_STARTED_WALL_CLOCK,
@@ -162,6 +179,10 @@ object MobileSessionPersistence {
 				putString(KEY_MANUALLY_COMPLETED_TASK_IDS, manuallyCompletedTaskIds)
 				putString(KEY_DEFERRED_TASK_IDS, deferredTaskIds)
 				putBoolean(KEY_PAUSED, CookingSessionController.paused)
+				putLong(
+					KEY_PAUSED_COOKING_ELAPSED_MILLIS,
+					CookingSessionController.pausedCookingElapsedMillis ?: -1L,
+				)
 				putBoolean(KEY_COMPLETED_EARLY, CookingSessionController.completedEarly)
 				putString(
 					KEY_ACTIVE_TASK_OVERRIDE_ID,

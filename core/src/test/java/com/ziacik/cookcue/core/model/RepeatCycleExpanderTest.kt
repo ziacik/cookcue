@@ -76,4 +76,62 @@ class RepeatCycleExpanderTest {
 			)
 		}
 	}
+
+	@Test
+	fun flexibleWaitCanFinishEarlyWithoutSkippingTheNextEvent() {
+		val setup = CookingTask(id = "setup", title = "Setup", durationSeconds = 10)
+		val phases = listOf(
+			CookingTask(id = "spread", title = "Spread", durationSeconds = 5),
+			CookingTask(
+				id = "side",
+				title = "Fry one side",
+				durationSeconds = 100,
+				kind = TaskKind.WAIT,
+				allowEarlyCompletion = true,
+			),
+			CookingTask(
+				id = "flip",
+				title = "Flip",
+				durationSeconds = 1,
+				kind = TaskKind.EVENT,
+				actionLabel = "FLIPPED",
+			),
+		)
+		val tasks = listOf(setup) + RepeatCycleExpander.expand(
+			id = "pancakes",
+			title = "Pancakes",
+			count = 2,
+			steps = phases,
+			dependsOn = setOf("setup"),
+		)
+		val recipe = Recipe(
+			id = "pancakes",
+			title = "Pancakes",
+			servings = 1,
+			ingredients = emptyList(),
+			resourceCapacities = emptyMap(),
+			tasks = tasks,
+		)
+		assertTrue(tasks.single { it.id == "pancakes/r1/side" }.allowEarlyCompletion)
+		val original = Scheduler().schedule(recipe)
+		assertEquals(115L, original.single { it.task.id == "pancakes/r1/flip" }.startSeconds)
+		val shortened = Scheduler().schedule(
+			recipe = recipe,
+			durationOverrides = mapOf("pancakes/r1/side" to 40L),
+		)
+		assertEquals(55L, shortened.single { it.task.id == "pancakes/r1/flip" }.startSeconds)
+		assertEquals(56L, shortened.single { it.task.id == "pancakes/r2/spread" }.startSeconds)
+	}
+
+	@Test
+	fun onlyWaitTasksCanAllowEarlyCompletion() {
+		assertThrows(IllegalArgumentException::class.java) {
+			CookingTask(
+				id = "exact-action",
+				title = "Action",
+				durationSeconds = 10,
+				allowEarlyCompletion = true,
+			)
+		}
+	}
 }

@@ -43,6 +43,7 @@ class CookingSessionService : Service() {
 		super.onCreate()
 		ensureSessionChannel()
 		MobileTransitionNotifier.ensureChannel(this)
+		MobileTransitionNotifier.clearLegacyNotifications(this)
 		CookingSessionController.initialize(applicationContext)
 		MobileSessionPersistence.ensureLoaded(applicationContext)
 	}
@@ -82,7 +83,12 @@ class CookingSessionService : Service() {
 
 	private suspend fun monitorSession() {
 		while (currentCoroutineContext().isActive) {
+			val previousTaskStarts = CookingSessionController.taskStartOverrides
 			val snapshot = CookingSessionController.snapshot()
+			if (previousTaskStarts != CookingSessionController.taskStartOverrides) {
+				MobileSessionPersistence.save(applicationContext)
+				MobileSessionSync.publish(applicationContext)
+			}
 			if (!snapshot.started || snapshot.paused) {
 				stopSelf()
 				return
@@ -356,6 +362,11 @@ class CookingSessionService : Service() {
 		}
 		if (snapshot.activeActions.size > 1) {
 			return "Teraz: " + snapshot.activeActions.joinToString(" + ") { it.task.title }
+		}
+		snapshot.retryCountdowns.firstOrNull()?.let { retry ->
+			val remaining = (retry.untilSeconds - snapshot.elapsedSeconds).coerceAtLeast(0)
+			val clock = "%02d:%02d".format(remaining / 60, remaining % 60)
+			return "Ďalšia kontrola o $clock: " + retry.event.task.title
 		}
 		snapshot.background.minByOrNull { it.endSeconds }?.let {
 			return "Čakám: " + it.task.title
