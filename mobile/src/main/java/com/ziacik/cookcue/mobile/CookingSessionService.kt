@@ -43,6 +43,7 @@ class CookingSessionService : Service() {
 		super.onCreate()
 		ensureSessionChannel()
 		MobileTransitionNotifier.ensureChannel(this)
+		MobileTransitionNotifier.clearLegacyNotifications(this)
 		CookingSessionController.initialize(applicationContext)
 		MobileSessionPersistence.ensureLoaded(applicationContext)
 	}
