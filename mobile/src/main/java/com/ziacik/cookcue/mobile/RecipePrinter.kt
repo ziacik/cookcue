@@ -168,6 +168,7 @@ private data class PrintLine(val text: String, val style: PrintStyle)
 private data class PrintBlock(
 	val lines: List<PrintLine>,
 	val spaceBefore: Float = 0f,
+	val keepWithNext: Boolean = false,
 )
 
 private data class PlacedText(
@@ -198,7 +199,11 @@ private class CompactRecipeComposer(
 	private val width: Float,
 	private val height: Float,
 ) {
-	private val columnCount = if (width >= 710f) 3 else 2
+	private val columnCount = when {
+		width >= 710f -> 3
+		width >= 420f -> 2
+		else -> 1
+	}
 	private val gutter = 15f
 	private val columnWidth = (width - gutter * (columnCount - 1)) / columnCount
 
@@ -324,14 +329,32 @@ private class CompactRecipeComposer(
 			}
 		}
 
-		recipeBlocks(recipe).forEach(::place)
+		val blocks = recipeBlocks(recipe)
+		blocks.forEachIndexed { index, block ->
+			if (block.keepWithNext) {
+				val next = blocks.getOrNull(index + 1)
+				if (next != null) {
+					fun blockHeight(value: PrintBlock): Float =
+						value.spaceBefore * scale + value.lines.sumOf {
+							(textLayout(it.text, it.style, columnWidth).height + 1.5f * scale).toDouble()
+						}.toFloat()
+					val combinedHeight = blockHeight(block) + blockHeight(next)
+					if (cursorY > columnTop() && combinedHeight <= columnBottom - columnTop() &&
+						cursorY + combinedHeight > columnBottom
+					) {
+						advanceColumn()
+					}
+				}
+			}
+			place(block)
+		}
 		return PrintPlan(pages.map { it.toList() }, dividerY)
 	}
 }
 
 private fun recipeBlocks(recipe: Recipe): List<PrintBlock> = buildList {
 	if (recipe.ingredients.isNotEmpty()) {
-		add(PrintBlock(listOf(PrintLine("INGREDIENCIE", PrintStyle.SECTION))))
+		add(PrintBlock(listOf(PrintLine("INGREDIENCIE", PrintStyle.SECTION)), keepWithNext = true))
 		recipe.ingredients.forEach { ingredient ->
 			val text = listOf(ingredient.amount, ingredient.name)
 				.filter(String::isNotBlank)
@@ -345,7 +368,7 @@ private fun recipeBlocks(recipe: Recipe): List<PrintBlock> = buildList {
 			PrintLine(note, PrintStyle.BODY),
 		), 9f))
 	}
-	add(PrintBlock(listOf(PrintLine("POSTUP", PrintStyle.SECTION)), 10f))
+	add(PrintBlock(listOf(PrintLine("POSTUP", PrintStyle.SECTION)), 10f, keepWithNext = true))
 
 	val plan = Scheduler().schedule(recipe)
 	val groupedTasks = plan.groupBy { it.task.repeatInfo?.id ?: it.task.id }
@@ -385,7 +408,7 @@ private fun recipeBlocks(recipe: Recipe): List<PrintBlock> = buildList {
 	}
 
 	if (recipe.troubleshooting.isNotEmpty()) {
-		add(PrintBlock(listOf(PrintLine("KEĎ SA NEDARÍ", PrintStyle.SECTION)), 11f))
+		add(PrintBlock(listOf(PrintLine("KEĎ SA NEDARÍ", PrintStyle.SECTION)), 11f, keepWithNext = true))
 		recipe.troubleshooting.forEach { tip ->
 			add(PrintBlock(listOf(
 				PrintLine(tip.problem, PrintStyle.STEP),
