@@ -26,8 +26,8 @@ import com.ziacik.cookcue.core.scheduler.Scheduler
 import java.io.FileOutputStream
 
 /**
- * Prints the complete selected recipe as a compact, two-column document.
- * The print system also offers "Save as PDF" without requiring file permissions.
+ * Prints a readable, balanced recipe layout rather than shrinking it to fit A4.
+ * The Android print sheet also supports saving the result as PDF.
  */
 internal object RecipePrinter {
 	fun print(context: Context, recipe: Recipe) {
@@ -37,7 +37,7 @@ internal object RecipePrinter {
 			RecipePrintAdapter(context, recipe),
 			PrintAttributes.Builder()
 				.setMediaSize(PrintAttributes.MediaSize.ISO_A4)
-				.setMinMargins(PrintAttributes.Margins(250, 250, 250, 250))
+				.setMinMargins(PrintAttributes.Margins(600, 600, 600, 600))
 				.setResolution(PrintAttributes.Resolution("cookcue", "CookCue", 300, 300))
 				.setColorMode(PrintAttributes.COLOR_MODE_MONOCHROME)
 				.build(),
@@ -97,13 +97,22 @@ private class RecipePrintAdapter(
 					width = bounds.width().toFloat(),
 					height = bounds.height().toFloat(),
 				)
-				// Preserve comfortable type whenever possible. Reduce it only if
-				// that allows the whole recipe to fit on one sheet.
-				val plan = listOf(1f, 0.96f, 0.92f, 0.88f)
-					.asSequence()
-					.map(composer::compose)
-					.firstOrNull { it.pages.size == 1 }
-					?: composer.compose(1f)
+				// Only make a small font adjustment if it actually saves a sheet.
+				// Otherwise keep full-size type and balance content across pages.
+				val fittingScale = listOf(1f, 0.97f, 0.94f)
+					.firstOrNull { composer.compose(it).pages.size == 1 } ?: 1f
+				val natural = composer.compose(fittingScale)
+				var minFill = 0.35f
+				var maxFill = 1f
+				repeat(12) {
+					val midpoint = (minFill + maxFill) / 2f
+					if (composer.compose(fittingScale, midpoint).pages.size <= natural.pages.size) {
+						maxFill = midpoint
+					} else {
+						minFill = midpoint
+					}
+				}
+				val plan = composer.compose(fittingScale, (maxFill + 0.015f).coerceAtMost(1f))
 				val written = mutableListOf<PageRange>()
 
 				plan.pages.forEachIndexed { index, placements ->
@@ -115,17 +124,24 @@ private class RecipePrintAdapter(
 					canvas.withTranslation(bounds.left.toFloat(), bounds.top.toFloat()) {
 						placements.forEach { it.draw(this) }
 
-					if (index == 0) {
-						val rule = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-							color = Color.LTGRAY
-							strokeWidth = 0.6f
+					if (index > 0) {
+						val continuation = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+							color = Color.BLACK
+							textSize = 10.5f
+							typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
 						}
-						canvas.drawLine(0f, plan.dividerY, bounds.width().toFloat(), plan.dividerY, rule)
+						canvas.drawText(recipe.title + " · pokračovanie", 0f, 12f, continuation)
 					}
+					val rule = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+						color = Color.LTGRAY
+						strokeWidth = 0.6f
+					}
+					val dividerY = if (index == 0) plan.dividerY else 19f
+					canvas.drawLine(0f, dividerY, bounds.width().toFloat(), dividerY, rule)
 
 					val footer = Paint(Paint.ANTI_ALIAS_FLAG).apply {
 						color = Color.DKGRAY
-						textSize = 7f
+						textSize = 8f
 					}
 					canvas.drawText(
 						"CookCue · " + (index + 1) + "/" + plan.pages.size,
@@ -200,27 +216,24 @@ private class CompactRecipeComposer(
 	private val width: Float,
 	private val height: Float,
 ) {
-	private val columnCount = when {
-		width >= 710f -> 3
-		width >= 420f -> 2
-		else -> 1
-	}
-	private val gutter = 15f
+	private val columnCount = if (width >= 400f) 2 else 1
+	private val gutter = 22f
 	private val columnWidth = (width - gutter * (columnCount - 1)) / columnCount
 
-	fun compose(scale: Float): PrintPlan {
+	fun compose(scale: Float, fill: Float = 1f): PrintPlan {
+		require(fill in 0f..1f)
 		val pages = mutableListOf<MutableList<PlacedText>>(mutableListOf())
 		var headerY = 0f
 
 		fun textLayout(text: String, style: PrintStyle, lineWidth: Float): StaticLayout {
 			val paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
 				textSize = when (style) {
-					PrintStyle.TITLE -> 16f
-					PrintStyle.SUBTITLE -> 8.4f
-					PrintStyle.SECTION -> 9.5f
-					PrintStyle.STEP -> 8.8f
-					PrintStyle.BODY -> 8.2f
-					PrintStyle.SMALL -> 7.5f
+					PrintStyle.TITLE -> 19f
+					PrintStyle.SUBTITLE -> 9.5f
+					PrintStyle.SECTION -> 11.5f
+					PrintStyle.STEP -> 10.5f
+					PrintStyle.BODY -> 10f
+					PrintStyle.SMALL -> 9.5f
 				} * scale
 				color = if (style == PrintStyle.SMALL || style == PrintStyle.SUBTITLE) {
 					Color.DKGRAY
@@ -260,14 +273,16 @@ private class CompactRecipeComposer(
 			headerY += layout.height + 2f * scale
 		}
 
-		val dividerY = headerY + 4f
-		val firstColumnTop = dividerY + 11f
-		val columnBottom = height - 14f
+		val dividerY = headerY + 8f
+		val firstColumnTop = dividerY + 14f
+		val nextPageTop = 33f
+		val pageBottom = height - 19f
 		var pageIndex = 0
 		var columnIndex = 0
 		var cursorY = firstColumnTop
 
-		fun columnTop() = if (pageIndex == 0) firstColumnTop else 0f
+		fun columnTop() = if (pageIndex == 0) firstColumnTop else nextPageTop
+		fun columnBottom() = columnTop() + (pageBottom - columnTop()) * fill
 
 		fun advanceColumn() {
 			if (columnIndex < columnCount - 1) {
@@ -287,13 +302,13 @@ private class CompactRecipeComposer(
 
 			val fullHeight = block.spaceBefore * scale +
 				prepared.sumOf { it.second.height.toDouble() + 1.5 * scale }.toFloat()
-			val columnCapacity = columnBottom - columnTop()
+			val columnCapacity = columnBottom() - columnTop()
 			if (cursorY > columnTop() && fullHeight <= columnCapacity &&
-				cursorY + fullHeight > columnBottom
+				cursorY + fullHeight > columnBottom()
 			) {
 				advanceColumn()
 			}
-			if (cursorY + block.spaceBefore * scale >= columnBottom) {
+			if (cursorY + block.spaceBefore * scale >= columnBottom()) {
 				advanceColumn()
 			} else {
 				cursorY += block.spaceBefore * scale
@@ -305,7 +320,7 @@ private class CompactRecipeComposer(
 					var endLine = firstLine
 					while (endLine < layout.lineCount &&
 						layout.getLineBottom(endLine) - layout.getLineTop(firstLine) <=
-						columnBottom - cursorY
+						columnBottom() - cursorY
 					) {
 						endLine++
 					}
@@ -340,8 +355,8 @@ private class CompactRecipeComposer(
 							(textLayout(it.text, it.style, columnWidth).height + 1.5f * scale).toDouble()
 						}.toFloat()
 					val combinedHeight = blockHeight(block) + blockHeight(next)
-					if (cursorY > columnTop() && combinedHeight <= columnBottom - columnTop() &&
-						cursorY + combinedHeight > columnBottom
+					if (cursorY > columnTop() && combinedHeight <= columnBottom() - columnTop() &&
+						cursorY + combinedHeight > columnBottom()
 					) {
 						advanceColumn()
 					}
@@ -381,7 +396,7 @@ private fun recipeBlocks(recipe: Recipe): List<PrintBlock> = buildList {
 				index + 1,
 				first.task,
 				first.startSeconds,
-			), 5f))
+			), 7f))
 		} else {
 			val lines = mutableListOf(
 				PrintLine(
@@ -404,7 +419,7 @@ private fun recipeBlocks(recipe: Recipe): List<PrintBlock> = buildList {
 				}
 				task.tips.forEach { lines += PrintLine("Tip: " + it, PrintStyle.SMALL) }
 			}
-			add(PrintBlock(lines, 5f))
+			add(PrintBlock(lines, 7f))
 		}
 	}
 
@@ -424,8 +439,7 @@ private fun stepLines(number: Int, task: CookingTask, startsAt: Long): List<Prin
 		val optional = if (task.optional) " · voliteľné" else ""
 		add(PrintLine(
 			number.toString() + ". " + task.title + " · " +
-				shortDuration(task.durationSeconds) + " (T+" +
-				shortDuration(startsAt) + ")" + optional,
+				shortDuration(task.durationSeconds) + optional,
 			PrintStyle.STEP,
 		))
 		if (task.instruction.isNotBlank() && task.instruction != task.title) {
