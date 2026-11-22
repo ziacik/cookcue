@@ -731,7 +731,7 @@ private fun CookCueScreen() {
 							onDefer = {},
 							onSkip = {},
 							onAction = {},
-							statusLabel = "ODPOČÍTAVAM DO KONTROLY",
+							statusLabel = "ODPOČET KONTROLY",
 						)
 					}
 				}
