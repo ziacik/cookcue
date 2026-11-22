@@ -312,6 +312,7 @@
 			"actionLabel": "RYŽA JE HOTOVÁ",
 			"retryActionLabel": "EŠTE TVRDÁ",
 			"retryAfterSeconds": 120,
+			"retryInstruction": "Nechaj ryžu ešte 2 minúty mierne variť na slabom výkone. Ak už dno vysychá, prilej po okraji 30–50 ml horúcej vody. Ryžu nemiešaj.",
 			"instruction": "Ochutnaj niekoľko zrniek pri okraji a v strede. Ryža má byť uvarená, no nie rozvarená, a väčšina tekutiny vsiaknutá. Ak je stále tvrdá, nechaj ju ďalšie 2 minúty na slabom výkone a stlač EŠTE TVRDÁ; appka pripomenie ďalšiu kontrolu. Ak už dno vysychá, prilej 30–50 ml rezervnej horúcej vody po okraji, nemiešaj. Keď je ryža dobrá, potvrď RYŽA JE HOTOVÁ. Ak nechceš chrumkavé dno, hneď vypni horák a v nasledujúcom voliteľnom kroku daj Preskočiť."
 		},
 		{
