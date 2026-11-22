@@ -11,6 +11,8 @@ import com.ziacik.cookcue.core.model.ScheduledTask
 import com.ziacik.cookcue.core.model.TaskKind
 import com.ziacik.cookcue.core.scheduler.ActiveTaskClock
 import com.ziacik.cookcue.core.scheduler.ItineraryScheduler
+import com.ziacik.cookcue.core.scheduler.PreparationPauseClock
+import com.ziacik.cookcue.core.scheduler.PreparationPausePolicy
 import com.ziacik.cookcue.core.scheduler.Scheduler
 
 enum class TaskProgress {
@@ -133,6 +135,7 @@ object CookingSessionController {
 		manuallyCompletedTaskIds = emptySet()
 		deferredTaskIds = emptySet()
 		paused = false
+		pausedCookingElapsedMillis = null
 		completedEarly = false
 		activeTaskOverrideId = null
 		activeTaskOverrideStartedAtSeconds = null
@@ -179,6 +182,9 @@ object CookingSessionController {
 	var paused by mutableStateOf(false)
 		private set
 
+	var pausedCookingElapsedMillis by mutableStateOf<Long?>(null)
+		private set
+
 	var completedEarly by mutableStateOf(false)
 		private set
 
@@ -223,6 +229,7 @@ object CookingSessionController {
 		manuallyCompletedTaskIds = emptySet()
 		deferredTaskIds = emptySet()
 		paused = false
+		pausedCookingElapsedMillis = null
 		completedEarly = false
 		activeTaskOverrideId = null
 		activeTaskOverrideStartedAtSeconds = null
@@ -244,6 +251,7 @@ object CookingSessionController {
 		manuallyCompletedTaskIds = emptySet()
 		deferredTaskIds = emptySet()
 		paused = false
+		pausedCookingElapsedMillis = null
 		completedEarly = false
 		activeTaskOverrideId = null
 		activeTaskOverrideStartedAtSeconds = null
@@ -269,6 +277,7 @@ object CookingSessionController {
 		manuallyCompletedTaskIds: Set<String> = emptySet(),
 		deferredTaskIds: Set<String> = emptySet(),
 		paused: Boolean = false,
+		pausedCookingElapsedMillis: Long? = null,
 		activeTaskOverrideId: String? = null,
 		activeTaskOverrideStartedAtSeconds: Long? = null,
 		nearbySuggestionSnoozeTaskId: String? = null,
@@ -300,10 +309,15 @@ object CookingSessionController {
 		this.skippedTaskIds = skippedTaskIds
 		this.manuallyCompletedTaskIds = manuallyCompletedTaskIds
 		this.deferredTaskIds = deferredTaskIds
-		this.paused = paused
-		this.activeTaskOverrideId = if (paused) null else activeTaskOverrideId
+		this.pausedCookingElapsedMillis = if (
+			paused && recipe.scheduleMode == ScheduleMode.COOKING && this.startedAt != null
+		) pausedCookingElapsedMillis?.coerceAtLeast(0) else null
+		this.paused = paused && (
+			recipe.scheduleMode == ScheduleMode.ITINERARY || this.pausedCookingElapsedMillis != null
+		)
+		this.activeTaskOverrideId = if (this.paused) null else activeTaskOverrideId
 		this.activeTaskOverrideStartedAtSeconds =
-			if (paused) null else activeTaskOverrideStartedAtSeconds
+			if (this.paused) null else activeTaskOverrideStartedAtSeconds
 		this.nearbySuggestion = null
 		this.nearbySuggestionSnoozeTaskId = nearbySuggestionSnoozeTaskId
 		this.nearbySuggestionSnoozeUntilElapsedRealtime = nearbySuggestionSnoozeUntilElapsedRealtime
@@ -540,6 +554,47 @@ object CookingSessionController {
 		markSilentTransition()
 	}
 
+	fun canPausePreparation(snapshot: MobileSessionSnapshot): Boolean {
+		if (
+			!snapshot.started ||
+			snapshot.paused ||
+			snapshot.completed ||
+			recipe.scheduleMode != ScheduleMode.COOKING
+		) return false
+
+		val alreadyStarted = taskStartOverrides.keys + durationOverrides.keys +
+			manuallyCompletedTaskIds + skippedTaskIds
+		return PreparationPausePolicy.canPause(
+			recipe = recipe,
+			activeActions = snapshot.activeActions,
+			background = snapshot.background,
+			pendingEvents = snapshot.pendingEvents,
+			startedTaskIds = alreadyStarted,
+		)
+	}
+
+	fun pausePreparation() {
+		if (!canPausePreparation(snapshot())) return
+		pausedCookingElapsedMillis = PreparationPauseClock.freeze(
+			nowMillis = SystemClock.elapsedRealtime(),
+			startedAtMillis = requireNotNull(startedAt),
+		)
+		paused = true
+		markSilentTransition()
+	}
+
+	fun resumePreparation() {
+		if (recipe.scheduleMode != ScheduleMode.COOKING || !paused || startedAt == null) return
+		val frozen = pausedCookingElapsedMillis ?: return
+		startedAt = PreparationPauseClock.resumeStart(
+			nowMillis = SystemClock.elapsedRealtime(),
+			frozenElapsedMillis = frozen,
+		)
+		pausedCookingElapsedMillis = null
+		paused = false
+		markSilentTransition()
+	}
+
 	fun pauseItinerary() {
 		if (
 			recipe.scheduleMode != ScheduleMode.ITINERARY ||
@@ -689,7 +744,7 @@ object CookingSessionController {
 				val epochStart = requireNotNull(recipe.scheduleStartEpochSeconds)
 				(System.currentTimeMillis() / 1000 - epochStart).coerceAtLeast(0)
 			}
-			else -> ((now - start) / 1000).coerceAtLeast(0)
+			else -> ((pausedCookingElapsedMillis ?: (now - start)) / 1000).coerceAtLeast(0)
 		}
 		val schedule = if (start == null) {
 			baseSchedule(elapsedSeconds)
@@ -876,7 +931,7 @@ object CookingSessionController {
 			val epochStart = requireNotNull(recipe.scheduleStartEpochSeconds)
 			(System.currentTimeMillis() / 1000 - epochStart).coerceAtLeast(0)
 		} else {
-			((SystemClock.elapsedRealtime() - start) / 1000).coerceAtLeast(0)
+			((pausedCookingElapsedMillis ?: (SystemClock.elapsedRealtime() - start)) / 1000).coerceAtLeast(0)
 		}
 	}
 
