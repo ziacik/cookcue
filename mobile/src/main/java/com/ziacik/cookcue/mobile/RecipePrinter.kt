@@ -17,6 +17,8 @@ import android.print.pdf.PrintedPdfDocument
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
+import androidx.core.graphics.withSave
+import androidx.core.graphics.withTranslation
 import com.ziacik.cookcue.core.model.CookingTask
 import com.ziacik.cookcue.core.model.Recipe
 import com.ziacik.cookcue.core.model.TaskKind
@@ -110,9 +112,8 @@ private class RecipePrintAdapter(
 
 					val page = document.startPage(index + 1)
 					val canvas = page.canvas
-					canvas.save()
-					canvas.translate(bounds.left.toFloat(), bounds.top.toFloat())
-					placements.forEach { it.draw(canvas) }
+					canvas.withTranslation(bounds.left.toFloat(), bounds.top.toFloat()) {
+						placements.forEach { it.draw(this) }
 
 					if (index == 0) {
 						val rule = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -132,7 +133,7 @@ private class RecipePrintAdapter(
 						bounds.height() - 1f,
 						footer,
 					)
-					canvas.restore()
+					}
 					document.finishPage(page)
 					written += PageRange(index, index)
 				}
@@ -179,13 +180,13 @@ private data class PlacedText(
 	val endLine: Int,
 ) {
 	fun draw(canvas: Canvas) {
-		canvas.save()
-		val top = layout.getLineTop(startLine)
-		val bottom = layout.getLineBottom(endLine - 1)
-		canvas.clipRect(x, y, x + layout.width, y + bottom - top)
-		canvas.translate(x, y - top)
-		layout.draw(canvas)
-		canvas.restore()
+		canvas.withSave {
+			val top = layout.getLineTop(startLine)
+			val bottom = layout.getLineBottom(endLine - 1)
+			clipRect(x, y, x + layout.width, y + bottom - top)
+			translate(x, y - top)
+			layout.draw(this)
+		}
 	}
 }
 
