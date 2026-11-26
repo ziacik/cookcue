@@ -98,6 +98,7 @@
 				"burner"
 			],
 			"kind": "WAIT",
+			"allowEarlyCompletion": true,
 			"instruction": "Var zemiaky miernym varom. Po 10 minútach ich začneš skúšať vidličkou."
 		},
 		{

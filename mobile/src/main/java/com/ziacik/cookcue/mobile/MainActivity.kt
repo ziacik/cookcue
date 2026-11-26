@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -240,8 +241,7 @@ private fun CookCueScreen() {
 	val current = activeActions.firstOrNull()
 	val primaryWait = snapshot.background.minByOrNull { it.endSeconds }
 	val displayedWait = if (activeActions.isEmpty()) primaryWait else null
-	val canAdvanceWait = displayedWait?.task?.allowEarlyCompletion == true &&
-		snapshot.pendingEvents.isEmpty()
+	val canAdvanceWait = displayedWait?.task?.allowEarlyCompletion == true
 	val activeTaskId = current?.task?.id ?: displayedWait?.task?.id ?:
 		snapshot.retryCountdowns.firstOrNull()?.event?.task?.id ?:
 		snapshot.pendingEvents.firstOrNull()?.task?.id
@@ -262,7 +262,8 @@ private fun CookCueScreen() {
 		}
 	}
 	val secondaryBackground = snapshot.background.filterNot {
-		it.task.id == displayedWait?.task?.id
+		it.task.id == displayedWait?.task?.id ||
+			(recipe.scheduleMode == ScheduleMode.COOKING && it.task.allowEarlyCompletion)
 	}
 	LaunchedEffect(snapshot.started, snapshot.paused) {
 		if (
@@ -430,6 +431,33 @@ private fun CookCueScreen() {
 			)
 			if (snapshot.started) {
 				SessionModeTabs(showPlan = showPlan, onSelectPlan = { showPlan = it })
+			}
+			// These confirmations can become due while a different task is in progress.
+			// Keep their controls outside the scrolling task/plan content.
+			if (snapshot.started && recipe.scheduleMode == ScheduleMode.COOKING) {
+				val flexibleWaits = snapshot.background.filter {
+					it.task.allowEarlyCompletion
+				}
+				if (snapshot.pendingEvents.isNotEmpty() || flexibleWaits.isNotEmpty()) {
+					CookingAttentionPanel(
+						events = snapshot.pendingEvents,
+						waits = flexibleWaits,
+						elapsedSeconds = snapshot.elapsedSeconds,
+						onDetails = { selectedTaskDetailId = it },
+						onConfirm = {
+							CookingSessionController.confirmEvent(it)
+							persistAndSync()
+						},
+						onDefer = {
+							CookingSessionController.deferEvent(it)
+							persistAndSync()
+						},
+						onCompleteWait = {
+							CookingSessionController.completeWaitEarly(it)
+							persistAndSync()
+						},
+					)
+				}
 			}
 			LazyColumn(
 				modifier = Modifier.weight(1f),
@@ -680,7 +708,7 @@ private fun CookCueScreen() {
 								)
 							}
 
-							snapshot.retryCountdowns.isNotEmpty() -> Unit
+							snapshot.retryCountdowns.isNotEmpty() || snapshot.pendingEvents.isNotEmpty() -> Unit
 
 							snapshot.completed -> {
 								CompletionCard(
@@ -737,7 +765,10 @@ private fun CookCueScreen() {
 					}
 				}
 
-				items(snapshot.pendingEvents, key = { "event-" + it.task.id }) { event ->
+				items(
+					if (recipe.scheduleMode == ScheduleMode.COOKING) emptyList() else snapshot.pendingEvents,
+					key = { "event-" + it.task.id },
+				) { event ->
 					Column(
 						modifier = Modifier.padding(horizontal = 16.dp),
 					) {
@@ -1687,6 +1718,82 @@ private fun IdleCard(isItinerary: Boolean) {
 				style = MaterialTheme.typography.bodyMedium,
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
 			)
+		}
+	}
+}
+
+@Composable
+private fun CookingAttentionPanel(
+	events: List<ScheduledTask>,
+	waits: List<ScheduledTask>,
+	elapsedSeconds: Long,
+	onDetails: (String) -> Unit,
+	onConfirm: (String) -> Unit,
+	onDefer: (String) -> Unit,
+	onCompleteWait: (String) -> Unit,
+) {
+	Surface(
+		modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
+		color = MaterialTheme.colorScheme.tertiaryContainer,
+		shape = RoundedCornerShape(12.dp),
+	) {
+		Column(modifier = Modifier.padding(8.dp)) {
+			SmallLabel(
+				text = if (events.isNotEmpty()) "ČAKÁ NA TEBA · ${events.size}" else "BEŽIACE ČASOVAČE",
+				color = MaterialTheme.colorScheme.onTertiaryContainer,
+			)
+			LazyColumn(modifier = Modifier.heightIn(max = 200.dp)) {
+				items(events.sortedByDescending { it.startSeconds }, key = { "attention-event-" + it.task.id }) { event ->
+					val task = event.task
+					Text(
+						text = task.title,
+						style = MaterialTheme.typography.titleMedium,
+						fontWeight = FontWeight.Bold,
+						modifier = Modifier.fillMaxWidth().clickable { onDetails(task.id) },
+					)
+					Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+						if (task.retryActionLabel != null && task.retryAfterSeconds != null) {
+							OutlinedButton(
+								onClick = { onDefer(task.id) },
+								modifier = Modifier.weight(1f),
+							) { Text(task.retryActionLabel.orEmpty()) }
+						}
+						Button(
+							onClick = { onConfirm(task.id) },
+							modifier = Modifier.weight(1f),
+						) { Text(task.actionLabel ?: "HOTOVO") }
+					}
+					Text(
+						text = task.instruction,
+						style = MaterialTheme.typography.bodySmall,
+						modifier = Modifier.fillMaxWidth().clickable { onDetails(task.id) },
+					)
+					if (task.image != null || task.tips.isNotEmpty() || task.links.isNotEmpty()) {
+						TextButton(onClick = { onDetails(task.id) }) { Text("DETAIL KROKU") }
+					}
+					if (task.retryAfterSeconds != null && task.retryActionLabel != null) {
+						Text(
+							text = "Ďalšia kontrola o " + formatRemaining(task.retryAfterSeconds ?: 0L),
+							style = MaterialTheme.typography.bodySmall,
+						)
+					}
+					HorizontalDivider()
+				}
+				items(waits, key = { "attention-wait-" + it.task.id }) { wait ->
+					Row(
+						verticalAlignment = Alignment.CenterVertically,
+						horizontalArrangement = Arrangement.spacedBy(6.dp),
+					) {
+						Column(modifier = Modifier.weight(1f)) {
+							Text(wait.task.title, style = MaterialTheme.typography.bodyMedium)
+							Text(formatRemaining(wait.endSeconds - elapsedSeconds), fontWeight = FontWeight.Bold)
+						}
+						OutlinedButton(onClick = { onCompleteWait(wait.task.id) }) {
+							Text("HOTOVO SKÔR")
+						}
+					}
+				}
+			}
 		}
 	}
 }

@@ -76,6 +76,7 @@ object FriedCheeseWithBoiledPotatoesRecipe {
 				dependsOn = setOf("wait-for-potato-boil"),
 				resources = uses(POT, BURNER),
 				kind = TaskKind.WAIT,
+				allowEarlyCompletion = true,
 				instruction = "Var zemiaky miernym varom. Po 10 minútach ich začneš skúšať vidličkou.",
 			),
 			CookingTask(
